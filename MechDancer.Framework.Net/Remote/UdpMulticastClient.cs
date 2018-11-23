@@ -3,13 +3,14 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using MechDancer.Framework.Net.Remote.Protocol;
 
 namespace MechDancer.Framework.Net.Remote {
 	/// <inheritdoc />
 	/// <summary>
 	///     UDP 组播客户端
 	/// </summary>
-	public class UdpMulticastClient : IDisposable {
+	public sealed class UdpMulticastClient : IDisposable {
 		private readonly IPEndPoint _multicast;
 
 		/// <summary>
@@ -59,7 +60,16 @@ namespace MechDancer.Framework.Net.Remote {
 		/// </summary>
 		/// <param name="buffer">存放数据包的缓存</param>
 		/// <returns>收到的包长度</returns>
-		public ushort Receive(byte[] buffer) => (ushort) Socket.Receive(buffer);
+		public int Receive(byte[] buffer) => Socket.Receive(buffer);
+
+		/// <summary>
+		/// 	接收，并从缓冲区拷贝实际报文
+		/// </summary>
+		/// <param name="buffer">缓冲区</param>
+		/// <returns>实际长度的数据报</returns>
+		public byte[] ReceiveActual(byte[] buffer) =>
+			Socket.Receive(buffer)
+			      .Let(size => buffer.CopyRange(0, size));
 
 		/// <summary>
 		/// 	通过IP获取网卡

@@ -16,7 +16,7 @@ namespace MechDancer.Framework.Net.Dependency {
 			Sync();
 		}
 
-		public void Sync() { }
+		public virtual void Sync() { }
 
 		public override bool Equals(object other) => ReferenceEquals(this, other);
 		public override int  GetHashCode()        => GetType().GetHashCode();

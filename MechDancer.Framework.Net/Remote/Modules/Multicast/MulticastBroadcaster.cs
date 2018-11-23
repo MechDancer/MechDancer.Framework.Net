@@ -6,7 +6,7 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
-	public class MulticastBroadcaster : AbstractModule {
+	public sealed class MulticastBroadcaster : AbstractModule {
 		private readonly MaybeProperty<Name>    _name;
 		private readonly Lazy<MulticastSockets> _sockets;
 		private          long                   _serial;

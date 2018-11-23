@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 using MechDancer.Framework.Net.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public class MulticastSockets : IResourceFactory<NetworkInterface, UdpMulticastClient> {
+	public sealed class MulticastSockets : IResourceFactory<NetworkInterface, UdpMulticastClient> {
 		private readonly ConcurrentDictionary<NetworkInterface, UdpMulticastClient> _core
 			= new ConcurrentDictionary<NetworkInterface, UdpMulticastClient>();
 
