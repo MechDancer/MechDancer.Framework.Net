@@ -98,15 +98,24 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public static string ReadEnd(this Stream receiver) {
 			var buffer = new MemoryStream(1);
 			while (true) {
-				var temp = buffer.ReadByte();
-				switch (temp) {
+				var b = receiver.ReadByte();
+				switch (b) {
 					case -1:
 					case 0:
 						return Encoding.Default.GetString(buffer.ToArray());
 					default:
-						buffer.WriteByte((byte) temp);
+						buffer.WriteByte((byte) b);
 						break;
 				}
+			}
+		}
+
+		public static byte[] ReadRest(this Stream receiver) {
+			var buffer = new MemoryStream();
+			while (true) {
+				var b = receiver.ReadByte();
+				if (b == -1) return buffer.ToArray();
+				buffer.WriteByte((byte) b);
 			}
 		}
 	}
