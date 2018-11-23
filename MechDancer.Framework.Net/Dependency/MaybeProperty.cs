@@ -30,7 +30,7 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// </summary>
 		/// <param name="result">结果</param>
 		/// <returns>是否获取成功</returns>
-		bool Get(out T result) {
+		public bool Get(out T result) {
 			// 已经找到，直接返回缓存
 			if (_found) {
 				result = _field;
@@ -47,5 +47,8 @@ namespace MechDancer.Framework.Net.Dependency {
 			result = default(T);
 			return false;
 		}
+
+		public T GetOrDefault(T defaultValue) =>
+			Get(out var result) ? result : defaultValue;
 	}
 }
