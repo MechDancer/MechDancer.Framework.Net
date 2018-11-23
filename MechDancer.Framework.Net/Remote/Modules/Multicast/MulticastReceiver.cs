@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using MechDancer.Framework.Net.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
@@ -8,16 +9,16 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	public sealed class MulticastReceiver : AbstractModule {
-		private readonly uint                        _bufferSize;
+		private readonly ThreadLocal<byte[]>         _buffer;
 		private readonly Lazy<Name>                  _name;
 		private readonly Lazy<MulticastSockets>      _socket;
 		private readonly HashSet<IMulticastListener> _callbacks;
 
 		public MulticastReceiver(uint bufferSize = 65536) {
-			_bufferSize = bufferSize;
-			_name       = Must<Name>(Host);
-			_socket     = Must<MulticastSockets>(Host);
-			_callbacks  = new HashSet<IMulticastListener>();
+			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
+			_name      = Must<Name>(Host);
+			_socket    = Must<MulticastSockets>(Host);
+			_callbacks = new HashSet<IMulticastListener>();
 		}
 
 		public override void Sync() {
@@ -26,11 +27,10 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		}
 
 		public void Invoke() {
-			var buffer = new byte[_bufferSize];
 			var pack = _socket
 			          .Value
 			          .Default
-			          .ReceiveActual(buffer)
+			          .ReceiveActual(_buffer.Value)
 			          .Let(data => new RemotePacket(data));
 
 			if (pack.Sender == _name.Value.Field) return;

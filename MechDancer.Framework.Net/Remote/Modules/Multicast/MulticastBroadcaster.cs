@@ -20,7 +20,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		public void Broadcast(byte cmd, byte[] payload = null) {
 			var packet = new RemotePacket
 				(cmd,
-				 _name[out var it] ? it.Field : "",
+				 _name.Get(out var it) ? it.Field : "",
 				 Interlocked.Increment(ref _serial),
 				 payload ?? new byte[0]
 				).Bytes;
