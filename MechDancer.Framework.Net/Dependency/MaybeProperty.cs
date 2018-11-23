@@ -30,25 +30,24 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// </summary>
 		/// <param name="result">结果</param>
 		/// <returns>是否获取成功</returns>
-		public bool Get(out T result) {
-			// 已经找到，直接返回缓存
-			if (_found) {
-				result = _field;
-				return true;
-			}
+		public bool this[out T result] {
+			get {
+				// 已经找到，直接返回缓存
+				if (_found) {
+					result = _field;
+					return true;
+				}
 
-			// 此次找到，缓存并返回
-			if (_func(out _field)) {
-				result = _field;
-				return _found = true;
-			}
+				// 此次找到，缓存并返回
+				if (_func(out _field)) {
+					result = _field;
+					return _found = true;
+				}
 
-			// 未能找到，告知失败
-			result = default(T);
-			return false;
+				// 未能找到，告知失败
+				result = default(T);
+				return false;
+			}
 		}
-
-		public T GetOrDefault(T defaultValue) =>
-			Get(out var result) ? result : defaultValue;
 	}
 }

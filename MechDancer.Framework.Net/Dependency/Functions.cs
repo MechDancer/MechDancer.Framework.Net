@@ -66,9 +66,9 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <param name="func">惰性获取所在动态域的方法</param>
 		/// <typeparam name="T">目标依赖项类型</typeparam>
 		/// <returns>代理属性</returns>
-		public static MustProperty<T> Must<T>(Func<DynamicScope> func)
+		public static Lazy<T> Must<T>(Func<DynamicScope> func)
 			where T : class, IDependency =>
-			new MustProperty<T>(() => func().Must<T>());
+			new Lazy<T>(() => func().Must<T>());
 
 		/// <summary>
 		/// 	构造动态域，操作，扫描，并返回

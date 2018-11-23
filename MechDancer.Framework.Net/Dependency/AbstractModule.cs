@@ -9,9 +9,7 @@ namespace MechDancer.Framework.Net.Dependency {
 
 		protected readonly Func<DynamicScope> Host;
 
-		protected AbstractModule() {
-			Host = () => _host;
-		}
+		protected AbstractModule() => Host = () => _host;
 
 		public void OnSetup(DynamicScope host) {
 			_host = host;
