@@ -1,19 +1,32 @@
 using System;
 
 namespace MechDancer.Framework.Net.Dependency {
-	public class MaybeThere<T> where T : IDependency {
+	/// <summary>
+	/// 	在每次需要时都尝试获取目标的代理属性
+	/// </summary>
+	/// <typeparam name="T">目标类型</typeparam>
+	public class MaybeProperty<T> {
+		/// <summary>
+		/// 	尝试获取使用的函数类型
+		/// </summary>
+		/// <param name="result">结果</param>
+		/// <returns>是否获取成功</returns>
 		public delegate bool GetDependency(out T result);
 
+		private readonly GetDependency _func;
 		private          bool          _found;
 		private          T             _field;
-		private readonly GetDependency _func;
 
-		public MaybeThere(GetDependency func) {
+		/// <summary>
+		/// 	构造器
+		/// </summary>
+		/// <param name="func">查找方法</param>
+		public MaybeProperty(GetDependency func) {
 			_func = func;
 		}
 
 		/// <summary>
-		/// 	尝试获取一个依赖项
+		/// 	尝试获取目标
 		/// </summary>
 		/// <param name="result">结果</param>
 		/// <returns>是否获取成功</returns>
@@ -30,7 +43,7 @@ namespace MechDancer.Framework.Net.Dependency {
 				return _found = true;
 			}
 
-			// 未能找到，失败
+			// 未能找到，告知失败
 			result = default(T);
 			return false;
 		}

@@ -1,3 +1,3 @@
 namespace MechDancer.Framework.Net.Dependency {
-	public interface IDepandency { }
+	public interface IDependency { }
 }
