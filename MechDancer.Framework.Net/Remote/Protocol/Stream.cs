@@ -20,6 +20,17 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		   .Also(it => receiver.CopyTo(it, 0));
 
 		/// <summary>
+		/// 	向流写入一个字符数组
+		/// </summary>
+		/// <param name="receiver">流</param>
+		/// <param name="bytes">字符数组</param>
+		/// <typeparam name="T">流实现类型</typeparam>
+		/// <returns>流</returns>
+		public static T Write<T>(this T receiver, byte[] bytes)
+			where T : Stream =>
+			receiver.Also(it => it.Write(bytes, 0, bytes.Length));
+
+		/// <summary>
 		/// 	把一个字节数组按相反的顺序写入流
 		/// </summary>
 		/// <param name="receiver">目标流</param>

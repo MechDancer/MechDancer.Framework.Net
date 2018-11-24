@@ -43,7 +43,7 @@ namespace MechDancer.Framework.Net.Dependency {
 				}
 
 				// 未能找到，告知失败
-				result = default(T);
+				result = default;
 				return false;
 			}
 		}

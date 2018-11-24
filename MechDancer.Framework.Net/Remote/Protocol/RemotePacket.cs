@@ -3,25 +3,17 @@ using System.IO;
 
 namespace MechDancer.Framework.Net.Remote.Protocol {
 	public sealed class RemotePacket {
-		public readonly byte   Command;
 		public readonly string Sender;
+		public readonly byte   Command;
 		public readonly long   SeqNumber;
 		public readonly byte[] Payload;
 
-		public byte[] Bytes {
-			get {
-				var buffer = new MemoryStream(Payload.Length + 1);
-				buffer.WriteByte(Command);
-				buffer.WriteEnd(Sender);
-				buffer.WriteZigzag(SeqNumber, false);
-				buffer.Write(Payload);
-				return new byte[0];
-			}
-		}
-
+		/// <summary>
+		/// 	从结构化数据构造
+		/// </summary>
 		public RemotePacket(
-			byte   command,
 			string sender,
+			byte   command,
 			long   seqNumber,
 			byte[] payload
 		) {
@@ -31,12 +23,39 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			Payload   = payload;
 		}
 
-		public RemotePacket(byte[] pack) {
-			var buffer = new MemoryStream(pack);
-			Command   = (byte) buffer.ReadByte();
+		/// <summary>
+		/// 	从数据包构造
+		/// </summary>
+		public RemotePacket(Stream buffer) {
 			Sender    = buffer.ReadEnd();
+			Command   = (byte) buffer.ReadByte();
 			SeqNumber = buffer.ReadZigzag(false);
 			Payload   = buffer.ReadRest();
 		}
+
+		/// <summary>
+		/// 	解构
+		/// </summary>
+		public void Deconstruct(
+			out string sender,
+			out byte   command,
+			out long   seqNumber,
+			out byte[] payload
+		) {
+			sender    = Sender;
+			command   = Command;
+			seqNumber = SeqNumber;
+			payload   = Payload;
+		}
+
+		public byte[] Bytes =>
+			new MemoryStream(Payload.Length + 1)
+			   .Also(it => {
+						 it.WriteByte(Command);
+						 it.WriteEnd(Sender);
+						 it.WriteZigzag(SeqNumber, false);
+						 it.Write(Payload);
+					 })
+			   .ToArray();
 	}
 }

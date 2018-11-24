@@ -7,7 +7,7 @@ using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	public sealed class MulticastBroadcaster : AbstractModule {
-		private readonly MaybeProperty<Name>    _name;
+		private readonly MaybeProperty<Name>    _name; // 可以匿名发送组播
 		private readonly Lazy<MulticastSockets> _sockets;
 		private          long                   _serial;
 
@@ -17,12 +17,16 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			_sockets = Must<MulticastSockets>(Host);
 		}
 
-		public void Broadcast(byte cmd, byte[] payload = null) {
+		public void Broadcast(UdpCmd cmd, byte[] payload = null) {
+			var me = _name.Get(out var it) ? it.Field : null;
+			
+			if (String.IsNullOrWhiteSpace(me) && (cmd == UdpCmd.YellAck || cmd == UdpCmd.AddressAck)) return;
+			
 			var packet = new RemotePacket
-				(cmd,
-				 _name.Get(out var it) ? it.Field : "",
-				 Interlocked.Increment(ref _serial),
-				 payload ?? new byte[0]
+				(sender: me,
+				 command: (byte) cmd,
+				 seqNumber: Interlocked.Increment(ref _serial),
+				 payload: payload ?? new byte[0]
 				).Bytes;
 
 			foreach (var socket in _sockets.Value.View.Values)
