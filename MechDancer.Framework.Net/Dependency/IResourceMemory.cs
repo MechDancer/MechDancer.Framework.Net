@@ -14,5 +14,12 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <param name="previous">更新之前的资源</param>
 		/// <returns>更新之前资源是否存在</returns>
 		bool Update(TP parameter, TR resource, out TR previous);
+
+		/// <summary>
+		/// 	清除指定资源
+		/// </summary>
+		/// <param name="parameter">对应参数</param>
+		/// <returns>资源是否存在</returns>
+		bool Remove(TP parameter);
 	}
 }

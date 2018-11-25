@@ -23,9 +23,18 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <returns>是否加载成功</returns>
 		public bool Setup(IDependency dependency) {
 			var result = _dependencies.Add(dependency);
-			(dependency as IFunctionModule)?.Sync();
+			(dependency as IFunctionModule)?.OnSetup(this);
 			return result;
 		}
+
+		/// <summary>
+		/// 	重载加号
+		/// </summary>
+		/// <param name="scope">动态域</param>
+		/// <param name="dependency">依赖项</param>
+		/// <returns>本身</returns>
+		public static DynamicScope operator +(DynamicScope scope, IDependency dependency) =>
+			scope.Also(it => it.Setup(dependency));
 
 		/// <summary>
 		/// 	重新同步依赖项

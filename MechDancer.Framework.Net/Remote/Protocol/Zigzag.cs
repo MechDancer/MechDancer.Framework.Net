@@ -33,30 +33,30 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			this Stream receiver,
 			bool        signed
 		) => new MemoryStream(9)
-		    .Also(stream => {
-			          int b;
-			          do {
-				          b = receiver.ReadByte();
-				          stream.WriteByte((byte) b);
-			          } while (b > 0x7f);
-		          })
-		    .ToArray()
-		    .Zigzag(signed);
+			.Also(stream => {
+					  int b;
+					  do {
+						  b = receiver.ReadByte();
+						  stream.WriteByte((byte) b);
+					  } while (b > 0x7f);
+				  })
+			.ToArray()
+			.Zigzag(signed);
 
 		public static byte[] Zigzag(
 			this long receiver,
 			bool      signed
 		) => new MemoryStream(9)
-		    .WriteZigzag(receiver, signed)
-		    .ToArray();
+			.WriteZigzag(receiver, signed)
+			.ToArray();
 
 		public static long Zigzag(
 			this byte[] receiver,
 			bool        signed
 		) {
 			var acc = 0L;
-			foreach (var b in receiver)
-				acc = (acc << 7) | (b & 0x7f);
+			for (var i = receiver.Length - 1; i >= 0; --i)
+				acc = (acc << 7) | (receiver[i] & 0x7f);
 			return signed ? (long) ((ulong) acc >> 1) ^ -(acc & 1) : acc;
 		}
 	}

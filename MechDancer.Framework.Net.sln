@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Net", "MechDancer.Framework.Net\MechDancer.Framework.Net.csproj", "{27485454-0D17-44C8-B2BE-E8243BBBFFA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleInterface", "ConsoleInterface\ConsoleInterface.csproj", "{72B0AD48-9297-4856-ACCD-595D0FBE99A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{4DDBCD09-C547-4B63-8FB0-031D346DC094}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{27485454-0D17-44C8-B2BE-E8243BBBFFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27485454-0D17-44C8-B2BE-E8243BBBFFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27485454-0D17-44C8-B2BE-E8243BBBFFA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

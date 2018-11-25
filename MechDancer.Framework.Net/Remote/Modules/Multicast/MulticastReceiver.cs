@@ -38,9 +38,13 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 				 command: (byte) stream.ReadByte(),
 				 seqNumber: stream.ReadZigzag(false),
 				 payload: stream.ReadRest());
-			
-			foreach (var listener in _callbacks.Where(it => it.Interest.Contains(packet.Command)))
-				listener.Process(packet);
+
+			// Console.WriteLine(packet);
+
+			foreach (var listener in
+				_callbacks.Where(it => it.Interest
+										 .Contains(packet.Command))
+			) listener.Process(packet);
 		}
 
 		public override bool Equals(object obj) => obj is MulticastReceiver;
