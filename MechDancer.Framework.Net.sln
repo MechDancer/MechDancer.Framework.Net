@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Net", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleInterface", "ConsoleInterface\ConsoleInterface.csproj", "{72B0AD48-9297-4856-ACCD-595D0FBE99A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{4DDBCD09-C547-4B63-8FB0-031D346DC094}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterface\UserInterface.csproj", "{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72B0AD48-9297-4856-ACCD-595D0FBE99A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DDBCD09-C547-4B63-8FB0-031D346DC094}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -23,7 +23,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		}
 
 		public override void Sync() {
-			foreach (var listener in Host().Get<IMulticastListener>())
+			foreach (var listener in Host.Value.Get<IMulticastListener>())
 				_callbacks.Add(listener);
 		}
 

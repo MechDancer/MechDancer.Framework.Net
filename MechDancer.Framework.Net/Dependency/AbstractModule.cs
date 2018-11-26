@@ -7,9 +7,11 @@ namespace MechDancer.Framework.Net.Dependency {
 	public abstract class AbstractModule : IFunctionModule {
 		private DynamicScope _host;
 
-		protected readonly Func<DynamicScope> Host;
+		protected readonly Lazy<DynamicScope> Host;
 
-		protected AbstractModule() => Host = () => _host;
+		protected AbstractModule() =>
+			Host = new Lazy<DynamicScope>
+				(() => _host ?? throw new InvalidOperationException(LazyMessage));
 
 		public void OnSetup(DynamicScope host) {
 			_host = host;
@@ -20,5 +22,7 @@ namespace MechDancer.Framework.Net.Dependency {
 
 		public override bool Equals(object other) => ReferenceEquals(this, other);
 		public override int  GetHashCode()        => GetType().GetHashCode();
+
+		private const string LazyMessage = "you must setup the module before using it";
 	}
 }

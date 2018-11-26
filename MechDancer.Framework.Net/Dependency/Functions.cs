@@ -40,14 +40,14 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// 	代理属性构建器
 		/// </summary>
 		private class DelegateBuilder {
-			private readonly Func<DynamicScope> _host;
+			private readonly Lazy<DynamicScope> _host;
 
-			public DelegateBuilder(Func<DynamicScope> host) =>
+			public DelegateBuilder(Lazy<DynamicScope> host) =>
 				_host = host;
 
 			public bool MaybeDelegate<T>(out T result)
 				where T : class, IDependency =>
-				(result = _host().Maybe<T>()) != null;
+				(result = _host.Value.Maybe<T>()) != null;
 		}
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <param name="func">惰性获取所在动态域的方法</param>
 		/// <typeparam name="T">目标依赖项类型</typeparam>
 		/// <returns>代理属性</returns>
-		public static MaybeProperty<T> Maybe<T>(Func<DynamicScope> func)
+		public static MaybeProperty<T> Maybe<T>(Lazy<DynamicScope> func)
 			where T : class, IDependency =>
 			new MaybeProperty<T>(new DelegateBuilder(func).MaybeDelegate);
 
@@ -66,9 +66,9 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <param name="func">惰性获取所在动态域的方法</param>
 		/// <typeparam name="T">目标依赖项类型</typeparam>
 		/// <returns>代理属性</returns>
-		public static Lazy<T> Must<T>(Func<DynamicScope> func)
+		public static Lazy<T> Must<T>(Lazy<DynamicScope> func)
 			where T : class, IDependency =>
-			new Lazy<T>(() => func().Must<T>());
+			new Lazy<T>(() => func.Value.Must<T>());
 
 		/// <summary>
 		/// 	构造动态域，操作，扫描，并返回
