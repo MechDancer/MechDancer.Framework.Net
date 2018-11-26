@@ -21,28 +21,28 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 			bool NotVirtual(string description) => !description.ToLower().Contains("virtual");
 
 			var @new = from network in NetworkInterface.GetAllNetworkInterfaces()
-					   where network.OperationalStatus == OperationalStatus.Up
-						  || network.OperationalStatus == OperationalStatus.Unknown
-					   where network.SupportsMulticast
-					   where network.NetworkInterfaceType == Wireless80211
-						  || network.NetworkInterfaceType == Ethernet
-						  || network.NetworkInterfaceType == GigabitEthernet
-						  || network.NetworkInterfaceType == FastEthernetT
-						  || network.NetworkInterfaceType == FastEthernetFx
-						  || network.NetworkInterfaceType == Ethernet3Megabit
-					   where NotVirtual(network.Name)
-					   where NotVirtual(network.Description)
-					   select network;
+			           where network.OperationalStatus == OperationalStatus.Up
+			              || network.OperationalStatus == OperationalStatus.Unknown
+			           where network.SupportsMulticast
+			           where network.NetworkInterfaceType == Wireless80211
+			              || network.NetworkInterfaceType == Ethernet
+			              || network.NetworkInterfaceType == GigabitEthernet
+			              || network.NetworkInterfaceType == FastEthernetT
+			              || network.NetworkInterfaceType == FastEthernetFx
+			              || network.NetworkInterfaceType == Ethernet3Megabit
+			           where NotVirtual(network.Name)
+			           where NotVirtual(network.Description)
+			           select network;
 
 			lock (_core) {
 				_core.Clear();
 				foreach (var network in @new)
 					network.GetIPProperties()
-						   .UnicastAddresses
-						   .Select(it => it.Address)
-						   .Where(it => InterNetwork == it.AddressFamily)
-						   .SingleOrDefault(it => it.GetAddressBytes()[0].Let(b => 0 < b && b < 224 && b != 127))
-						  ?.Also(it => _core.Add(network, it));
+					       .UnicastAddresses
+					       .Select(it => it.Address)
+					       .Where(it => InterNetwork == it.AddressFamily)
+					       .SingleOrDefault(it => it.GetAddressBytes()[0].Let(b => 0 < b && b < 224 && b != 127))
+					      ?.Also(it => _core.Add(network, it));
 			}
 		}
 

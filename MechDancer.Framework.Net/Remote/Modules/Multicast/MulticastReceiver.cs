@@ -43,7 +43,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 
 			foreach (var listener in
 				_callbacks.Where(it => it.Interest
-										 .Contains(packet.Command))
+				                         .Contains(packet.Command))
 			) listener.Process(packet);
 		}
 

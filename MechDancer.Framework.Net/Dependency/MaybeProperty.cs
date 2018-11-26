@@ -1,5 +1,3 @@
-using System;
-
 namespace MechDancer.Framework.Net.Dependency {
 	/// <summary>
 	/// 	在每次需要时都尝试获取目标的代理属性

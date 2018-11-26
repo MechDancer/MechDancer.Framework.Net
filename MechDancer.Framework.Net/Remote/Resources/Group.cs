@@ -14,7 +14,7 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 		public bool Update(string parameter, DateTime resource, out DateTime previous) {
 			DateTime? last = null;
 			_core.AddOrUpdate(parameter, _ => resource,
-							  (_, current) => resource.Also(__ => last = current));
+			                  (_, current) => resource.Also(__ => last = current));
 			previous = last ?? default;
 			return last.HasValue;
 		}
@@ -32,8 +32,8 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 			get {
 				var now = DateTime.Now;
 				return _core.Where(it => now - it.Value < timeout)
-							.Select(it => it.Key)
-							.ToList();
+				            .Select(it => it.Key)
+				            .ToList();
 			}
 		}
 

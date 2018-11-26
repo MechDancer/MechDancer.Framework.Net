@@ -27,7 +27,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		/// <returns>套接字地址</returns>
 		public static IPEndPoint ReadIpEndPoint(this Stream receiver) =>
 			new IPEndPoint(new IPAddress(receiver.WaitNBytes(4)),
-						   BitConverter.ToInt32(receiver.WaitReversed(4), 0));
+			               BitConverter.ToInt32(receiver.WaitReversed(4), 0));
 
 		/// <summary>
 		/// 	向流写入一个套接字地址

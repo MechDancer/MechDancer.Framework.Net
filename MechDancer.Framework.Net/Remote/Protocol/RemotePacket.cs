@@ -51,11 +51,11 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public byte[] Bytes =>
 			new MemoryStream(Payload.Length + 1)
 			   .Also(it => {
-						 it.WriteEnd(Sender);
-						 it.WriteByte(Command);
-						 it.WriteZigzag(SeqNumber, false);
-						 it.Write(Payload);
-					 })
+				         it.WriteEnd(Sender);
+				         it.WriteByte(Command);
+				         it.WriteZigzag(SeqNumber, false);
+				         it.Write(Payload);
+			         })
 			   .ToArray();
 
 		public override string ToString() =>

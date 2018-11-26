@@ -19,9 +19,9 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 
 		public void Broadcast(UdpCmd cmd, byte[] payload = null) {
 			var me = _name.Get(out var it) ? it.Field : null;
-			
+
 			if (String.IsNullOrWhiteSpace(me) && (cmd == UdpCmd.YellAck || cmd == UdpCmd.AddressAck)) return;
-			
+
 			var packet = new RemotePacket
 				(sender: me,
 				 command: (byte) cmd,
