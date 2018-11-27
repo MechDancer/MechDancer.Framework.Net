@@ -14,7 +14,7 @@ namespace UserInterface {
 		private static void Main() {
 			var scope = Scope
 				(@this => {
-					 @this += new Name(".net");
+					 @this += new Name(".Net");
 
 					 @this += new Group();
 					 @this += new GroupMonitor(Console.WriteLine);

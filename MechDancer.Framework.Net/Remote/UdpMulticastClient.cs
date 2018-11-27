@@ -59,17 +59,14 @@ namespace MechDancer.Framework.Net.Remote {
 		///     从组播接收数据
 		/// </summary>
 		/// <param name="buffer">存放数据包的缓存</param>
+		/// <param name="address">数据包到来的地址</param>
 		/// <returns>收到的包长度</returns>
-		public int Receive(byte[] buffer) => Socket.Receive(buffer);
-
-		/// <summary>
-		/// 	接收，并从缓冲区拷贝实际报文
-		/// </summary>
-		/// <param name="buffer">缓冲区</param>
-		/// <returns>实际长度的数据报</returns>
-		public byte[] ReceiveActual(byte[] buffer) =>
-			Socket.Receive(buffer)
-			      .Let(size => buffer.CopyRange(0, size));
+		public int ReceiveFrom(byte[] buffer, out IPAddress address) {
+			EndPoint temp   = new IPEndPoint(IPAddress.Any, 0);
+			var      result = Socket.ReceiveFrom(buffer, ref temp);
+			address = ((IPEndPoint) temp).Address;
+			return result;
+		}
 
 		/// <summary>
 		/// 	通过IP获取网卡

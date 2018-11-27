@@ -16,7 +16,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		}
 
 		public void Broadcast(byte[] payload) =>
-			_broadcaster.Value.Broadcast(UdpCmd.Common, payload);
+			_broadcaster.Value.Broadcast((byte) UdpCmd.Common, payload);
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 

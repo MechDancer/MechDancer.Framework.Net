@@ -17,14 +17,16 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			_sockets = Must<MulticastSockets>(Host);
 		}
 
-		public void Broadcast(UdpCmd cmd, byte[] payload = null) {
+		public void Broadcast(byte cmd, byte[] payload = null) {
 			var me = _name.Get(out var it) ? it.Field : null;
 
-			if (String.IsNullOrWhiteSpace(me) && (cmd == UdpCmd.YellAck || cmd == UdpCmd.AddressAck)) return;
+			if (String.IsNullOrWhiteSpace(me)
+			 && (cmd == (byte) UdpCmd.YellAck || cmd == (byte) UdpCmd.AddressAck)
+			) return;
 
 			var packet = new RemotePacket
-				(sender: me,
-				 command: (byte) cmd,
+				(sender: me ?? "",
+				 command: cmd,
 				 seqNumber: Interlocked.Increment(ref _serial),
 				 payload: payload ?? new byte[0]
 				).Bytes;
