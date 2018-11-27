@@ -1,55 +1,46 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using MechDancer.Framework.Net;
-using MechDancer.Framework.Net.Remote.Modules;
-using MechDancer.Framework.Net.Remote.Modules.Multicast;
+using MechDancer.Framework.Net.Remote;
+using MechDancer.Framework.Net.Remote.Modules.TcpConnection;
+using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
 using static MechDancer.Framework.Net.Dependency.Functions;
-
-// ReSharper disable RedundantAssignment
 
 namespace UserInterface {
 	internal static class Program {
 		private static void Main() {
-			var scope = Scope
-				(@this => {
-					 @this += new Name(".Net");
+			var hub = new RemoteHub("client");
+			hub.OpenAllNetworks();
 
-					 @this += new Group();
-					 @this += new GroupMonitor(Console.WriteLine);
-
-					 var networks = new Networks().Also(it => it.Scan());
-					 @this += new MulticastSockets(Address)
-						.Also(it => {
-							      foreach (var network in networks.View.Keys)
-								      it.Get(network);
-						      });
-					 @this += new MulticastBroadcaster();
-					 @this += new MulticastReceiver();
-				 });
-
-			var group    = scope.Must<Group>();
-			var receiver = scope.Must<MulticastReceiver>();
-
-			async Task Display(TimeSpan timeSpan) {
-				Console.Write("members: [");
-				foreach (var member in group[timeSpan])
-					Console.Write($" {member}");
-				Console.WriteLine(" ]");
-				await Task.Delay(timeSpan);
-			}
-
-			Task.Run(async () => {
-				         while (true) {
-					         await Display(TimeSpan.FromSeconds(1));
-				         }
+			Task.Run(() => {
+				         while (true) hub.Invoke();
 			         });
 
-			while (true) receiver.Invoke();
-		}
+			var addresses    = hub.Hub.Must<Addresses>();
+			var synchronizer = hub.Hub.Must<PortMonitor>();
 
-		private static readonly IPEndPoint Address
-			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
+			async Task Asking() {
+				while (addresses["framework"] == null) {
+					synchronizer.Ask("framework");
+					await Task.Delay(1000);
+				}
+			}
+
+			Task.Run(Asking).Wait();
+
+			using (var I = hub.Connect("framework", (byte) TcpCmd.Common)) {
+				Console.WriteLine("connected framework");
+				while (true) {
+					var sentence = Console.ReadLine();
+					if (sentence == "over") break;
+
+					I.Say(sentence.GetBytes());
+					I.Listen().GetString().Also(Console.WriteLine);
+				}
+
+				I.Say("over".GetBytes());
+			}
+		}
 	}
 }

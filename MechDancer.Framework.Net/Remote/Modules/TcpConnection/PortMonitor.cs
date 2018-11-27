@@ -26,7 +26,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		}
 
 		public void Ask(string name) =>
-			_broadcaster.Value.Broadcast((byte) UdpCmd.AddressAck, name.GetBytes());
+			_broadcaster.Value.Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 

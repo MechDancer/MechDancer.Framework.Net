@@ -58,8 +58,8 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		/// <param name="receiver"></param>
 		/// <param name="n"></param>
 		/// <returns></returns>
-		public static byte[] WaitNBytes(this Stream receiver, uint n) =>
-			new MemoryStream(new byte[n]).Let
+		public static byte[] WaitNBytes(this Stream receiver, int n) =>
+			new MemoryStream(n).Let
 				(buffer => {
 					 for (var i = 0; i < n; ++i) {
 						 var temp = receiver.ReadByte();
@@ -162,6 +162,6 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 				 });
 
 		public static byte[] ReadWithLength(this Stream receiver) =>
-			receiver.WaitNBytes((uint) receiver.ReadZigzag(false));
+			receiver.WaitNBytes((int) receiver.ReadZigzag(false));
 	}
 }

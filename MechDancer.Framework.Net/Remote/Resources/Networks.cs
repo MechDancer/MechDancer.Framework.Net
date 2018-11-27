@@ -11,6 +11,8 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 		private readonly Dictionary<NetworkInterface, IPAddress> _core
 			= new Dictionary<NetworkInterface, IPAddress>();
 
+		public Networks() => Scan();
+
 		public IReadOnlyDictionary<NetworkInterface, IPAddress> View => _core;
 
 		/// <summary>

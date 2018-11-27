@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Sockets;
 using MechDancer.Framework.Net.Dependency;
 using MechDancer.Framework.Net.Remote.Resources;
@@ -14,20 +15,22 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 			_monitor   = Maybe<PortMonitor>(Host);
 		}
 
-		public TcpClient Connect(string name) {
+		public NetworkStream Connect(string name, byte cmd) {
 			var address = _addresses.Value[name];
 			if (address == null) return null;
 
 			var socket = new TcpClient();
 			try {
 				socket.Connect(address);
+				socket.GetStream().WriteByte(cmd);
 			}
 			catch (SocketException) {
 				_addresses.Value.Remove(name);
+				if (_monitor.Get(out var monitor)) monitor.Ask(name);
 				return null;
 			}
 
-			return socket;
+			return socket.GetStream();
 		}
 
 		public override bool Equals(object obj) => obj is ShortConnectionClient;
