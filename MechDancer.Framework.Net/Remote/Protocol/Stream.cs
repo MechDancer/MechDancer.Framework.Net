@@ -87,6 +87,24 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 				 });
 
 		/// <summary>
+		/// 	字节数组转字符串
+		/// </summary>
+		/// <param name="receiver"></param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		public static string GetString(this byte[] receiver, Encoding encoding = null) =>
+			(encoding ?? Encoding.Default).GetString(receiver);
+
+		/// <summary>
+		/// 	字符串转字节数组
+		/// </summary>
+		/// <param name="receiver"></param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		public static byte[] GetBytes(this string receiver, Encoding encoding = null) =>
+			(encoding ?? Encoding.Default).GetBytes(receiver);
+
+		/// <summary>
 		/// 	向流中写入字符串，再写入结尾
 		/// </summary>
 		/// <param name="receiver">流</param>
@@ -97,7 +115,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			where T : Stream =>
 			receiver.Also
 				(it => {
-					 it.Write(Encoding.Default.GetBytes(text));
+					 it.Write(text.GetBytes());
 					 it.WriteByte(0);
 				 });
 
@@ -113,7 +131,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 				switch (b) {
 					case -1:
 					case 0:
-						return Encoding.Default.GetString(buffer.ToArray());
+						return buffer.ToArray().GetString();
 					default:
 						buffer.WriteByte((byte) b);
 						break;
@@ -121,6 +139,11 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			}
 		}
 
+		/// <summary>
+		/// 	从流中读取所有数据
+		/// </summary>
+		/// <param name="receiver"></param>
+		/// <returns></returns>
 		public static byte[] ReadRest(this Stream receiver) {
 			var buffer = new MemoryStream();
 			while (true) {
@@ -129,5 +152,16 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 				buffer.WriteByte((byte) b);
 			}
 		}
+
+		public static T WriteWithLength<T>(this T receiver, byte[] payload)
+			where T : Stream =>
+			receiver.Also
+				(it => {
+					 it.WriteZigzag(payload.Length, false);
+					 it.Write(payload);
+				 });
+
+		public static byte[] ReadWithLength(this Stream receiver) =>
+			receiver.WaitNBytes((uint) receiver.ReadZigzag(false));
 	}
 }

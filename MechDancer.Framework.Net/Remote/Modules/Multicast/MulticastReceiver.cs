@@ -9,15 +9,22 @@ using MechDancer.Framework.Net.Remote.Resources;
 using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
+	/// <summary>
+	/// 	组播单体接收
+	/// </summary>
 	public sealed class MulticastReceiver : AbstractModule {
 		private readonly ThreadLocal<byte[]>         _buffer;    // 线程独立缓冲区
 		private readonly MaybeProperty<Name>         _name;      // 过滤环路数据
 		private readonly Lazy<MulticastSockets>      _socket;    // 接收套接字
 		private readonly HashSet<IMulticastListener> _callbacks; // 处理回调
 
-		private readonly MaybeProperty<Networks>  _networks;
-		private readonly MaybeProperty<Addresses> _addresses;
+		private readonly MaybeProperty<Networks>  _networks;  // 网络管理
+		private readonly MaybeProperty<Addresses> _addresses; // 地址管理
 
+		/// <summary>
+		/// 	构造器
+		/// </summary>
+		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
 			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
 			_name      = Maybe<Name>(Host);
