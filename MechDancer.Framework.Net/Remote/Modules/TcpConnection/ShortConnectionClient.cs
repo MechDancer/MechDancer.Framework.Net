@@ -7,8 +7,8 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 	public sealed class ShortConnectionClient : AbstractModule {
-		private readonly Lazy<Addresses>            _addresses;
-		private readonly MaybeProperty<PortMonitor> _monitor;
+		private readonly Lazy<Addresses>   _addresses;
+		private readonly Lazy<PortMonitor> _monitor;
 
 		public ShortConnectionClient() {
 			_addresses = Must<Addresses>(Host);
@@ -26,7 +26,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 			}
 			catch (SocketException) {
 				_addresses.Value.Remove(name);
-				if (_monitor.Get(out var monitor)) monitor.Ask(name);
+				_monitor.Value?.Ask(name);
 				return null;
 			}
 

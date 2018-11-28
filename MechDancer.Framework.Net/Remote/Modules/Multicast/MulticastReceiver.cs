@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Threading;
 using MechDancer.Framework.Net.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
@@ -14,12 +17,12 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	/// </summary>
 	public sealed class MulticastReceiver : AbstractModule {
 		private readonly ThreadLocal<byte[]>         _buffer;    // 线程独立缓冲区
-		private readonly MaybeProperty<Name>         _name;      // 过滤环路数据
+		private readonly Lazy<Name>                  _name;      // 过滤环路数据
 		private readonly Lazy<MulticastSockets>      _socket;    // 接收套接字
-		private readonly HashSet<IMulticastListener> _callbacks; // 处理回调
+		private readonly HashSet<IMulticastListener> _listeners; // 处理回调
 
-		private readonly MaybeProperty<Networks>  _networks;  // 网络管理
-		private readonly MaybeProperty<Addresses> _addresses; // 地址管理
+		private readonly Lazy<Networks>  _networks;  // 网络管理
+		private readonly Lazy<Addresses> _addresses; // 地址管理
 
 		/// <summary>
 		/// 	构造器
@@ -31,32 +34,28 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			_socket    = Must<MulticastSockets>(Host);
 			_networks  = Maybe<Networks>(Host);
 			_addresses = Maybe<Addresses>(Host);
-			_callbacks = new HashSet<IMulticastListener>();
+			_listeners = new HashSet<IMulticastListener>();
 		}
 
 		public override void Sync() {
 			foreach (var listener in Host.Value.Get<IMulticastListener>())
-				_callbacks.Add(listener);
+				_listeners.Add(listener);
 		}
 
 		public RemotePacket Invoke() {
 			var length = _socket.Value.Default.ReceiveFrom(_buffer.Value, out var address);
 
-			if (_networks.Get(out var networks))
-				networks.View
-				        .ToList()
-				        .Select(it => Tuple.Create(it.Key, it.Value))
-				        .FirstOrDefault(it => Equals(it.Item2, address))
-				       ?.Item1
-				       ?.Let(network => _socket.Value.Get(network));
-
 			var stream = new MemoryStream(_buffer.Value, 0, length, false);
 			var sender = stream.ReadEnd();
 
-			if (sender == (_name.Get(out var name) ? name.Field : "")) return null;
+			if (sender == (_name.Value?.Field ?? "")) return null;
 
-			if (_addresses.Get(out var addresses))
-				addresses.Update(sender, address);
+			_networks.Value
+			        ?.View
+			         .FirstOrDefault(it => Match(it.Value, address))
+			         .Key
+			        ?.Let(it => _socket.Value.Get(it));
+			_addresses.Value?.Update(sender, address);
 
 			var packet = new RemotePacket
 				(sender: sender,
@@ -65,10 +64,10 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 
 			// Console.WriteLine($"{packet} from {address}");
 
-			foreach (var listener in
-				_callbacks.Where(it => it.Interest
-				                         .Contains(packet.Command))
-			) listener.Process(packet);
+			foreach (var listener in from item in _listeners
+			                         where item.Interest.Contains(packet.Command)
+			                         select item)
+				listener.Process(packet);
 
 			return packet;
 		}
@@ -77,5 +76,18 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		public override int  GetHashCode()      => Hash;
 
 		private static readonly int Hash = typeof(MulticastReceiver).GetHashCode();
+
+		private static bool Match(UnicastIPAddressInformation @this, IPAddress other) {
+			if (Equals(@this.Address, other)) return true;
+			if (@this.Address.AddressFamily != AddressFamily.InterNetwork) return false;
+
+			var mask = @this.IPv4Mask.GetAddressBytes();
+			var a    = @this.Address.GetAddressBytes();
+			var b    = other.GetAddressBytes();
+			for (var i = 0; i < 4; ++i)
+				if ((a[i] & mask[i]) != (b[i] & mask[i]))
+					return false;
+			return true;
+		}
 	}
 }

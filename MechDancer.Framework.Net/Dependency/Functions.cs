@@ -56,9 +56,9 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <param name="func">惰性获取所在动态域的方法</param>
 		/// <typeparam name="T">目标依赖项类型</typeparam>
 		/// <returns>代理属性</returns>
-		public static MaybeProperty<T> Maybe<T>(Lazy<DynamicScope> func)
+		public static Lazy<T> Maybe<T>(Lazy<DynamicScope> func)
 			where T : class, IDependency =>
-			new MaybeProperty<T>(new DelegateBuilder(func).MaybeDelegate);
+			new Lazy<T>(() => func.Value.Maybe<T>());
 
 		/// <summary>
 		/// 	构造一个严格要求依赖项的代理属性

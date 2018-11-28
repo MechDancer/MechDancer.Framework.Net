@@ -7,7 +7,7 @@ using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	public sealed class MulticastBroadcaster : AbstractModule {
-		private readonly MaybeProperty<Name>    _name; // 可以匿名发送组播
+		private readonly Lazy<Name>             _name; // 可以匿名发送组播
 		private readonly Lazy<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster() {
@@ -16,7 +16,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		}
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
-			var me = _name.Get(out var it) ? it.Field : null;
+			var me = _name.Value?.Field;
 
 			if (String.IsNullOrWhiteSpace(me)
 			 && (cmd == (byte) UdpCmd.YellAck || cmd == (byte) UdpCmd.AddressAck)

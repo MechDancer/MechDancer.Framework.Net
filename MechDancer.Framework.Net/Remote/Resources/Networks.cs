@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,13 +8,13 @@ using static System.Net.NetworkInformation.NetworkInterfaceType;
 using static System.Net.Sockets.AddressFamily;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class Networks : IResourceFactory<NetworkInterface, IPAddress> {
-		private readonly Dictionary<NetworkInterface, IPAddress> _core
-			= new Dictionary<NetworkInterface, IPAddress>();
+	public sealed class Networks : IResourceFactory<NetworkInterface, UnicastIPAddressInformation> {
+		private readonly Dictionary<NetworkInterface, UnicastIPAddressInformation> _core
+			= new Dictionary<NetworkInterface, UnicastIPAddressInformation>();
 
 		public Networks() => Scan();
 
-		public IReadOnlyDictionary<NetworkInterface, IPAddress> View => _core;
+		public IReadOnlyDictionary<NetworkInterface, UnicastIPAddressInformation> View => _core;
 
 		/// <summary>
 		/// 	扫描并更新 IP 地址
@@ -41,17 +42,16 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 				foreach (var network in @new)
 					network.GetIPProperties()
 					       .UnicastAddresses
-					       .Select(it => it.Address)
-					       .Where(it => InterNetwork == it.AddressFamily)
-					       .SingleOrDefault(it => it.GetAddressBytes()[0].Let(b => 0 < b && b < 224 && b != 127))
+					       .Where(it => InterNetwork == it.Address.AddressFamily)
+					       .SingleOrDefault(it => it.Address.GetAddressBytes()[0].Let(b => b != 127))
 					      ?.Also(it => _core.Add(network, it));
 			}
 		}
 
-		public bool TryGet(NetworkInterface parameter, out IPAddress resource) =>
+		public bool TryGet(NetworkInterface parameter, out UnicastIPAddressInformation resource) =>
 			_core.TryGetValue(parameter, out resource);
 
-		public IPAddress Get(NetworkInterface parameter) => _core[parameter];
+		public UnicastIPAddressInformation Get(NetworkInterface parameter) => _core[parameter];
 
 		public override bool Equals(object obj) => obj is Networks;
 		public override int  GetHashCode()      => Hash;
