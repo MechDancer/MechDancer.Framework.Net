@@ -32,7 +32,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public static long ReadZigzag(
 			this Stream receiver,
 			bool        signed
-		) => new MemoryStream(9)
+		) => new MemoryStream(10)
 		    .Also(stream => {
 			          int b;
 			          do {
@@ -46,7 +46,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public static byte[] Zigzag(
 			this long receiver,
 			bool      signed
-		) => new MemoryStream(9)
+		) => new MemoryStream(10)
 		    .WriteZigzag(receiver, signed)
 		    .ToArray();
 
@@ -54,10 +54,10 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			this byte[] receiver,
 			bool        signed
 		) {
-			var acc = 0L;
+			var acc = 0UL;
 			for (var i = receiver.Length - 1; i >= 0; --i)
-				acc = (acc << 7) | (receiver[i] & 0x7f);
-			return signed ? (long) ((ulong) acc >> 1) ^ -(acc & 1) : acc;
+				acc = (acc << 7) | ((ulong) receiver[i] & 0x7f);
+			return signed ? (long) (acc >> 1) ^ -((long) acc & 1) : (long) acc;
 		}
 	}
 }

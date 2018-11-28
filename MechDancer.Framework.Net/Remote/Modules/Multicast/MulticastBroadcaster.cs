@@ -9,10 +9,8 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	public sealed class MulticastBroadcaster : AbstractModule {
 		private readonly MaybeProperty<Name>    _name; // 可以匿名发送组播
 		private readonly Lazy<MulticastSockets> _sockets;
-		private          long                   _serial;
 
 		public MulticastBroadcaster() {
-			_serial  = -1;
 			_name    = Maybe<Name>(Host);
 			_sockets = Must<MulticastSockets>(Host);
 		}
@@ -27,7 +25,6 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			var packet = new RemotePacket
 				(sender: me ?? "",
 				 command: cmd,
-				 seqNumber: Interlocked.Increment(ref _serial),
 				 payload: payload ?? new byte[0]
 				).Bytes;
 

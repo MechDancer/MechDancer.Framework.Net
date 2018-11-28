@@ -61,7 +61,6 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			var packet = new RemotePacket
 				(sender: sender,
 				 command: (byte) stream.ReadByte(),
-				 seqNumber: stream.ReadZigzag(false),
 				 payload: stream.ReadRest());
 
 			// Console.WriteLine($"{packet} from {address}");

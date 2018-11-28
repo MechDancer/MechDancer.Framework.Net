@@ -21,7 +21,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
 		public void Process(RemotePacket remotePacket) {
-			var (name, _, _, payload) = remotePacket;
+			var (name, _, payload) = remotePacket;
 			_action(name, payload);
 		}
 

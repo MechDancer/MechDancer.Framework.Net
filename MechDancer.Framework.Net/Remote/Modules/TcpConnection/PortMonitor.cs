@@ -31,7 +31,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
 		public void Process(RemotePacket remotePacket) {
-			var (sender, _, _, payload) = remotePacket;
+			var (sender, _, payload) = remotePacket;
 
 			if (!string.IsNullOrWhiteSpace(remotePacket.Sender))
 				_addresses.Value.Update(sender, payload[0] << 8 | payload[1]);

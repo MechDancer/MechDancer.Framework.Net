@@ -23,7 +23,7 @@ namespace MechDancer.Framework.Net.Remote.Modules {
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
 		public void Process(RemotePacket remotePacket) {
-			var (name, cmd, _, _) = remotePacket;
+			var (name, cmd, _) = remotePacket;
 
 			if (!string.IsNullOrWhiteSpace(name)) // 非匿名则保存名字
 				if (!_group.Value.Update(name, DateTime.Now, out _))

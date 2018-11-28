@@ -5,7 +5,6 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 	public sealed class RemotePacket {
 		public readonly string Sender;
 		public readonly byte   Command;
-		public readonly long   SeqNumber;
 		public readonly byte[] Payload;
 
 		/// <summary>
@@ -14,12 +13,10 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public RemotePacket(
 			string sender,
 			byte   command,
-			long   seqNumber,
 			byte[] payload
 		) {
 			Command   = command;
 			Sender    = sender;
-			SeqNumber = seqNumber;
 			Payload   = payload;
 		}
 
@@ -29,7 +26,6 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public RemotePacket(Stream buffer) {
 			Sender    = buffer.ReadEnd();
 			Command   = (byte) buffer.ReadByte();
-			SeqNumber = buffer.ReadZigzag(false);
 			Payload   = buffer.ReadRest();
 		}
 
@@ -39,12 +35,10 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 		public void Deconstruct(
 			out string sender,
 			out byte   command,
-			out long   seqNumber,
 			out byte[] payload
 		) {
 			sender    = Sender;
 			command   = Command;
-			seqNumber = SeqNumber;
 			payload   = Payload;
 		}
 
@@ -53,12 +47,11 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 			   .Also(it => {
 				         it.WriteEnd(Sender);
 				         it.WriteByte(Command);
-				         it.WriteZigzag(SeqNumber, false);
 				         it.Write(Payload);
 			         })
 			   .ToArray();
 
 		public override string ToString() =>
-			$"command: {Command}, sender: {Sender}, Sequence: {SeqNumber}, payload: byte[{Payload.Length}]";
+			$"command: {Command}, sender: {Sender}, payload: byte[{Payload.Length}]";
 	}
 }
