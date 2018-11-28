@@ -77,6 +77,12 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 
 		private static readonly int Hash = typeof(MulticastReceiver).GetHashCode();
 
+		/// <summary>
+		/// 	判定两个网络在同一个子网中
+		/// </summary>
+		/// <param name="this">包含子网掩码的本机网络地址</param>
+		/// <param name="other">一个外部的网络地址</param>
+		/// <returns>是否同属一个子网</returns>
 		private static bool Match(UnicastIPAddressInformation @this, IPAddress other) {
 			if (Equals(@this.Address, other)) return true;
 			if (@this.Address.AddressFamily != AddressFamily.InterNetwork) return false;

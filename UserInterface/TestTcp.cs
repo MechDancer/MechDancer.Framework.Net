@@ -17,12 +17,9 @@ namespace UserInterface {
 				         while (true) hub.Invoke();
 			         });
 
-			var addresses    = hub.Hub.Must<Addresses>();
-			var synchronizer = hub.Hub.Must<PortMonitor>();
-
 			async Task Asking() {
-				while (addresses["framework"] == null) {
-					synchronizer.Ask("framework");
+				while (hub["framework"] == null) {
+					hub.Ask("framework");
 					await Task.Delay(1000);
 				}
 			}
