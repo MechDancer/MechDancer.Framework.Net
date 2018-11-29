@@ -20,16 +20,21 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		public ShortConnectionServer() => _servers = Must<ServerSockets>(Dependencies);
 
 		public override void Sync() {
+			lock (_mailListeners) {
+				_mailListeners.Clear();
+				foreach (var listener in Dependencies
+				                        .Value
+				                        .Get<IMailListener>())
+					_mailListeners.Add(listener);
+			}
+
 			lock (_connectListeners) {
 				_connectListeners.Clear();
-
 				foreach (var listener in Dependencies
-				                        .Value.Get<IShortConnectionListener>()
+				                        .Value
+				                        .Get<IShortConnectionListener>()
 				                        .Where(it => it.Interest != (byte) TcpCmd.Mail))
-					_connectListeners[listener.Interest] = listener;
-
-				foreach (var listener in Dependencies.Value.Get<IMailListener>())
-					_mailListeners.Add(listener);
+					_connectListeners.Add(listener.Interest, listener);
 			}
 		}
 
