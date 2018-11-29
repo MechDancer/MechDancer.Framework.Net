@@ -14,8 +14,8 @@ namespace MechDancer.Framework.Net.Remote.Modules {
 
 		public GroupMonitor(Action<string> detected = null) {
 			_detected    = detected;
-			_group       = Must<Group>(Host);
-			_broadcaster = Must<MulticastBroadcaster>(Host);
+			_group       = Must<Group>(Dependencies);
+			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
 		}
 
 		public void Yell() => _broadcaster.Value.Broadcast((byte) UdpCmd.YellAsk);

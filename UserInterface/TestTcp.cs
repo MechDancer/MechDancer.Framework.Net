@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using MechDancer.Framework.Net;
 using MechDancer.Framework.Net.Dependency;
@@ -10,23 +11,25 @@ using MechDancer.Framework.Net.Remote.Resources;
 namespace UserInterface {
 	public static class TestTcp {
 		public static void Test() {
-			var hub = new RemoteHub("client");
+			var hub = new RemoteHub("C#");
 			hub.OpenAllNetworks();
 
 			Task.Run(() => {
 				         while (true) hub.Invoke();
 			         });
 
-			async Task Asking() {
-				while (hub["framework"] == null) {
-					hub.Ask("framework");
-					await Task.Delay(1000);
-				}
-			}
 
-			Task.Run(Asking).Wait();
+			var task = Task.Run(async () => {
+				                    NetworkStream server;
+				                    do {
+					                    server = hub.Connect("kotlin echo server", (byte) TcpCmd.Common);
+					                    await Task.Delay(200);
+				                    } while (server == null);
 
-			using (var I = hub.Connect("framework", (byte) TcpCmd.Common)) {
+				                    return server;
+			                    });
+
+			using (var I = task.Result) {
 				Console.WriteLine("connected framework");
 				while (true) {
 					var sentence = Console.ReadLine();

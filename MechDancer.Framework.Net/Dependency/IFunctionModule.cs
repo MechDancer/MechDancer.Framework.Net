@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MechDancer.Framework.Net.Dependency {
 	/// <summary>
 	/// 	功能模块
@@ -6,8 +8,8 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// <summary>
 		/// 	加入动态域
 		/// </summary>
-		/// <param name="host">目标动态域</param>
-		void OnSetup(DynamicScope host);
+		/// <param name="dependencies">动态域依赖项集</param>
+		void OnSetup(IReadOnlyCollection<IDependency> dependencies);
 
 		/// <summary>
 		/// 	重新同步依赖项

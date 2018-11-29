@@ -29,8 +29,8 @@ namespace UserInterface {
 					 @this += new MulticastReceiver();
 				 });
 
-			var group    = scope.Must<Group>();
-			var receiver = scope.Must<MulticastReceiver>();
+			var group    = scope.Dependencies.Must<Group>();
+			var receiver = scope.Dependencies.Must<MulticastReceiver>();
 
 			async Task Display(TimeSpan timeSpan) {
 				Console.Write("members: [");

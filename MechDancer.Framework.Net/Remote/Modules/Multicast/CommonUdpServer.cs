@@ -6,17 +6,14 @@ using MechDancer.Framework.Net.Remote.Resources;
 using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
-	public sealed class CommonMulticast : AbstractModule, IMulticastListener {
+	public sealed class CommonUdpServer : AbstractModule, IMulticastListener {
 		private readonly Lazy<MulticastBroadcaster> _broadcaster;
 		private readonly Action<string, byte[]>     _action;
 
-		public CommonMulticast(Action<string, byte[]> action) {
+		public CommonUdpServer(Action<string, byte[]> action) {
 			_action      = action;
-			_broadcaster = Must<MulticastBroadcaster>(Host);
+			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
 		}
-
-		public void Broadcast(byte[] payload) =>
-			_broadcaster.Value.Broadcast((byte) UdpCmd.Common, payload);
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
@@ -25,10 +22,10 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 			_action(name, payload);
 		}
 
-		public override bool Equals(object obj) => obj is CommonMulticast;
+		public override bool Equals(object obj) => obj is CommonUdpServer;
 		public override int  GetHashCode()      => Hash;
 
-		private static readonly int           Hash        = typeof(CommonMulticast).GetHashCode();
+		private static readonly int           Hash        = typeof(CommonUdpServer).GetHashCode();
 		private static readonly HashSet<byte> InterestSet = new HashSet<byte> {(byte) UdpCmd.Common};
 	}
 }

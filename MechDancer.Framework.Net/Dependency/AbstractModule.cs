@@ -1,20 +1,21 @@
 using System;
+using System.Collections.Generic;
 
 namespace MechDancer.Framework.Net.Dependency {
 	/// <summary>
 	/// 	抽象功能模块
 	/// </summary>
 	public abstract class AbstractModule : IFunctionModule {
-		private DynamicScope _host;
+		private IReadOnlyCollection<IDependency> _dependencies;
 
-		protected readonly Lazy<DynamicScope> Host;
+		protected readonly Lazy<IReadOnlyCollection<IDependency>> Dependencies;
 
 		protected AbstractModule() =>
-			Host = new Lazy<DynamicScope>
-				(() => _host ?? throw new InvalidOperationException(LazyMessage));
+			Dependencies = new Lazy<IReadOnlyCollection<IDependency>>
+				(() => _dependencies ?? throw new InvalidOperationException(LazyMessage));
 
-		public void OnSetup(DynamicScope host) {
-			_host = host;
+		public void OnSetup(IReadOnlyCollection<IDependency> host) {
+			_dependencies = host;
 			Sync();
 		}
 

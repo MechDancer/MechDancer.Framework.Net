@@ -9,6 +9,8 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 	}
 
 	public enum TcpCmd : byte {
+		Mail   = 0,  // 发送一次
+		Dialog = 1,  // 一问一答
 		Common = 127 // 通用广播
 	}
 }

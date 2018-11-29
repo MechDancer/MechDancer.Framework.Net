@@ -21,12 +21,14 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		private readonly Lazy<Addresses>            _addresses;
 
 		public PortMonitor() {
-			_broadcaster = Must<MulticastBroadcaster>(Host);
-			_addresses   = Must<Addresses>(Host);
+			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
+			_addresses   = Must<Addresses>(Dependencies);
 		}
 
-		public void Ask(string name) =>
-			_broadcaster.Value.Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
+		public void Ask(string name)
+			=> _broadcaster
+			  .Value
+			  .Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
@@ -34,7 +36,9 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 			var (sender, _, payload) = remotePacket;
 
 			if (!string.IsNullOrWhiteSpace(remotePacket.Sender))
-				_addresses.Value.Update(sender, payload[0] << 8 | payload[1]);
+				_addresses
+				   .Value
+				   .Update(sender, payload[0] << 8 | payload[1]);
 		}
 
 		public override bool Equals(object obj) => obj is PortMonitor;

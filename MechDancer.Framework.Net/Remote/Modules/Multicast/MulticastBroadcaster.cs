@@ -6,13 +6,16 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
+	/// <summary>
+	/// 	组播发布者
+	/// </summary>
 	public sealed class MulticastBroadcaster : AbstractModule {
 		private readonly Lazy<Name>             _name; // 可以匿名发送组播
 		private readonly Lazy<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster() {
-			_name    = Maybe<Name>(Host);
-			_sockets = Must<MulticastSockets>(Host);
+			_name    = Maybe<Name>(Dependencies);
+			_sockets = Must<MulticastSockets>(Dependencies);
 		}
 
 		public void Broadcast(byte cmd, byte[] payload = null) {

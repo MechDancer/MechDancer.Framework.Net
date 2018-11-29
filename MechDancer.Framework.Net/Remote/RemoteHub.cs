@@ -14,67 +14,82 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 // ReSharper disable RedundantAssignment
 
 namespace MechDancer.Framework.Net.Remote {
-	public sealed class RemoteHub {
-		private readonly Group        _group;
+	public class RemoteHub {
+		private readonly Group        _group = new Group();
 		private readonly GroupMonitor _monitor;
 
-		private readonly Networks          _networks;
-		private readonly MulticastSockets  _sockets;
-		private readonly MulticastReceiver _receiver;
-		private readonly CommonMulticast   _commonMulticast;
+		private readonly Networks             _networks    = new Networks();
+		private readonly MulticastSockets     _sockets     = new MulticastSockets(Address);
+		private readonly MulticastBroadcaster _broadcaster = new MulticastBroadcaster();
+		private readonly MulticastReceiver    _receiver    = new MulticastReceiver();
 
-		private readonly Addresses       _addresses;
-		private readonly ServerSockets   _servers;
-		private readonly PortBroadcaster _synchronizer1;
-		private readonly PortMonitor     _synchronizer2;
+		private readonly Addresses       _addresses     = new Addresses();
+		private readonly ServerSockets   _servers       = new ServerSockets();
+		private readonly PortBroadcaster _synchronizer1 = new PortBroadcaster();
+		private readonly PortMonitor     _synchronizer2 = new PortMonitor();
 
-		private readonly ShortConnectionClient _client;
-		private readonly ShortConnectionServer _server;
+		private readonly ShortConnectionClient _client = new ShortConnectionClient();
+		private readonly ShortConnectionServer _server = new ShortConnectionServer();
 
-		public readonly DynamicScope Hub;
+		private readonly DynamicScope _scope;
 
-		public RemoteHub(string name) {
-			_group           = new Group();
-			_monitor         = new GroupMonitor();
-			_networks        = new Networks();
-			_sockets         = new MulticastSockets(Address);
-			_receiver        = new MulticastReceiver();
-			_commonMulticast = new CommonMulticast(null);
-			_addresses       = new Addresses();
-			_servers         = new ServerSockets();
-			_synchronizer1   = new PortBroadcaster();
-			_synchronizer2   = new PortMonitor();
-			_client          = new ShortConnectionClient();
-			_server          = new ShortConnectionServer();
+		public RemoteHub(string                   name              = null,
+		                 Action<string>           newMemberDetected = null,
+		                 IEnumerable<IDependency> additional        = null
+		) {
+			_monitor = new GroupMonitor(newMemberDetected);
+			_scope = Scope(@this => {
+				               @this += new Name(name ?? RandomName);
 
-			Hub = Scope(@this => {
-				            @this += new Name(name);
+				               @this += _group;
+				               @this += _monitor;
 
-				            @this += _group;
-				            @this += _monitor;
+				               @this += _networks;
+				               @this += _sockets;
+				               @this += _broadcaster;
+				               @this += _receiver;
 
-				            @this += _networks;
-				            @this += _sockets;
-				            @this += new MulticastBroadcaster();
-				            @this += _receiver;
-				            @this += _commonMulticast;
+				               @this += _addresses;
+				               @this += _servers;
+				               @this += _synchronizer1;
+				               @this += _synchronizer2;
 
-				            @this += _addresses;
-				            @this += _servers;
-				            @this += _synchronizer1;
-				            @this += _synchronizer2;
+				               @this += _client;
+				               @this += _server;
 
-				            @this += _client;
-				            @this += _server;
-			            });
+				               if (additional != null)
+					               foreach (var dependency in additional)
+						               @this += dependency;
+			               });
 		}
+
+		/// <summary>
+		/// 	浏览全部依赖项
+		/// </summary>
+		public IReadOnlyCollection<IDependency> Modules => _scope.Dependencies;
+
+		/// <summary>
+		/// 	尝试打开一个随机的网络端口
+		/// </summary>
+		/// <remarks>
+		///		若当前已有打开的网络端口则不进行任何操作
+		/// </remarks>
+		/// <returns>是否有网络端口已被打开</returns>
+		public bool OpenOneNetwork() =>
+			_sockets.View.Any()
+		 || null != _networks.View
+		                     .Keys
+		                     .FirstOrDefault()
+		                    ?.Also(it => _sockets.Get(it));
 
 		/// <summary>
 		/// 	打开本机所有网络端口对应的套接字
 		/// </summary>
-		public void OpenAllNetworks() {
+		/// <returns>打开的网络端口数量</returns>
+		public int OpenAllNetworks() {
 			foreach (var network in _networks.View.Keys)
 				_sockets.Get(network);
+			return _sockets.View.Count;
 		}
 
 		/// <summary>
@@ -96,16 +111,17 @@ namespace MechDancer.Framework.Net.Remote {
 		public void Yell() => _monitor.Yell();
 
 		/// <summary>
-		/// 	发送通用广播
-		/// </summary>
-		/// <param name="payload">广播数据包</param>
-		public void Broadcast(byte[] payload) => _commonMulticast.Broadcast(payload);
-
-		/// <summary>
 		/// 	主动询问一个远端的端口号
 		/// </summary>
 		/// <param name="name">对方名字</param>
 		public void Ask(string name) => _synchronizer2.Ask(name);
+
+		/// <summary>
+		/// 	广播数据
+		/// </summary>
+		/// <param name="cmd">指令代码</param>
+		/// <param name="payload">数据负载</param>
+		public void Broadcast(byte cmd, byte[] payload) => _broadcaster.Broadcast(cmd, payload);
 
 		/// <summary>
 		/// 	连接到一个TCP远端
@@ -135,5 +151,7 @@ namespace MechDancer.Framework.Net.Remote {
 
 		private static readonly IPEndPoint Address
 			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
+
+		private static string RandomName => $"RemoteHub[{Guid.NewGuid()}]";
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
 using static MechDancer.Framework.Net.Dependency.Functions;
 
@@ -10,42 +11,45 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 	public sealed class ShortConnectionServer : AbstractModule {
 		private readonly Lazy<ServerSockets> _servers;
 
-		private readonly HashSet<IShortConnectionListener> _listeners
-			= new HashSet<IShortConnectionListener>();
+		private readonly HashSet<IMailListener> _mailListeners
+			= new HashSet<IMailListener>();
 
-		public ShortConnectionServer() => _servers = Must<ServerSockets>(Host);
+		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
+			= new Dictionary<byte, IShortConnectionListener>();
+
+		public ShortConnectionServer() => _servers = Must<ServerSockets>(Dependencies);
 
 		public override void Sync() {
-			lock (_listeners) {
-				_listeners.Clear();
-				foreach (var listener
-					in Host.Value.Get<IShortConnectionListener>()
-				) _listeners.Add(listener);
-			}
+			lock (_connectListeners) {
+				_connectListeners.Clear();
 
-			new List<byte>()
-			   .Also(list => {
-				         foreach (var listener in _listeners)
-					         list.AddRange(listener.Interest);
-			         })
-			   .Let(list => list.Distinct().ToList().Count != list.Count)
-			   .Also(reduplicate => {
-				         if (reduplicate) throw new AmbiguousMatchException(ReduplicateErrorMsg);
-			         });
+				foreach (var listener in Dependencies
+				                        .Value.Get<IShortConnectionListener>()
+				                        .Where(it => it.Interest != (byte) TcpCmd.Mail))
+					_connectListeners[listener.Interest] = listener;
+
+				foreach (var listener in Dependencies.Value.Get<IMailListener>())
+					_mailListeners.Add(listener);
+			}
 		}
 
 		public void Invoke(int port = 0) {
-			using (var stream = _servers.Value.Get(port).AcceptTcpClient().GetStream())
-				stream.Listen(it => (TcpCmd) it)
-				      .Let(cmd => _listeners.SingleOrDefault(it => it.Interest.Contains((byte) cmd)))
-				     ?.Process(stream);
+			using (var stream = _servers.Value.Get(port).AcceptTcpClient().GetStream()) {
+				var cmd    = stream.ListenCommand();
+				var client = stream.ListenString();
+				if ((TcpCmd) cmd == TcpCmd.Mail) {
+					var payload = stream.ReadWithLength();
+					foreach (var listener in _mailListeners)
+						listener.Process(client, payload);
+				} else if (_connectListeners.TryGetValue(cmd, out var listener)) {
+					listener.Process(client, stream);
+				}
+			}
 		}
 
 		public override bool Equals(object obj) => obj is ShortConnectionServer;
 		public override int  GetHashCode()      => Hash;
 
 		private static readonly int Hash = typeof(ShortConnectionServer).GetHashCode();
-
-		private const string ReduplicateErrorMsg = "more than one listener interested in same command";
 	}
 }

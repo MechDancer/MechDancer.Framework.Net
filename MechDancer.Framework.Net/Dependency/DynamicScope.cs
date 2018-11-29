@@ -21,11 +21,12 @@ namespace MechDancer.Framework.Net.Dependency {
 		/// </summary>
 		/// <param name="dependency">依赖项</param>
 		/// <returns>是否加载成功</returns>
-		public bool Setup(IDependency dependency) {
-			var result = _dependencies.Add(dependency);
-			(dependency as IFunctionModule)?.OnSetup(this);
-			return result;
-		}
+		public bool Setup(IDependency dependency) =>
+			_dependencies
+			   .Add(dependency)
+			   .Also(it => {
+				         if (it) (dependency as IFunctionModule)?.OnSetup(_dependencies);
+			         });
 
 		/// <summary>
 		/// 	重载加号
