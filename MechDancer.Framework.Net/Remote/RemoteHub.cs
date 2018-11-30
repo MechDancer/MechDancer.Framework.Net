@@ -69,6 +69,24 @@ namespace MechDancer.Framework.Net.Remote {
 		public IReadOnlyCollection<IDependency> Modules => _scope.Dependencies;
 
 		/// <summary>
+		/// 	查看本机所有 可能打开的网络接口的IP地址 和 已经打开的服务套接字的端口号
+		/// </summary>
+		public (ICollection<IPAddress>, ICollection<int>) Endpoints
+			=> (_networks.View
+			             .Values
+			             .Select(it => it.Address)
+			             .ToList(),
+			    _servers.View
+			            .Keys
+			            .ToList()
+			            .Also(list => _servers.Default
+			                                  .LocalEndpoint
+			                                  .Let(it => (IPEndPoint) it)
+			                                  .Port
+			                                  .Also(list.Add))
+			   );
+
+		/// <summary>
 		/// 	尝试打开一个随机的网络端口
 		/// </summary>
 		/// <remarks>
