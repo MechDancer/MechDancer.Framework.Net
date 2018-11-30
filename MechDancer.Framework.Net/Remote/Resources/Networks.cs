@@ -21,7 +21,11 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 		///    	这是一个耗时操作，最多可达100ms，谨慎使用
 		/// </summary>
 		public void Scan() {
-			bool NotVirtual(string description) => !description.ToLower().Contains("virtual");
+			bool NotVirtual(params string[] descriptions)
+				=> !descriptions.Any(it => it.ToLower().Contains("virtual"));
+
+			bool NotDocker(params string[] descriptions)
+				=> !descriptions.Any(it => it.ToLower().Contains("virtual"));
 
 			var @new = from network in NetworkInterface.GetAllNetworkInterfaces()
 			           where network.OperationalStatus == OperationalStatus.Up
@@ -33,8 +37,9 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 			              || network.NetworkInterfaceType == FastEthernetT
 			              || network.NetworkInterfaceType == FastEthernetFx
 			              || network.NetworkInterfaceType == Ethernet3Megabit
-			           where NotVirtual(network.Name)
-			           where NotVirtual(network.Description)
+			              || network.NetworkInterfaceType == NetworkInterfaceType.Unknown
+			           where NotVirtual(network.Name, network.Description)
+			           where NotDocker(network.Name, network.Description)
 			           select network;
 
 			lock (_core) {
