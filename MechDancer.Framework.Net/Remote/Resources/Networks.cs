@@ -53,9 +53,6 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 			}
 		}
 
-		public bool TryGet(NetworkInterface parameter, out UnicastIPAddressInformation resource) =>
-			_core.TryGetValue(parameter, out resource);
-
 		public UnicastIPAddressInformation Get(NetworkInterface parameter) => _core[parameter];
 
 		public override bool Equals(object obj) => obj is Networks;

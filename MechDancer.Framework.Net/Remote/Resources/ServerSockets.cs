@@ -16,22 +16,18 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 		public TcpListener                           Default => _default.Value;
 
 		public ServerSockets(int port = 0) {
-			_default = new Lazy<TcpListener>(() => new TcpListener(IPAddress.Any, port));
-		}
-
-		public bool TryGet(int parameter, out TcpListener resource) {
-			resource = Get(parameter);
-			return true;
+			_default = new Lazy<TcpListener>(() => Server(port));
 		}
 
 		public TcpListener Get(int parameter) =>
-			parameter == 0
-				? Default
-				: _core.GetOrAdd(parameter, port => new TcpListener(IPAddress.Any, port));
+			parameter == 0 ? Default : _core.GetOrAdd(parameter, Server);
 
 		public override bool Equals(object obj) => obj is ServerSockets;
 		public override int  GetHashCode()      => Hash;
 
 		private static readonly int Hash = typeof(ServerSockets).GetHashCode();
+
+		private static TcpListener Server(int port)
+			=> new TcpListener(IPAddress.Any, port).Also(it => it.Start());
 	}
 }

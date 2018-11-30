@@ -19,14 +19,10 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 			return last.HasValue;
 		}
 
-		public bool Remove(string parameter) =>
-			_core.TryRemove(parameter, out _);
+		public bool Remove(string parameter) => _core.TryRemove(parameter, out _);
 
-		public bool TryGet(string parameter, out DateTime resource) =>
-			_core.TryGetValue(parameter, out resource);
-
-		public DateTime Get(string parameter) =>
-			_core.TryGetValue(parameter, out var value) ? value : default;
+		public DateTime Get(string parameter)
+			=> _core.TryGetValue(parameter, out var value) ? value : DateTime.MinValue;
 
 		public List<string> this[TimeSpan timeout] {
 			get {

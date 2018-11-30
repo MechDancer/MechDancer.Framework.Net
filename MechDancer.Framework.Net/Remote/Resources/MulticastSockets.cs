@@ -22,11 +22,6 @@ namespace MechDancer.Framework.Net.Remote.Resources {
 		public UdpMulticastClient Get(NetworkInterface parameter) =>
 			_core.GetOrAdd(parameter, network => new UdpMulticastClient(Address, network));
 
-		public bool TryGet(NetworkInterface parameter, out UdpMulticastClient resource) {
-			resource = Get(parameter);
-			return true;
-		}
-
 		public UdpMulticastClient Temporary => new UdpMulticastClient(Address, null);
 
 		public override bool Equals(object obj) => obj is MulticastSockets;
