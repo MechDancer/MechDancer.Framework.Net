@@ -14,9 +14,9 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		private readonly Lazy<ServerSockets>        _servers;
 
 		public PortBroadcaster() {
-			_name        = Must<Name>(Dependencies);
-			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
-			_servers     = Must<ServerSockets>(Dependencies);
+			_name        = Must<Name>();
+			_broadcaster = Must<MulticastBroadcaster>();
+			_servers     = Must<ServerSockets>();
 		}
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;

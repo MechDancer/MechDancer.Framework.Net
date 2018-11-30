@@ -30,15 +30,15 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
 			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
-			_name      = Maybe<Name>(Dependencies);
-			_socket    = Must<MulticastSockets>(Dependencies);
-			_networks  = Maybe<Networks>(Dependencies);
-			_addresses = Maybe<Addresses>(Dependencies);
+			_name      = Maybe<Name>();
+			_socket    = Must<MulticastSockets>();
+			_networks  = Maybe<Networks>();
+			_addresses = Maybe<Addresses>();
 			_listeners = new HashSet<IMulticastListener>();
 		}
 
 		public override void Sync() {
-			foreach (var listener in Dependencies.Value.Get<IMulticastListener>())
+			foreach (var listener in Dependencies.Get<IMulticastListener>())
 				_listeners.Add(listener);
 		}
 

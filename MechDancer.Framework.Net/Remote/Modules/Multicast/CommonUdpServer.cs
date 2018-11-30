@@ -7,12 +7,10 @@ using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	public sealed class CommonUdpServer : AbstractModule, IMulticastListener {
-		private readonly Lazy<MulticastBroadcaster> _broadcaster;
-		private readonly Action<string, byte[]>     _action;
+		private readonly Action<string, byte[]> _action;
 
 		public CommonUdpServer(Action<string, byte[]> action) {
-			_action      = action;
-			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
+			_action = action;
 		}
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;

@@ -14,8 +14,8 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		private readonly Lazy<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster() {
-			_name    = Maybe<Name>(Dependencies);
-			_sockets = Must<MulticastSockets>(Dependencies);
+			_name    = Maybe<Name>();
+			_sockets = Must<MulticastSockets>();
 		}
 
 		public void Broadcast(byte cmd, byte[] payload = null) {

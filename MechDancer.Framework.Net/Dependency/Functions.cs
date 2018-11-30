@@ -36,35 +36,14 @@ namespace MechDancer.Framework.Net.Dependency {
 			receiver.Maybe<T>() ?? throw new Exception($"cannot find this dependency: {typeof(T).Name}");
 
 		/// <summary>
-		/// 	构造一个每次检查依赖项的代理属性
-		/// </summary>
-		/// <param name="func">惰性获取所在动态域的方法</param>
-		/// <typeparam name="T">目标依赖项类型</typeparam>
-		/// <returns>代理属性</returns>
-		public static Lazy<T> Maybe<T>(Lazy<IReadOnlyCollection<IDependency>> func)
-			where T : class, IDependency =>
-			new Lazy<T>(() => func.Value.Maybe<T>());
-
-		/// <summary>
-		/// 	构造一个严格要求依赖项的代理属性
-		/// </summary>
-		/// <param name="func">惰性获取所在动态域的方法</param>
-		/// <typeparam name="T">目标依赖项类型</typeparam>
-		/// <returns>代理属性</returns>
-		public static Lazy<T> Must<T>(Lazy<IReadOnlyCollection<IDependency>> func)
-			where T : class, IDependency =>
-			new Lazy<T>(() => func.Value.Must<T>());
-
-		/// <summary>
 		/// 	构造动态域，操作，扫描，并返回
 		/// </summary>
 		/// <param name="block">操作</param>
 		/// <returns>新的动态域</returns>
-		public static DynamicScope Scope(Action<DynamicScope> block) {
-			var result = new DynamicScope();
-			block(result);
-			result.Sync();
-			return result;
-		}
+		public static DynamicScope Scope(Action<DynamicScope> block) =>
+			new DynamicScope().Also(it => {
+				                        block(it);
+				                        it.Sync();
+			                        });
 	}
 }

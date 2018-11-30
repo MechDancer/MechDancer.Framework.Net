@@ -14,11 +14,11 @@ namespace MechDancer.Framework.Net.Remote.Modules {
 
 		public GroupMonitor(Action<string> detected = null) {
 			_detected    = detected;
-			_group       = Must<Group>(Dependencies);
-			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
+			_group       = Must<Group>();
+			_broadcaster = Maybe<MulticastBroadcaster>();
 		}
 
-		public void Yell() => _broadcaster.Value.Broadcast((byte) UdpCmd.YellAsk);
+		public void Yell() => _broadcaster.Value?.Broadcast((byte) UdpCmd.YellAsk);
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
@@ -30,7 +30,7 @@ namespace MechDancer.Framework.Net.Remote.Modules {
 					_detected?.Invoke(name);
 
 			if (cmd == (byte) UdpCmd.YellAsk) // 回应询问
-				_broadcaster.Value.Broadcast((byte) UdpCmd.YellAck);
+				_broadcaster.Value?.Broadcast((byte) UdpCmd.YellAck);
 		}
 
 		public override bool Equals(object obj) => obj is GroupMonitor;

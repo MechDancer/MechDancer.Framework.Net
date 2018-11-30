@@ -13,9 +13,9 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		private readonly Lazy<PortMonitor> _monitor;
 
 		public ShortConnectionClient() {
-			_name      = Must<Name>(Dependencies);
-			_addresses = Must<Addresses>(Dependencies);
-			_monitor   = Maybe<PortMonitor>(Dependencies);
+			_name      = Must<Name>();
+			_addresses = Must<Addresses>();
+			_monitor   = Maybe<PortMonitor>();
 		}
 
 		public NetworkStream Connect(string name, byte cmd) {
@@ -31,8 +31,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 				var stream = socket.GetStream();
 				stream.Say(cmd);
 				stream.Say(_name.Value.Field);
-			}
-			catch (SocketException) {
+			} catch (SocketException) {
 				_addresses.Value.Remove(name);
 				_monitor.Value?.Ask(name);
 				return null;

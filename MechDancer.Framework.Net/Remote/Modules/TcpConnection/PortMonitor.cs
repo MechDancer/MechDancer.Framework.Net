@@ -21,8 +21,8 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		private readonly Lazy<Addresses>            _addresses;
 
 		public PortMonitor() {
-			_broadcaster = Must<MulticastBroadcaster>(Dependencies);
-			_addresses   = Must<Addresses>(Dependencies);
+			_broadcaster = Must<MulticastBroadcaster>();
+			_addresses   = Must<Addresses>();
 		}
 
 		public void Ask(string name)
