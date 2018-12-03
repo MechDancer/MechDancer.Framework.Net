@@ -15,8 +15,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	///     组播单体接收
 	/// </summary>
 	public sealed class MulticastReceiver : AbstractDependent<MulticastReceiver> {
-		private readonly ThreadLocal<byte[]>         _buffer;    // 线程独立缓冲区
-		private readonly HashSet<IMulticastListener> _listeners; // 处理回调
+		private readonly ThreadLocal<byte[]>      _buffer;    // 线程独立缓冲区
+		private readonly List<IMulticastListener> _listeners; // 处理回调
 
 		private readonly ComponentHook<Name>             _name;      // 过滤环路数据
 		private readonly ComponentHook<Addresses>        _addresses; // 地址管理
@@ -28,17 +28,17 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		/// </summary>
 		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
-			_buffer       = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
-			_name         = BuildDependency<Name>();
-			_addresses    = BuildDependency<Addresses>();
-			_socket       = BuildDependency<MulticastSockets>();
-			_networks     = BuildDependency<Networks>();
-			_listeners    = new HashSet<IMulticastListener>();
+			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
+			_name      = BuildDependency<Name>();
+			_addresses = BuildDependency<Addresses>();
+			_socket    = BuildDependency<MulticastSockets>();
+			_networks  = BuildDependency<Networks>();
+			_listeners = new List<IMulticastListener>();
 		}
 
 		public override bool Sync(IComponent dependency) {
 			base.Sync(dependency);
-			(dependency as IMulticastListener)?.Let(it => _listeners.Add(it));
+			(dependency as IMulticastListener)?.Also(it => _listeners.Add(it));
 			return false;
 		}
 
