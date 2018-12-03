@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Concurrent;
 using System.Net;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class Addresses : IDependency {
+	public sealed class Addresses : IComponent {
 		private readonly ConcurrentDictionary<string, IPEndPoint> _core
 			= new ConcurrentDictionary<string, IPEndPoint>();
 

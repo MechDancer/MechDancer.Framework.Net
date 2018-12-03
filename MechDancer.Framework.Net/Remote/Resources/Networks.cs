@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using static System.Net.NetworkInformation.NetworkInterfaceType;
 using static System.Net.Sockets.AddressFamily;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class Networks : IResourceFactory<NetworkInterface, UnicastIPAddressInformation> {
+	public sealed class Networks : IComponent {
 		private readonly Dictionary<NetworkInterface, UnicastIPAddressInformation> _core
 			= new Dictionary<NetworkInterface, UnicastIPAddressInformation>();
 

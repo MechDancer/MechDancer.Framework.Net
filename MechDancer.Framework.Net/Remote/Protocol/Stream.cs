@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Protocol {
 	public static partial class Functions {

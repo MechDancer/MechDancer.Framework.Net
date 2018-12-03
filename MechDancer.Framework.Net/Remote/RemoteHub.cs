@@ -3,13 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Modules;
 using MechDancer.Framework.Net.Remote.Modules.Multicast;
 using MechDancer.Framework.Net.Remote.Modules.TcpConnection;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 // ReSharper disable RedundantAssignment
 
@@ -18,8 +17,8 @@ namespace MechDancer.Framework.Net.Remote {
 		private readonly Group        _group = new Group();
 		private readonly GroupMonitor _monitor;
 
-		private readonly Networks             _networks    = new Networks();
-		private readonly MulticastSockets     _sockets     = new MulticastSockets(Address);
+		private readonly Networks             _networks = new Networks();
+		private readonly MulticastSockets     _sockets;
 		private readonly MulticastBroadcaster _broadcaster = new MulticastBroadcaster();
 		private readonly MulticastReceiver    _receiver    = new MulticastReceiver();
 
@@ -33,40 +32,42 @@ namespace MechDancer.Framework.Net.Remote {
 
 		private readonly DynamicScope _scope;
 
-		public RemoteHub(string                   name              = null,
-		                 Action<string>           newMemberDetected = null,
-		                 IEnumerable<IDependency> additional        = null
+		public RemoteHub(string                  name              = null,
+		                 IPEndPoint              address           = null,
+		                 Action<string>          newMemberDetected = null,
+		                 IEnumerable<IComponent> additions         = null
 		) {
 			_monitor = new GroupMonitor(newMemberDetected);
-			_scope = Scope(@this => {
-				               @this += new Name(name ?? RandomName);
+			_sockets = new MulticastSockets(address ?? Address);
 
-				               @this += _group;
-				               @this += _monitor;
+			_scope = new DynamicScope();
+			_scope.Setup(new Name(name ?? RandomName));
 
-				               @this += _networks;
-				               @this += _sockets;
-				               @this += _broadcaster;
-				               @this += _receiver;
+			_scope.Setup(_group);
+			_scope.Setup(_monitor);
 
-				               @this += _addresses;
-				               @this += _servers;
-				               @this += _synchronizer1;
-				               @this += _synchronizer2;
+			_scope.Setup(_networks);
+			_scope.Setup(_sockets);
+			_scope.Setup(_broadcaster);
+			_scope.Setup(_receiver);
 
-				               @this += _client;
-				               @this += _server;
+			_scope.Setup(_addresses);
+			_scope.Setup(_servers);
+			_scope.Setup(_synchronizer1);
+			_scope.Setup(_synchronizer2);
 
-				               if (additional != null)
-					               foreach (var dependency in additional)
-						               @this += dependency;
-			               });
+			_scope.Setup(_client);
+			_scope.Setup(_server);
+
+			if (additions != null)
+				foreach (var dependency in additions)
+					_scope.Setup(dependency);
 		}
 
 		/// <summary>
 		/// 	浏览全部依赖项
 		/// </summary>
-		public IReadOnlyCollection<IDependency> Modules => _scope.Dependencies;
+		public IEnumerable<IComponent> Modules => _scope.Components;
 
 		/// <summary>
 		/// 	查看本机所有 可能打开的网络接口的IP地址 和 已经打开的服务套接字的端口号

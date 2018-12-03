@@ -12,6 +12,6 @@ namespace MechDancer.Framework.Dependency {
 		/// </summary>
 		/// <param name="dependency">新加入域的组件</param>
 		/// <returns>否已获得全部依赖项</returns>
-		bool Sync(IComponent dependency);
+		bool Sync<T>(T dependency) where T : class, IComponent;
 	}
 }

@@ -1,8 +1,7 @@
 using System;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using MechDancer.Framework.Net;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote;
 using MechDancer.Framework.Net.Remote.Modules.TcpConnection;
 using MechDancer.Framework.Net.Remote.Protocol;

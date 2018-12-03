@@ -1,15 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
-	public sealed class ShortConnectionServer : AbstractModule {
-		private readonly Lazy<ServerSockets> _servers;
+	public sealed class ShortConnectionServer : AbstractDependent {
+		private readonly Hook<ServerSockets> _servers;
 
 		private readonly HashSet<IMailListener> _mailListeners
 			= new HashSet<IMailListener>();
@@ -17,26 +13,17 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
 			= new Dictionary<byte, IShortConnectionListener>();
 
-		public ShortConnectionServer() => _servers = Must<ServerSockets>();
+		public ShortConnectionServer() => _servers = BuildDependency<ServerSockets>();
 
-		public override void Sync() {
-			lock (_mailListeners) {
-				_mailListeners.Clear();
-				foreach (var listener in Dependencies.Get<IMailListener>())
-					_mailListeners.Add(listener);
-			}
-
-			lock (_connectListeners) {
-				_connectListeners.Clear();
-				foreach (var listener in Dependencies
-				                        .Get<IShortConnectionListener>()
-				                        .Where(it => it.Interest != (byte) TcpCmd.Mail))
-					_connectListeners.Add(listener.Interest, listener);
-			}
+		public override bool Sync<T>(T dependency) {
+			base.Sync(dependency);
+			(dependency as IMailListener)?.Let(it => _mailListeners.Add(it));
+			(dependency as IShortConnectionListener)?.Also(it => _connectListeners.Add(it.Interest, it));
+			return false;
 		}
 
 		public void Invoke(int port = 0) {
-			using (var stream = _servers.Value.Get(port).AcceptTcpClient().GetStream()) {
+			using (var stream = _servers.StrictField.Get(port).AcceptTcpClient().GetStream()) {
 				var cmd    = stream.ListenCommand();
 				var client = stream.ListenString();
 				if ((TcpCmd) cmd == TcpCmd.Mail) {

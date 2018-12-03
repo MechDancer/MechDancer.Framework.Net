@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Protocol {
 	public sealed class RemotePacket {

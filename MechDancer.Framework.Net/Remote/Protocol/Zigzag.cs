@@ -1,4 +1,5 @@
 using System.IO;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Protocol {
 	public static partial class Functions {
@@ -21,8 +22,7 @@ namespace MechDancer.Framework.Net.Remote.Protocol {
 				if (temp > 0x7f) {
 					receiver.WriteByte((byte) (temp | 0x80));
 					temp >>= 7;
-				}
-				else {
+				} else {
 					receiver.WriteByte((byte) temp);
 					return receiver;
 				}

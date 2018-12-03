@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
-	public sealed class CommonUdpServer : AbstractModule, IMulticastListener {
+	public sealed class CommonUdpServer : AbstractDependent, IMulticastListener {
 		private readonly Action<string, byte[]> _action;
 
 		public CommonUdpServer(Action<string, byte[]> action) {

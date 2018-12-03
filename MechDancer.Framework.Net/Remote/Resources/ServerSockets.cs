@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class ServerSockets : IResourceFactory<int, TcpListener> {
+	public sealed class ServerSockets : IComponent {
 		private readonly ConcurrentDictionary<int, TcpListener> _core
 			= new ConcurrentDictionary<int, TcpListener>();
 

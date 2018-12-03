@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,23 +5,22 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	/// <summary>
 	/// 	组播单体接收
 	/// </summary>
-	public sealed class MulticastReceiver : AbstractModule {
+	public sealed class MulticastReceiver : AbstractDependent {
 		private readonly ThreadLocal<byte[]>         _buffer;    // 线程独立缓冲区
-		private readonly Lazy<Name>                  _name;      // 过滤环路数据
-		private readonly Lazy<MulticastSockets>      _socket;    // 接收套接字
+		private readonly Hook<Name>                  _name;      // 过滤环路数据
+		private readonly Hook<MulticastSockets>      _socket;    // 接收套接字
 		private readonly HashSet<IMulticastListener> _listeners; // 处理回调
 
-		private readonly Lazy<Networks>  _networks;  // 网络管理
-		private readonly Lazy<Addresses> _addresses; // 地址管理
+		private readonly Hook<Networks>  _networks;  // 网络管理
+		private readonly Hook<Addresses> _addresses; // 地址管理
 
 		/// <summary>
 		/// 	构造器
@@ -30,32 +28,33 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
 			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
-			_name      = Maybe<Name>();
-			_socket    = Must<MulticastSockets>();
-			_networks  = Maybe<Networks>();
-			_addresses = Maybe<Addresses>();
+			_name      = BuildDependency<Name>();
+			_socket    = BuildDependency<MulticastSockets>();
+			_networks  = BuildDependency<Networks>();
+			_addresses = BuildDependency<Addresses>();
 			_listeners = new HashSet<IMulticastListener>();
 		}
 
-		public override void Sync() {
-			foreach (var listener in Dependencies.Get<IMulticastListener>())
-				_listeners.Add(listener);
+		public override bool Sync<T>(T dependency) {
+			base.Sync(dependency);
+			(dependency as IMulticastListener)?.Let(it => _listeners.Add(it));
+			return false;
 		}
 
 		public RemotePacket Invoke() {
-			var length = _socket.Value.Default.ReceiveFrom(_buffer.Value, out var address);
+			var length = _socket.StrictField.Default.ReceiveFrom(_buffer.Value, out var address);
 
 			var stream = new MemoryStream(_buffer.Value, 0, length, false);
 			var sender = stream.ReadEnd();
 
-			if (sender == (_name.Value?.Field ?? "")) return null;
+			if (sender == (_name.Field?.Field ?? "")) return null;
 
-			_networks.Value
+			_networks.Field
 			        ?.View
 			         .FirstOrDefault(it => Match(it.Value, address))
 			         .Key
-			        ?.Let(it => _socket.Value.Get(it));
-			_addresses.Value?.Update(sender, address);
+			        ?.Let(it => _socket.StrictField.Get(it));
+			_addresses.Field?.Update(sender, address);
 
 			var packet = new RemotePacket
 				(sender: sender,

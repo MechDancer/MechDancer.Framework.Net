@@ -4,7 +4,7 @@ namespace MechDancer.Framework.Dependency {
 	/// <summary>
 	/// 	组件不存在异常
 	/// </summary>
-	public sealed class ComponentNotExistException : Exception {
+	public sealed class ComponentNotExistException : NullReferenceException {
 		/// <summary>
 		/// 	构造器
 		/// </summary>

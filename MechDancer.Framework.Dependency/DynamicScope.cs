@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace MechDancer.Framework.Dependency {
-	using Predicate = Func<IComponent, bool>;
-
 	/// <summary>
 	/// 	动态域
 	/// </summary>
@@ -21,7 +19,7 @@ namespace MechDancer.Framework.Dependency {
 		///		用于查找特定组件类型和判定类型冲突
 		///		其中的组件只增加不减少
 		/// </remarks>
-		private readonly ConcurrentSet<IComponent> _component
+		private readonly ConcurrentSet<IComponent> _components
 			= new ConcurrentSet<IComponent>();
 
 		/// <summary>
@@ -31,13 +29,13 @@ namespace MechDancer.Framework.Dependency {
 		///		用于在在新的依赖项到来时接收通知
 		///		其中的组件一旦集齐依赖项就会离开列表，不再接收通知
 		/// </remarks>
-		private readonly List<Predicate> _dependents
-			= new List<Predicate>();
+		private readonly List<IDependent> _dependents
+			= new List<IDependent>();
 
 		/// <summary>
 		/// 	浏览所有组件
 		/// </summary>
-		public ICollection<IComponent> Components => _component.View;
+		public IEnumerable<IComponent> Components => _components.View;
 
 		/// <summary>
 		/// 	将一个新的组件加入到动态域
@@ -47,25 +45,24 @@ namespace MechDancer.Framework.Dependency {
 		///		若组件被添加到域，返回 true
 		///		与已有的组件发生冲突时返回 false 
 		/// </returns>
-		public bool Setup(IComponent component) =>
-			_component.TryAdd(component)
-					  .Also(success => {
-								if (success)
-									lock (_dependents) {
-										_dependents.RemoveAll(it => it(component));
+		public bool Setup<T>(T component) where T : class, IComponent =>
+			_components.TryAdd(component)
+			          .Also(success => {
+				                if (success)
+					                lock (_dependents) {
+						                _dependents.RemoveAll(it => it.Sync(component));
 
-										(component as IDependent)
-										  ?.Let<IDependent, Predicate>(it => it.Sync)
-										  ?.TakeIf(Components.Any)
-										  ?.Also(_dependents.Add);
-									}
-							});
+						                (component as IDependent)
+							              ?.TakeIf(it => Components.None(it.Sync))
+							              ?.Also(_dependents.Add);
+					                }
+			                });
 
 		private sealed class ConcurrentSet<T> where T : class {
 			private readonly ConcurrentDictionary<T, byte> _core
 				= new ConcurrentDictionary<T, byte>();
 
-			public ICollection<T> View => _core.Keys;
+			public IEnumerable<T> View => _core.Keys;
 
 			public bool TryAdd(T it) => _core.TryAdd(it, 0);
 		}

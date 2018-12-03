@@ -1,25 +1,23 @@
 using System;
-using System.Threading;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Protocol;
-using static MechDancer.Framework.Net.Dependency.Functions;
 using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 	/// <summary>
 	/// 	组播发布者
 	/// </summary>
-	public sealed class MulticastBroadcaster : AbstractModule {
-		private readonly Lazy<Name>             _name; // 可以匿名发送组播
-		private readonly Lazy<MulticastSockets> _sockets;
+	public sealed class MulticastBroadcaster : AbstractDependent {
+		private readonly Hook<Name>             _name; // 可以匿名发送组播
+		private readonly Hook<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster() {
-			_name    = Maybe<Name>();
-			_sockets = Must<MulticastSockets>();
+			_name    = BuildDependency<Name>();
+			_sockets = BuildDependency<MulticastSockets>();
 		}
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
-			var me = _name.Value?.Field;
+			var me = _name.Field?.Field;
 
 			if (String.IsNullOrWhiteSpace(me)
 			 && (cmd == (byte) UdpCmd.YellAck || cmd == (byte) UdpCmd.AddressAck)
@@ -31,7 +29,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.Multicast {
 				 payload: payload ?? new byte[0]
 				).Bytes;
 
-			foreach (var socket in _sockets.Value.View.Values)
+			foreach (var socket in _sockets.StrictField.View.Values)
 				socket.Broadcast(packet);
 		}
 

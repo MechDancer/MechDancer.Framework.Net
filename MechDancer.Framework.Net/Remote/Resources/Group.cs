@@ -2,10 +2,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class Group : IResourceMemory<string, DateTime> {
+	public sealed class Group : IComponent {
 		private readonly ConcurrentDictionary<string, DateTime> _core
 			= new ConcurrentDictionary<string, DateTime>();
 

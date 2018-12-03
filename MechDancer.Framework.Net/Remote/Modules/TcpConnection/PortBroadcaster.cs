@@ -1,31 +1,29 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Modules.Multicast;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
-	public sealed class PortBroadcaster : AbstractModule, IMulticastListener {
-		private readonly Lazy<Name>                 _name;
-		private readonly Lazy<MulticastBroadcaster> _broadcaster;
-		private readonly Lazy<ServerSockets>        _servers;
+	public sealed class PortBroadcaster : AbstractDependent, IMulticastListener {
+		private readonly Hook<Name>                 _name;
+		private readonly Hook<MulticastBroadcaster> _broadcaster;
+		private readonly Hook<ServerSockets>        _servers;
 
 		public PortBroadcaster() {
-			_name        = Must<Name>();
-			_broadcaster = Must<MulticastBroadcaster>();
-			_servers     = Must<ServerSockets>();
+			_name        = BuildDependency<Name>();
+			_broadcaster = BuildDependency<MulticastBroadcaster>();
+			_servers     = BuildDependency<ServerSockets>();
 		}
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
 		public void Process(RemotePacket remotePacket) {
-			if (remotePacket.Payload.GetString() != _name.Value.Field) return;
+			if (remotePacket.Payload.GetString() != _name.StrictField.Field) return;
 
-			var port = (IPEndPoint) _servers.Value.Default.LocalEndpoint;
-			_broadcaster.Value.Broadcast
+			var port = (IPEndPoint) _servers.StrictField.Default.LocalEndpoint;
+			_broadcaster.StrictField.Broadcast
 				((byte) UdpCmd.AddressAck,
 				 new[] {(byte) (port.Port >> 8), (byte) port.Port});
 		}

@@ -1,10 +1,10 @@
 using System;
 using System.Net.Sockets;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Resources;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
-	public sealed class CommonTcpServer : AbstractModule, IShortConnectionListener {
+	public sealed class CommonTcpServer : AbstractDependent, IShortConnectionListener {
 		private readonly Action<string, NetworkStream> _func;
 
 		public CommonTcpServer(Action<string, NetworkStream> func)

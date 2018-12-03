@@ -1,27 +1,23 @@
-using System;
-using System.IO;
 using System.Net.Sockets;
-using MechDancer.Framework.Net.Dependency;
-using MechDancer.Framework.Net.Remote.Protocol;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
-	public sealed class ShortConnectionClient : AbstractModule {
-		private readonly Lazy<Name>        _name;
-		private readonly Lazy<Addresses>   _addresses;
-		private readonly Lazy<PortMonitor> _monitor;
+	public sealed class ShortConnectionClient : AbstractDependent {
+		private readonly Hook<Name>        _name;
+		private readonly Hook<Addresses>   _addresses;
+		private readonly Hook<PortMonitor> _monitor;
 
 		public ShortConnectionClient() {
-			_name      = Must<Name>();
-			_addresses = Must<Addresses>();
-			_monitor   = Maybe<PortMonitor>();
+			_name      = BuildDependency<Name>();
+			_addresses = BuildDependency<Addresses>();
+			_monitor   = BuildDependency<PortMonitor>();
 		}
 
 		public NetworkStream Connect(string name, byte cmd) {
-			var address = _addresses.Value[name];
+			var address = _addresses.StrictField[name];
 			if (address == null) {
-				_monitor.Value?.Ask(name);
+				_monitor.Field?.Ask(name);
 				return null;
 			}
 
@@ -30,10 +26,10 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 				socket.Connect(address);
 				var stream = socket.GetStream();
 				stream.Say(cmd);
-				stream.Say(_name.Value.Field);
+				stream.Say(_name.Field?.Field ?? "");
 			} catch (SocketException) {
-				_addresses.Value.Remove(name);
-				_monitor.Value?.Ask(name);
+				_addresses.StrictField.Remove(name);
+				_monitor.Field?.Ask(name);
 				return null;
 			}
 

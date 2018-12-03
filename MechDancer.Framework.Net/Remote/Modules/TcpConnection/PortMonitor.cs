@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Remote.Modules.Multicast;
 using MechDancer.Framework.Net.Remote.Protocol;
 using MechDancer.Framework.Net.Remote.Resources;
-using static MechDancer.Framework.Net.Dependency.Functions;
 
 namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 	/// <summary>
@@ -16,18 +14,18 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 	/// 	依赖地址资源和组播收发功能
 	/// 	将发起地址询问并更新地址资源
 	/// </remarks>
-	public sealed class PortMonitor : AbstractModule, IMulticastListener {
-		private readonly Lazy<MulticastBroadcaster> _broadcaster;
-		private readonly Lazy<Addresses>            _addresses;
+	public sealed class PortMonitor : AbstractDependent, IMulticastListener {
+		private readonly Hook<MulticastBroadcaster> _broadcaster;
+		private readonly Hook<Addresses>            _addresses;
 
 		public PortMonitor() {
-			_broadcaster = Must<MulticastBroadcaster>();
-			_addresses   = Must<Addresses>();
+			_broadcaster = BuildDependency<MulticastBroadcaster>();
+			_addresses   = BuildDependency<Addresses>();
 		}
 
 		public void Ask(string name)
 			=> _broadcaster
-			  .Value
+			  .StrictField
 			  .Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
@@ -37,7 +35,7 @@ namespace MechDancer.Framework.Net.Remote.Modules.TcpConnection {
 
 			if (!string.IsNullOrWhiteSpace(remotePacket.Sender))
 				_addresses
-				   .Value
+				   .StrictField
 				   .Update(sender, payload[0] << 8 | payload[1]);
 		}
 

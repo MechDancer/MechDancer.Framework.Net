@@ -1,8 +1,8 @@
 using System;
-using MechDancer.Framework.Net.Dependency;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Remote.Resources {
-	public sealed class Name : IDependency {
+	public sealed class Name : IComponent {
 		public readonly string Field;
 
 		public Name(string name) => Field = name;
