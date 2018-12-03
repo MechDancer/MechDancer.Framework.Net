@@ -2,9 +2,9 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using MechDancer.Framework.Dependency;
-using MechDancer.Framework.Net.Remote.Modules;
-using MechDancer.Framework.Net.Remote.Modules.Multicast;
-using MechDancer.Framework.Net.Remote.Resources;
+using MechDancer.Framework.Net.Modules;
+using MechDancer.Framework.Net.Modules.Multicast;
+using MechDancer.Framework.Net.Resources;
 
 // ReSharper disable RedundantAssignment
 

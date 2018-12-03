@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MechDancer.Framework.Net\MechDancer.Framework.Net.csproj"/>
+        <ProjectReference Include="..\MechDancer.Framework.Remote\MechDancer.Framework.Remote.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -2,10 +2,10 @@ using System;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MechDancer.Framework.Dependency;
-using MechDancer.Framework.Net.Remote;
-using MechDancer.Framework.Net.Remote.Modules.TcpConnection;
-using MechDancer.Framework.Net.Remote.Protocol;
-using MechDancer.Framework.Net.Remote.Resources;
+using MechDancer.Framework.Net;
+using MechDancer.Framework.Net.Modules.TcpConnection;
+using MechDancer.Framework.Net.Protocol;
+using MechDancer.Framework.Net.Resources;
 
 namespace UserInterface {
 	public static class TestTcp {

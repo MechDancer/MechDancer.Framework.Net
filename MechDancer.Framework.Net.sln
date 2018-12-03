@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Net", "MechDancer.Framework.Net\MechDancer.Framework.Net.csproj", "{27485454-0D17-44C8-B2BE-E8243BBBFFA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Remote", "MechDancer.Framework.Remote\MechDancer.Framework.Remote.csproj", "{27485454-0D17-44C8-B2BE-E8243BBBFFA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterface\UserInterface.csproj", "{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}"
 EndProject
