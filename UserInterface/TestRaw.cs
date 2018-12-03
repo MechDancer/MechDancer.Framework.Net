@@ -49,6 +49,6 @@ namespace UserInterface {
 		}
 
 		private static readonly IPEndPoint Address
-			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
+			= new IPEndPoint(IPAddress.Parse("238.88.8.7"), 30000);
 	}
 }

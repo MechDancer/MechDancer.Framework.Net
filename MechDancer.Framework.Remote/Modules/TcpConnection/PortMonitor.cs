@@ -38,6 +38,11 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 				   .Update(sender, (payload[0] << 8) | payload[1]);
 		}
 
+		public void AskEveryone()
+			=> _broadcaster
+			  .StrictField
+			  .Broadcast((byte) UdpCmd.AddressAsk);
+
 		public void Ask(string name)
 			=> _broadcaster
 			  .StrictField

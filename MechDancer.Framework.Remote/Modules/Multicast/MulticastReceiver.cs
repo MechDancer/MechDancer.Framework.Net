@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,12 +28,12 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		/// </summary>
 		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
-			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
-			_name      = BuildDependency<Name>();
-			_socket    = BuildDependency<MulticastSockets>();
-			_networks  = BuildDependency<Networks>();
-			_addresses = BuildDependency<Addresses>();
-			_listeners = new HashSet<IMulticastListener>();
+			_buffer       = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
+			_name         = BuildDependency<Name>();
+			_addresses    = BuildDependency<Addresses>();
+			_socket       = BuildDependency<MulticastSockets>();
+			_networks     = BuildDependency<Networks>();
+			_listeners    = new HashSet<IMulticastListener>();
 		}
 
 		public override bool Sync(IComponent dependency) {
@@ -63,10 +64,12 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 			// Console.WriteLine($"{packet} from {address}");
 
-			foreach (var listener in from item in _listeners
-			                         where item.Interest.Contains(packet.Command)
-			                         select item)
-				listener.Process(packet);
+			foreach (
+				var listener
+				in from item in _listeners
+				   where !item.Interest.Any() || item.Interest.Contains(packet.Command)
+				   select item
+			) listener.Process(packet);
 
 			return packet;
 		}

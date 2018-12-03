@@ -8,8 +8,6 @@ using MechDancer.Framework.Net.Resources;
 namespace MechDancer.Framework.Net.Modules {
 	public sealed class GroupMonitor : AbstractDependent<GroupMonitor>,
 	                                   IMulticastListener {
-		private static readonly byte[] InterestSet = {(byte) UdpCmd.YellAsk, (byte) UdpCmd.YellAck};
-
 		private readonly ComponentHook<MulticastBroadcaster> _broadcaster;
 		private readonly ComponentHook<Group>                _group;
 		private readonly Action<string>                      _detected;
@@ -20,7 +18,9 @@ namespace MechDancer.Framework.Net.Modules {
 			_broadcaster = BuildDependency<MulticastBroadcaster>();
 		}
 
-		public IReadOnlyCollection<byte> Interest => InterestSet;
+		public IReadOnlyCollection<byte> Interest => new byte[0];
+
+		public void Yell() => _broadcaster.StrictField.Broadcast((byte) UdpCmd.YellAsk);
 
 		public void Process(RemotePacket remotePacket) {
 			var (name, cmd, _) = remotePacket;
@@ -32,7 +32,5 @@ namespace MechDancer.Framework.Net.Modules {
 			if (cmd == (byte) UdpCmd.YellAsk) // 回应询问
 				_broadcaster.Field?.Broadcast((byte) UdpCmd.YellAck);
 		}
-
-		public void Yell() => _broadcaster.StrictField.Broadcast((byte) UdpCmd.YellAsk);
 	}
 }

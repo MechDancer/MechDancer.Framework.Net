@@ -23,12 +23,18 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
 		public void Process(RemotePacket remotePacket) {
-			if (remotePacket.Payload.GetString() != _name.StrictField.Field) return;
+			if (remotePacket.Payload.Length      == 0
+			 || remotePacket.Payload.GetString() != _name.StrictField.Field)
+				return;
 
-			var port = (IPEndPoint) _servers.StrictField.Default.LocalEndpoint;
-			_broadcaster.StrictField.Broadcast
-				((byte) UdpCmd.AddressAck,
-				 new[] {(byte) (port.Port >> 8), (byte) port.Port});
+			var port = _servers.StrictField
+			                   .Default
+			                   .LocalEndpoint
+			                   .Let(it => (IPEndPoint) it)
+			                   .Port
+			                   .Let(it => new[] {(byte) (it >> 8), (byte) it});
+
+			_broadcaster.StrictField.Broadcast((byte) UdpCmd.AddressAck, port);
 		}
 	}
 }
