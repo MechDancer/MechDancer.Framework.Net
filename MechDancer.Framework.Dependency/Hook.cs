@@ -1,3 +1,5 @@
+using System.Threading;
+
 namespace MechDancer.Framework.Dependency {
 	/// <summary>
 	///     用于标定引用钩子转型上限的共通基类型
@@ -13,7 +15,22 @@ namespace MechDancer.Framework.Dependency {
 	/// <typeparam name="T">内部类型</typeparam>
 	/// <typeparam name="TS">设值上限</typeparam>
 	public class Hook<T, TS> : IHook<TS> where T : class, TS {
-		public T Field;
+		private readonly ReaderWriterLock _lock = new ReaderWriterLock();
+		private          T                _field;
+
+		public T Field {
+			get {
+				_lock.AcquireReaderLock(-1);
+				var value = _field;
+				_lock.ReleaseReaderLock();
+				return value;
+			}
+			set {
+				_lock.AcquireWriterLock(-1);
+				_field = value;
+				_lock.ReleaseWriterLock();
+			}
+		}
 
 		public bool TrySet(TS obj) {
 			return (obj as T)?.Also(it => Field = it) != null;
