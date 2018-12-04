@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Modules;
 using MechDancer.Framework.Net.Modules.Multicast;
+using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 // ReSharper disable RedundantAssignment
@@ -29,6 +30,9 @@ namespace UserInterface {
 					                          }));
 				         @this.Setup(new MulticastBroadcaster());
 				         @this.Setup(receiver);
+				         @this.Setup(new PacketSlicer());
+
+				         @this.Setup(new CommonUdpServer((_, pack) => Console.WriteLine(pack.GetString())));
 			         });
 
 			async Task Display(TimeSpan timeSpan) {
@@ -49,6 +53,6 @@ namespace UserInterface {
 		}
 
 		private static readonly IPEndPoint Address
-			= new IPEndPoint(IPAddress.Parse("238.88.8.7"), 30000);
+			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
 	}
 }

@@ -78,15 +78,13 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public void Process(RemotePacket remotePacket) {
 			var (name, _, payload) = remotePacket;
-			MemoryStream stream;
-			byte?        cmd;
+			var   stream = new MemoryStream(payload);
+			byte? cmd;
 			if (payload[0] == 0) {
-				stream = new MemoryStream(payload, 2, payload.Length - 2);
-				cmd    = payload[1];
-			} else {
-				stream = new MemoryStream(payload);
-				cmd    = null;
-			}
+				stream.ReadByte();
+				cmd = (byte) stream.ReadByte();
+			} else
+				cmd = null;
 
 			var subSeq = stream.ReadZigzag(false);
 			var index  = stream.ReadZigzag(false);
