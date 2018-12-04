@@ -79,7 +79,7 @@ namespace MechDancer.Framework.Net.Protocol {
 				(buffer => {
 					 while (--n > 0) {
 						 var temp = receiver.ReadByte();
-						 if (temp > 0) buffer[n] = (byte) temp;
+						 if (temp >= 0) buffer[n] = (byte) temp;
 						 else throw new IOException("stream is already end");
 					 }
 				 });
