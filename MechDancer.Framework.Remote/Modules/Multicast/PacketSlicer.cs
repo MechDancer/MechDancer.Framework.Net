@@ -10,30 +10,20 @@ using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
-	public class PacketSlicer : AbstractDependent<PacketSlicer>,
+	public class PacketSlicer : AbstractComponent<PacketSlicer>,
 	                            IMulticastListener {
 		private static byte[] InterestSet = {(byte) UdpCmd.PackageSlice};
 
-		// 发送
-
-		private readonly int                                 _packetSize;
-		private readonly ComponentHook<MulticastBroadcaster> _broadcaster;
-		private          long                                _sequence;
-
-		// 接收
-
+		private          long                                         _sequence;
 		private readonly ConcurrentDictionary<(string, long), Buffer> _buffers;
 		private readonly List<IMulticastListener>                     _listeners;
 
-		public PacketSlicer(int packetSize = 0x4000) {
-			_packetSize  = packetSize;
-			_broadcaster = BuildDependency<MulticastBroadcaster>();
-			_buffers     = new ConcurrentDictionary<(string, long), Buffer>();
-			_listeners   = new List<IMulticastListener>();
+		public PacketSlicer() {
+			_buffers   = new ConcurrentDictionary<(string, long), Buffer>();
+			_listeners = new List<IMulticastListener>();
 		}
 
-		public override bool Sync(IComponent dependency) {
-			base.Sync(dependency);
+		public bool Sync(IComponent dependency) {
 			if (!(dependency is PacketSlicer))
 				(dependency as IMulticastListener)?.Also(it => _listeners.Add(it));
 			return false;
@@ -41,7 +31,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
-		public void Broadcast(byte cmd, byte[] payload) {
+		internal void Broadcast(byte cmd, byte[] payload, int size, Action<byte[]> output) {
 			var stream = new MemoryStream(payload);
 			var s      = Interlocked.Increment(ref _sequence).Zigzag(false);
 			var index  = 0L; // 包序号
@@ -50,29 +40,28 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 				// 编码子包序号
 				var i = index++.Zigzag(false);
 				// 如果是最后一包，应该多长？
-				var    last = (int) (stream.Length - stream.Position + 2 + s.Length + i.Length);
-				byte[] pack;
-				if (last <= _packetSize) {
-					pack = new byte[last];
-					var outStream = new MemoryStream(pack);
+				var          last = (int) (stream.Length - stream.Position + 2 + s.Length + i.Length);
+				byte[]       pack;
+				MemoryStream outStream;
+				if (last <= size) {
+					pack      = new byte[last];
+					outStream = new MemoryStream(pack);
 					outStream.WriteByte(0);   // 空一位作为停止位
 					outStream.WriteByte(cmd); // 保存实际指令
-					outStream.Write(s);
-					outStream.Write(i);
-					stream.WriteTo(outStream);
 				} else {
-					pack = new byte[_packetSize];
-					var outStream = new MemoryStream(pack);
-					outStream.Write(s);
-					outStream.Write(i);
-					var length = _packetSize - outStream.Position;
-					Array.Copy(payload, stream.Position,
-					           pack, outStream.Position,
-					           length);
-					stream.Position += length;
+					pack      = new byte[size];
+					outStream = new MemoryStream(pack);
 				}
+				
+				outStream.Write(s);
+				outStream.Write(i);
+				var length = outStream.Available();
+				Array.Copy(payload, stream.Position,
+				           pack, outStream.Position,
+				           outStream.Available());
+				stream.Position += length;
 
-				_broadcaster.StrictField.Broadcast(InterestSet[0], pack);
+				output(pack);
 			}
 		}
 

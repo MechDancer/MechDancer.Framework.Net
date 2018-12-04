@@ -5,9 +5,7 @@ using System.Linq;
 using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class Group : IComponent {
-		private static readonly int Hash = typeof(Group).GetHashCode();
-
+	public sealed class Group : AbstractComponent<Group> {
 		private readonly ConcurrentDictionary<string, DateTime> _core
 			= new ConcurrentDictionary<string, DateTime>();
 
@@ -30,20 +28,10 @@ namespace MechDancer.Framework.Net.Resources {
 			return last.HasValue;
 		}
 
-		public bool Remove(string parameter) {
-			return _core.TryRemove(parameter, out _);
-		}
+		public bool Remove(string parameter)
+			=> _core.TryRemove(parameter, out _);
 
-		public DateTime Get(string parameter) {
-			return _core.TryGetValue(parameter, out var value) ? value : DateTime.MinValue;
-		}
-
-		public override bool Equals(object obj) {
-			return obj is Group;
-		}
-
-		public override int GetHashCode() {
-			return Hash;
-		}
+		public DateTime Get(string parameter)
+			=> _core.TryGetValue(parameter, out var value) ? value : DateTime.MinValue;
 	}
 }

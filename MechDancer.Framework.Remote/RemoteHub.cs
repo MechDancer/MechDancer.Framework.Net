@@ -22,9 +22,9 @@ namespace MechDancer.Framework.Net {
 
 		private readonly Networks             _networks = new Networks();
 		private readonly MulticastSockets     _sockets;
-		private readonly MulticastBroadcaster _broadcaster = new MulticastBroadcaster();
-		private readonly MulticastReceiver    _receiver    = new MulticastReceiver();
-		private readonly PacketSlicer         _slicer      = new PacketSlicer();
+		private readonly MulticastBroadcaster _broadcaster;
+		private readonly MulticastReceiver    _receiver = new MulticastReceiver();
+		private readonly PacketSlicer         _slicer   = new PacketSlicer();
 
 		private readonly Addresses       _addresses     = new Addresses();
 		private readonly ServerSockets   _servers       = new ServerSockets();
@@ -37,12 +37,14 @@ namespace MechDancer.Framework.Net {
 		private readonly DynamicScope _scope;
 
 		public RemoteHub(string                  name              = null,
+		                 uint                    size              = 0x4000,
 		                 IPEndPoint              address           = null,
 		                 Action<string>          newMemberDetected = null,
 		                 IEnumerable<IComponent> additions         = null
 		) {
-			_monitor = new GroupMonitor(newMemberDetected);
-			_sockets = new MulticastSockets(address ?? Address);
+			_monitor     = new GroupMonitor(newMemberDetected);
+			_sockets     = new MulticastSockets(address ?? Address);
+			_broadcaster = new MulticastBroadcaster(size);
 
 			_scope = new DynamicScope();
 			_scope.Setup(new Name(name ?? RandomName));
@@ -114,13 +116,12 @@ namespace MechDancer.Framework.Net {
 		///     若当前已有打开的网络端口则不进行任何操作
 		/// </remarks>
 		/// <returns>是否有网络端口已被打开</returns>
-		public bool OpenOneNetwork() {
-			return _sockets.View.Any()
-			    || null != _networks.View
-			                        .Keys
-			                        .FirstOrDefault()
-			                       ?.Also(it => _sockets.Get(it));
-		}
+		public bool OpenOneNetwork()
+			=> _sockets.View.Any()
+			|| null != _networks.View
+			                    .Keys
+			                    .FirstOrDefault()
+			                   ?.Also(it => _sockets.Get(it));
 
 		/// <summary>
 		///     打开本机所有网络端口对应的套接字
@@ -135,26 +136,21 @@ namespace MechDancer.Framework.Net {
 		/// <summary>
 		///     请求组成员自证存在性
 		/// </summary>
-		public void Yell() {
-			_monitor.Yell();
-		}
+		public void Yell() => _monitor.Yell();
 
 		/// <summary>
 		///     主动询问一个远端的端口号
 		/// </summary>
 		/// <param name="name">对方名字</param>
-		public void Ask(string name) {
-			_synchronizer2.Ask(name);
-		}
+		public void Ask(string name) => _synchronizer2.Ask(name);
 
 		/// <summary>
 		///     广播数据
 		/// </summary>
 		/// <param name="cmd">指令代码</param>
 		/// <param name="payload">数据负载</param>
-		public void Broadcast(byte cmd, byte[] payload) {
-			_broadcaster.Broadcast(cmd, payload);
-		}
+		public void Broadcast(byte cmd, byte[] payload)
+			=> _broadcaster.Broadcast(cmd, payload);
 
 		/// <summary>
 		///     连接到一个TCP远端
@@ -166,9 +162,8 @@ namespace MechDancer.Framework.Net {
 		///     尚未得知对方地址将直接返回空
 		///     连接失败将返回空
 		/// </returns>
-		public NetworkStream Connect(string name, byte cmd) {
-			return _client.Connect(name, cmd);
-		}
+		public NetworkStream Connect(string name, byte cmd)
+			=> _client.Connect(name, cmd);
 
 		/// <summary>
 		///     调度一次UDP组播接收
@@ -177,15 +172,11 @@ namespace MechDancer.Framework.Net {
 		///     收到的UDP包
 		///     若收到的是自己发的则返回空
 		/// </returns>
-		public RemotePacket Invoke() {
-			return _receiver.Invoke();
-		}
+		public RemotePacket Invoke() => _receiver.Invoke();
 
 		/// <summary>
 		///     调度一次TCP短连接服务
 		/// </summary>
-		public void Accept() {
-			_server.Invoke();
-		}
+		public void Accept() => _server.Invoke();
 	}
 }

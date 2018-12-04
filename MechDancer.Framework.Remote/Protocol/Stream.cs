@@ -157,5 +157,8 @@ namespace MechDancer.Framework.Net.Protocol {
 
 		public static byte[] ReadWithLength(this Stream receiver)
 			=> receiver.WaitNBytes((int) receiver.ReadZigzag(false));
+
+		public static long Available(this MemoryStream receiver)
+			=> receiver.Capacity - receiver.Position;
 	}
 }

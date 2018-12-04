@@ -7,9 +7,9 @@ namespace MechDancer.Framework.Dependency {
 	/// <remarks>
 	///     封装了依赖项管理功能
 	/// </remarks>
-	public abstract class AbstractDependent<T> : IDependent where T : AbstractDependent<T> {
-		protected static readonly int TypeHash = typeof(T).GetHashCode();
-
+	public abstract class AbstractDependent<T>
+		: AbstractComponent<T>, IDependent
+		where T : AbstractDependent<T> {
 		/// <summary>
 		///     尚未装载的依赖项集
 		/// </summary>
@@ -30,8 +30,5 @@ namespace MechDancer.Framework.Dependency {
 		/// <returns>钩子类型</returns>
 		protected ComponentHook<TD> BuildDependency<TD>()
 			where TD : class, IComponent => new ComponentHook<TD>().Also(it => _dependencies.Add(it));
-
-		public override bool Equals(object obj) => obj is T;
-		public override int  GetHashCode()      => TypeHash;
 	}
 }

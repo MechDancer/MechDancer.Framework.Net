@@ -5,9 +5,7 @@ using System.Net.NetworkInformation;
 using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class MulticastSockets : IComponent {
-		private static readonly int Hash = typeof(MulticastSockets).GetHashCode();
-
+	public sealed class MulticastSockets : AbstractComponent<MulticastSockets> {
 		private readonly ConcurrentDictionary<NetworkInterface, UdpMulticastClient> _core
 			= new ConcurrentDictionary<NetworkInterface, UdpMulticastClient>();
 
@@ -23,16 +21,7 @@ namespace MechDancer.Framework.Net.Resources {
 
 		public UdpMulticastClient Temporary => new UdpMulticastClient(Address, null);
 
-		public UdpMulticastClient Get(NetworkInterface parameter) {
-			return _core.GetOrAdd(parameter, network => new UdpMulticastClient(Address, network));
-		}
-
-		public override bool Equals(object obj) {
-			return obj is MulticastSockets;
-		}
-
-		public override int GetHashCode() {
-			return Hash;
-		}
+		public UdpMulticastClient Get(NetworkInterface parameter) 
+			=> _core.GetOrAdd(parameter, network => new UdpMulticastClient(Address, network));
 	}
 }

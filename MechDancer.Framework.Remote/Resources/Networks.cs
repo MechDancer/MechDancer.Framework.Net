@@ -5,15 +5,11 @@ using System.Net.Sockets;
 using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class Networks : IComponent {
-		private static readonly int Hash = typeof(Networks).GetHashCode();
-
+	public sealed class Networks : AbstractComponent<Networks> {
 		private readonly Dictionary<NetworkInterface, UnicastIPAddressInformation> _core
 			= new Dictionary<NetworkInterface, UnicastIPAddressInformation>();
 
-		public Networks() {
-			Scan();
-		}
+		public Networks() => Scan();
 
 		public IReadOnlyDictionary<NetworkInterface, UnicastIPAddressInformation> View => _core;
 
@@ -56,16 +52,6 @@ namespace MechDancer.Framework.Net.Resources {
 			}
 		}
 
-		public UnicastIPAddressInformation Get(NetworkInterface parameter) {
-			return _core[parameter];
-		}
-
-		public override bool Equals(object obj) {
-			return obj is Networks;
-		}
-
-		public override int GetHashCode() {
-			return Hash;
-		}
+		public UnicastIPAddressInformation Get(NetworkInterface parameter) => _core[parameter];
 	}
 }
