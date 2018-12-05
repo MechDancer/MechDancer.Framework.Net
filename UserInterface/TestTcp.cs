@@ -1,5 +1,6 @@
 using System;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net;
@@ -13,32 +14,26 @@ namespace UserInterface {
 			var hub = new RemoteHub("C#");
 			hub.OpenAllNetworks();
 
-			Task.Run(() => {
-				         while (true) hub.Invoke();
-			         });
+			new Thread(() => {
+				           while (true) hub.Invoke();
+			           }) {IsBackground = true}.Start();
 
+			while (true) {
+				var success = hub.Connect
+					("kotlin echo server", (byte) TcpCmd.Common,
+					 I => {
+						 Console.WriteLine("connected framework");
+						 while (true) {
+							 var sentence = Console.ReadLine();
+							 I.Say(sentence.GetBytes());
 
-			var task = Task.Run(async () => {
-				                    NetworkStream server;
-				                    do {
-					                    server = hub.Connect("kotlin echo server", (byte) TcpCmd.Common);
-					                    await Task.Delay(200);
-				                    } while (server == null);
+							 if (sentence == "over") break;
+							 I.Listen().GetString().Also(Console.WriteLine);
+						 }
+					 });
 
-				                    return server;
-			                    });
-
-			using (var I = task.Result) {
-				Console.WriteLine("connected framework");
-				while (true) {
-					var sentence = Console.ReadLine();
-					if (sentence == "over") break;
-
-					I.Say(sentence.GetBytes());
-					I.Listen().GetString().Also(Console.WriteLine);
-				}
-
-				I.Say("over".GetBytes());
+				if (!success) Thread.Sleep(200);
+				else break;
 			}
 		}
 	}

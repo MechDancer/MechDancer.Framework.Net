@@ -20,7 +20,7 @@ namespace UserInterface {
 				         @this.Setup(new Name(".Net"));
 
 				         @this.Setup(group);
-				         @this.Setup(new GroupMonitor(Console.WriteLine));
+				         @this.Setup(new GroupMonitor(detected: Console.WriteLine));
 
 				         var networks = new Networks().Also(it => it.Scan());
 				         @this.Setup(new MulticastSockets(Address)

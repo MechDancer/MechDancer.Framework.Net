@@ -42,7 +42,7 @@ namespace MechDancer.Framework.Net {
 		                 Action<string>          newMemberDetected = null,
 		                 IEnumerable<IComponent> additions         = null
 		) {
-			_monitor     = new GroupMonitor(newMemberDetected);
+			_monitor     = new GroupMonitor(detected: newMemberDetected);
 			_sockets     = new MulticastSockets(address ?? Address);
 			_broadcaster = new MulticastBroadcaster(size);
 
@@ -157,13 +157,16 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="name">远端名字</param>
 		/// <param name="cmd">建立连接的类型</param>
+		/// <param name="block">建立连接成功后执行方法</param>
 		/// <returns>
-		///     打开的双向网络字节流
-		///     尚未得知对方地址将直接返回空
-		///     连接失败将返回空
+		///     是否执行了方法
+		///     尚未得知对方地址或连接失败将返回 false
 		/// </returns>
-		public NetworkStream Connect(string name, byte cmd)
-			=> _client.Connect(name, cmd);
+		public bool Connect(string name, byte cmd, Action<NetworkStream> block) {
+			using (var client = _client.Connect(name, cmd)) {
+				return client?.Also(block) != null;
+			}
+		}
 
 		/// <summary>
 		///     调度一次UDP组播接收
