@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Modules.Multicast;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
@@ -14,18 +15,23 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	///     依赖地址资源和组播收发功能
 	///     将发起地址询问并更新地址资源
 	/// </remarks>
-	public sealed class PortMonitor : AbstractDependent<PortMonitor>,
+	public sealed class PortMonitor : UniqueComponent<PortMonitor>,
+	                                  IDependent,
 	                                  IMulticastListener {
 		private static readonly HashSet<byte> InterestSet
 			= new HashSet<byte> {(byte) UdpCmd.AddressAck};
 
-		private readonly ComponentHook<Addresses>            _addresses;
-		private readonly ComponentHook<MulticastBroadcaster> _broadcaster;
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<Addresses>            _addresses;
+		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
 
 		public PortMonitor() {
-			_broadcaster = BuildDependency<MulticastBroadcaster>();
-			_addresses   = BuildDependency<Addresses>();
+			_broadcaster = _dependencies.BuildDependency<MulticastBroadcaster>();
+			_addresses   = _dependencies.BuildDependency<Addresses>();
 		}
+
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 

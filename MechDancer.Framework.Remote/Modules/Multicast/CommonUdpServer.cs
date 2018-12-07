@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
-	public sealed class CommonUdpServer : AbstractDependent<CommonUdpServer>,
+	public sealed class CommonUdpServer : UniqueComponent<CommonUdpServer>,
 	                                      IMulticastListener {
 		private static readonly byte[] InterestSet = {(byte) UdpCmd.Common};
 

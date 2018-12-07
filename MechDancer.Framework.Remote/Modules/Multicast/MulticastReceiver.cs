@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
@@ -14,14 +14,16 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	/// <summary>
 	///     组播单体接收
 	/// </summary>
-	public sealed class MulticastReceiver : AbstractDependent<MulticastReceiver> {
+	public sealed class MulticastReceiver : UniqueComponent<MulticastReceiver>, IDependent {
 		private readonly ThreadLocal<byte[]>      _buffer;    // 线程独立缓冲区
 		private readonly List<IMulticastListener> _listeners; // 处理回调
 
-		private readonly ComponentHook<Name>             _name;      // 过滤环路数据
-		private readonly ComponentHook<Addresses>        _addresses; // 地址管理
-		private readonly ComponentHook<Networks>         _networks;  // 网络管理
-		private readonly ComponentHook<MulticastSockets> _socket;    // 接收套接字
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<Name>             _name;      // 过滤环路数据
+		private readonly UniqueDependency<Addresses>        _addresses; // 地址管理
+		private readonly UniqueDependency<Networks>         _networks;  // 网络管理
+		private readonly UniqueDependency<MulticastSockets> _socket;    // 接收套接字
 
 		/// <summary>
 		///     构造器
@@ -29,15 +31,15 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		/// <param name="bufferSize">缓冲区容量</param>
 		public MulticastReceiver(uint bufferSize = 65536) {
 			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
-			_name      = BuildDependency<Name>();
-			_addresses = BuildDependency<Addresses>();
-			_socket    = BuildDependency<MulticastSockets>();
-			_networks  = BuildDependency<Networks>();
+			_name      = _dependencies.BuildDependency<Name>();
+			_addresses = _dependencies.BuildDependency<Addresses>();
+			_socket    = _dependencies.BuildDependency<MulticastSockets>();
+			_networks  = _dependencies.BuildDependency<Networks>();
 			_listeners = new List<IMulticastListener>();
 		}
 
-		public override bool Sync(IComponent dependency) {
-			base.Sync(dependency);
+		public bool Sync(IComponent dependency) {
+			_dependencies.Sync(dependency);
 			(dependency as IMulticastListener)?.Also(it => _listeners.Add(it));
 			return false;
 		}

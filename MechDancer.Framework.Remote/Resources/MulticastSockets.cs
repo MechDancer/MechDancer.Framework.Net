@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class MulticastSockets : AbstractComponent<MulticastSockets> {
+	public sealed class MulticastSockets : UniqueComponent<MulticastSockets> {
 		private readonly ConcurrentDictionary<NetworkInterface, UdpMulticastClient> _core
 			= new ConcurrentDictionary<NetworkInterface, UdpMulticastClient>();
 

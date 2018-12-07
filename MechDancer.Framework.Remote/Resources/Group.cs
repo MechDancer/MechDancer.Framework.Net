@@ -3,9 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class Group : AbstractComponent<Group> {
+	public sealed class Group : UniqueComponent<Group> {
 		private readonly ConcurrentDictionary<string, DateTime> _core
 			= new ConcurrentDictionary<string, DateTime>();
 

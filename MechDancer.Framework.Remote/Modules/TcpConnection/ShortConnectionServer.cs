@@ -1,24 +1,28 @@
 using System.Collections.Generic;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
-	public sealed class ShortConnectionServer : AbstractDependent<ShortConnectionServer> {
+	public sealed class ShortConnectionServer : UniqueComponent<ShortConnectionServer>,
+	                                            IDependent {
 		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
 			= new Dictionary<byte, IShortConnectionListener>();
 
 		private readonly HashSet<IMailListener> _mailListeners
 			= new HashSet<IMailListener>();
 
-		private readonly ComponentHook<ServerSockets> _servers;
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<ServerSockets> _servers;
 
 		public ShortConnectionServer() {
-			_servers = BuildDependency<ServerSockets>();
+			_servers = _dependencies.BuildDependency<ServerSockets>();
 		}
 
-		public override bool Sync(IComponent dependency) {
-			base.Sync(dependency);
+		public bool Sync(IComponent dependency) {
+			_dependencies.Sync(dependency);
 			(dependency as IMailListener)?.Let(it => _mailListeners.Add(it));
 			(dependency as IShortConnectionListener)?.Also(it => _connectListeners.Add(it.Interest, it));
 			return false;

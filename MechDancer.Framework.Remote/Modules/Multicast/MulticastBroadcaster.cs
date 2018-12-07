@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
@@ -8,19 +9,24 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	/// <summary>
 	///     组播发布者
 	/// </summary>
-	public sealed class MulticastBroadcaster : AbstractDependent<MulticastBroadcaster> {
+	public sealed class MulticastBroadcaster : UniqueComponent<MulticastBroadcaster>, IDependent {
 		private readonly int _size;
 
-		private readonly ComponentHook<Name>             _name; // 可以匿名发送组播
-		private readonly ComponentHook<PacketSlicer>     _slicer;
-		private readonly ComponentHook<MulticastSockets> _sockets;
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<Name>             _name; // 可以匿名发送组播
+		private readonly UniqueDependency<PacketSlicer>     _slicer;
+		private readonly UniqueDependency<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster(uint size = 0x4000) {
 			_size    = (int) size;
-			_name    = BuildDependency<Name>();
-			_slicer  = BuildDependency<PacketSlicer>();
-			_sockets = BuildDependency<MulticastSockets>();
+			_name    = _dependencies.BuildDependency<Name>();
+			_slicer  = _dependencies.BuildDependency<PacketSlicer>();
+			_sockets = _dependencies.BuildDependency<MulticastSockets>();
 		}
+
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
+
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
 			payload = payload ?? new byte[0];

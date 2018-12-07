@@ -1,18 +1,24 @@
 using System.Net.Sockets;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
-	public sealed class ShortConnectionClient : AbstractDependent<ShortConnectionClient> {
-		private readonly ComponentHook<Addresses>   _addresses;
-		private readonly ComponentHook<PortMonitor> _monitor;
-		private readonly ComponentHook<Name>        _name;
+	public sealed class ShortConnectionClient : UniqueComponent<ShortConnectionClient>,
+	                                            IDependent {
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<Addresses>   _addresses;
+		private readonly UniqueDependency<PortMonitor> _monitor;
+		private readonly UniqueDependency<Name>        _name;
 
 		public ShortConnectionClient() {
-			_name      = BuildDependency<Name>();
-			_addresses = BuildDependency<Addresses>();
-			_monitor   = BuildDependency<PortMonitor>();
+			_name      = _dependencies.BuildDependency<Name>();
+			_addresses = _dependencies.BuildDependency<Addresses>();
+			_monitor   = _dependencies.BuildDependency<PortMonitor>();
 		}
+
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
 		public NetworkStream Connect(string name, byte cmd) {
 			var address = _addresses.StrictField[name];

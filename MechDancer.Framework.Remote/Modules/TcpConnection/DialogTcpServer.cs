@@ -1,12 +1,13 @@
 using System;
 using System.Net.Sockets;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	using Func = Func<string, byte[], byte[]>;
 
-	public sealed class DialogTcpServer : AbstractDependent<DialogTcpServer>,
+	public sealed class DialogTcpServer : UniqueComponent<DialogTcpServer>,
 	                                      IShortConnectionListener {
 		private readonly Func _func;
 

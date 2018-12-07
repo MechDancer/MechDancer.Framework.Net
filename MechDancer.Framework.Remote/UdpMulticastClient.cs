@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using MechDancer.Framework.Dependency;
 
 namespace MechDancer.Framework.Net {
 	/// <inheritdoc />
@@ -22,10 +23,7 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="multicast">组播地址和端口</param>
 		/// <param name="networkInterface">目标出口网卡</param>
-		public UdpMulticastClient
-		(IPEndPoint       multicast,
-		 NetworkInterface networkInterface
-		) {
+		public UdpMulticastClient(IPEndPoint multicast, NetworkInterface networkInterface) {
 			_multicast = multicast;
 			// 允许端口复用
 			Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -34,12 +32,15 @@ namespace MechDancer.Framework.Net {
 			// 加入组播
 			Socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
 			                       new MulticastOption(multicast.Address));
-			if (networkInterface == null) return;
-			// 获取网卡序号
-			var index = networkInterface.GetIPProperties().GetIPv4Properties().Index;
-			// 指定出口网卡
-			Socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface,
-			                       IPAddress.HostToNetworkOrder(index));
+			// 获取网卡序号并指定出口网卡
+			networkInterface
+			  ?.GetIPProperties()
+			   .GetIPv4Properties()
+			   .Index
+			   .Also(index => Socket.SetSocketOption
+				         (SocketOptionLevel.IP,
+				          SocketOptionName.MulticastInterface,
+				          IPAddress.HostToNetworkOrder(index)));
 		}
 
 		/// <inheritdoc />

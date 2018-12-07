@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Modules.Multicast;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
@@ -13,12 +14,15 @@ namespace MechDancer.Framework.Net.Modules {
 	///		发现新成员时将调用回调函数
 	///     从未出现过的成员或离线时间超过超时时间的成员视作新成员
 	/// </remarks>
-	public sealed class GroupMonitor : AbstractDependent<GroupMonitor>,
+	public sealed class GroupMonitor : UniqueComponent<GroupMonitor>,
+	                                   IDependent,
 	                                   IMulticastListener {
-		private readonly ComponentHook<MulticastBroadcaster> _broadcaster;
-		private readonly ComponentHook<Group>                _group;
-		private readonly Action<string>                      _detected;
-		private readonly TimeSpan                            _timeout;
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
+		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
+		private readonly UniqueDependency<Group>                _group;
+		private readonly Action<string>                         _detected;
+		private readonly TimeSpan                               _timeout;
 
 		/// <summary>
 		/// 	构造器
@@ -28,9 +32,11 @@ namespace MechDancer.Framework.Net.Modules {
 		public GroupMonitor(TimeSpan? timeout = null, Action<string> detected = null) {
 			_timeout     = timeout ?? TimeSpan.MaxValue;
 			_detected    = detected;
-			_group       = BuildDependency<Group>();
-			_broadcaster = BuildDependency<MulticastBroadcaster>();
+			_group       = _dependencies.BuildDependency<Group>();
+			_broadcaster = _dependencies.BuildDependency<MulticastBroadcaster>();
 		}
+
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
 		/// <summary>
 		/// 	请求组中成员响应以证实存在性

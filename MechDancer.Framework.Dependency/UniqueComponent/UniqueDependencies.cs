@@ -1,15 +1,10 @@
 using System.Collections.Generic;
 
-namespace MechDancer.Framework.Dependency {
+namespace MechDancer.Framework.Dependency.UniqueComponent {
 	/// <summary>
-	///     抽象依赖
+	/// 	管理单例依赖项
 	/// </summary>
-	/// <remarks>
-	///     封装了依赖项管理功能
-	/// </remarks>
-	public abstract class AbstractDependent<T>
-		: AbstractComponent<T>, IDependent
-		where T : AbstractDependent<T> {
+	public sealed class UniqueDependencies {
 		/// <summary>
 		///     尚未装载的依赖项集
 		/// </summary>
@@ -20,7 +15,7 @@ namespace MechDancer.Framework.Dependency {
 		/// </summary>
 		/// <param name="dependency">新组件</param>
 		/// <returns>是否装载了全部依赖项</returns>
-		public virtual bool Sync(IComponent dependency)
+		public bool Sync(IComponent dependency)
 			=> _dependencies.Count == _dependencies.RemoveAll(hook => hook.TrySet(dependency));
 
 		/// <summary>
@@ -28,7 +23,7 @@ namespace MechDancer.Framework.Dependency {
 		/// </summary>
 		/// <typeparam name="TD">依赖项类型</typeparam>
 		/// <returns>钩子类型</returns>
-		protected ComponentHook<TD> BuildDependency<TD>()
-			where TD : class, IComponent => new ComponentHook<TD>().Also(it => _dependencies.Add(it));
+		public UniqueDependency<TD> BuildDependency<TD>()
+			where TD : class, IComponent => new UniqueDependency<TD>().Also(it => _dependencies.Add(it));
 	}
 }

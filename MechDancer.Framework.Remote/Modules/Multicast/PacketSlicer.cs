@@ -6,11 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
-	public class PacketSlicer : AbstractComponent<PacketSlicer>,
+	public class PacketSlicer : UniqueComponent<PacketSlicer>,
 	                            IMulticastListener {
 		private static byte[] InterestSet = {(byte) UdpCmd.PackageSlice};
 
@@ -52,7 +53,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 					pack      = new byte[size];
 					outStream = new MemoryStream(pack);
 				}
-				
+
 				outStream.Write(s);
 				outStream.Write(i);
 				var length = outStream.Available();

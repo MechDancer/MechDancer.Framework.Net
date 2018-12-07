@@ -1,9 +1,10 @@
 using System.Collections.Concurrent;
 using System.Net;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class Addresses : AbstractComponent<Addresses> {
+	public sealed class Addresses : UniqueComponent<Addresses> {
 		private readonly ConcurrentDictionary<string, IPEndPoint> _core
 			= new ConcurrentDictionary<string, IPEndPoint>();
 

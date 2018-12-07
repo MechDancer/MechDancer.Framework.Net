@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace MechDancer.Framework.Dependency {
+namespace MechDancer.Framework.Dependency.UniqueComponent {
 	/// <summary>
 	///     用于标定引用钩子转型上限的共通基类型
 	/// </summary>
@@ -41,7 +41,7 @@ namespace MechDancer.Framework.Dependency {
 	///     组件的引用钩子
 	/// </summary>
 	/// <typeparam name="T">组件类型</typeparam>
-	public class ComponentHook<T> : Hook<T, IComponent> where T : class, IComponent {
+	public class UniqueDependency<T> : Hook<T, IComponent> where T : class, IComponent {
 		public T StrictField => Field ?? throw new ComponentNotExistException(typeof(T));
 	}
 }

@@ -49,7 +49,7 @@ namespace UserInterface {
 				         }
 			         });
 
-			while (true) receiver.Invoke();
+			while (true) receiver.Invoke().Also(Console.WriteLine);
 		}
 
 		private static readonly IPEndPoint Address

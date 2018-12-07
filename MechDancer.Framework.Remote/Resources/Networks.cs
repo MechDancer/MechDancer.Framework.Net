@@ -3,9 +3,10 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class Networks : AbstractComponent<Networks> {
+	public sealed class Networks : UniqueComponent<Networks> {
 		private readonly Dictionary<NetworkInterface, UnicastIPAddressInformation> _core
 			= new Dictionary<NetworkInterface, UnicastIPAddressInformation>();
 

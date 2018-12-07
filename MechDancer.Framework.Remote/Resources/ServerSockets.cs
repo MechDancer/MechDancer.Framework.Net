@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using MechDancer.Framework.Dependency;
+using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
-	public sealed class ServerSockets : AbstractComponent<ServerSockets> {
+	public sealed class ServerSockets : UniqueComponent<ServerSockets> {
 		private readonly ConcurrentDictionary<int, TcpListener> _core
 			= new ConcurrentDictionary<int, TcpListener>();
 
