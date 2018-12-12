@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConsoleParser.Scanner;
 using MechDancer.Common;
 
-namespace ConsoleParser.Scanner {
+// ReSharper disable InconsistentNaming
+
+namespace MechDancer.ConsoleParser.Scanner {
 	/// <summary>
-	/// 	确定性自动机扫描器
+	///     确定性自动机扫描器
 	/// </summary>
 	/// <typeparam name="T">单体类型</typeparam>
 	public class DFA<T> : IScanner<T> where T : struct {
@@ -14,11 +17,11 @@ namespace ConsoleParser.Scanner {
 		private readonly int[][]          _table;
 
 		/// <summary>
-		/// 	当前状态
+		///     当前状态
 		/// </summary>
 		/// <remarks>
-		///		正数表示正在匹配
-		///		负数是匹配失败前最后状态的相反数，即能匹配部分的结束状态
+		///     正数表示正在匹配
+		///     负数是匹配失败前最后状态的相反数，即能匹配部分的结束状态
 		/// </remarks>
 		private int _state = 1;
 
@@ -28,7 +31,7 @@ namespace ConsoleParser.Scanner {
 			_map    = map;
 		}
 
-		public int  Length   { get; private set; } = 0;
+		public int  Length   { get; private set; }
 		public bool Complete => _ending.Contains(Math.Abs(_state));
 
 		public void Set(T item) {

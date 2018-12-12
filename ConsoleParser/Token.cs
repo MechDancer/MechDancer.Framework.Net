@@ -1,8 +1,8 @@
 using System;
 
-namespace ConsoleParser {
+namespace MechDancer.ConsoleParser {
 	/// <summary>
-	/// 	词性
+	///     词性
 	/// </summary>
 	public enum TokenType : byte {
 		Number,
@@ -13,14 +13,14 @@ namespace ConsoleParser {
 	}
 
 	/// <summary>
-	/// 	公共基类
+	///     公共基类
 	/// </summary>
 	public interface IToken {
 		TokenType TokenType { get; }
 	}
 
 	/// <summary>
-	/// 	单词
+	///     单词
 	/// </summary>
 	/// <typeparam name="T">类型</typeparam>
 	public sealed class Token<T> : IToken {
@@ -33,7 +33,7 @@ namespace ConsoleParser {
 		public TokenType TokenType { get; }
 
 		/// <summary>
-		/// 	判断两个词是否匹配
+		///     判断两个词是否匹配
 		/// </summary>
 		public bool Match(IToken other) {
 			if (TokenType != other.TokenType

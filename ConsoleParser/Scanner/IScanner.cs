@@ -1,4 +1,6 @@
 using System;
+using MechDancer.ConsoleParser;
+using MechDancer.ConsoleParser.Scanner;
 
 namespace ConsoleParser.Scanner {
 	public interface IScanner<in T> {
@@ -22,7 +24,7 @@ namespace ConsoleParser.Scanner {
 				case TokenType.Word:
 					return new DFA<char>(new[] {
 						                           new[] {2, 0},
-						                           new[] {2, 2},
+						                           new[] {2, 2}
 					                           },
 					                     new[] {2},
 					                     it => {
@@ -38,7 +40,7 @@ namespace ConsoleParser.Scanner {
 						                           new[] {5, 4, 6},
 						                           new[] {0, 0, 0},
 						                           new[] {6, 4, 6},
-						                           new[] {7, 7, 7},
+						                           new[] {7, 7, 7}
 					                           },
 					                     new[] {5, 7},
 					                     it => {
@@ -58,7 +60,7 @@ namespace ConsoleParser.Scanner {
 						                           new[] {0, 3, 3, 0, 0, 0},
 						                           new[] {5, 5, 5, 5, 0, 5},
 						                           new[] {5, 5, 5, 5, 6, 5},
-						                           new[] {0, 0, 0, 0, 0, 0},
+						                           new[] {0, 0, 0, 0, 0, 0}
 					                           },
 					                     new[] {3, 6},
 					                     it => {
