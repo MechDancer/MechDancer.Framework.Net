@@ -77,7 +77,7 @@ namespace MechDancer.Framework.Net.Protocol {
 		public static byte[] WaitReversed(this Stream receiver, uint n)
 			=> new byte[n].Also
 				(buffer => {
-					 while (--n > 0) {
+					 while (n-- > 0) {
 						 var temp = receiver.ReadByte();
 						 if (temp >= 0) buffer[n] = (byte) temp;
 						 else throw new IOException("stream is already end");
@@ -149,15 +149,32 @@ namespace MechDancer.Framework.Net.Protocol {
 			}
 		}
 
+		/// <summary>
+		///     先向流中写入长度再写入数据
+		/// </summary>
+		/// <param name="receiver">流</param>
+		/// <param name="payload">数据</param>
+		/// <typeparam name="T">流实现类型</typeparam>
+		/// <returns>流本身</returns>
 		public static T WriteWithLength<T>(this T receiver, byte[] payload)
 			where T : Stream => receiver.Also(it => {
 				                                  it.WriteZigzag(payload.Length, false);
 				                                  it.Write(payload);
 			                                  });
 
+		/// <summary>
+		///     先从流中读取长度，再读取指定长度内容
+		/// </summary>
+		/// <param name="receiver">流</param>
+		/// <returns>读到的内容</returns>
 		public static byte[] ReadWithLength(this Stream receiver)
 			=> receiver.WaitNBytes((int) receiver.ReadZigzag(false));
 
+		/// <summary>
+		///     计算内存流剩余空间
+		/// </summary>
+		/// <param name="receiver">内存流</param>
+		/// <returns>剩余空间长度</returns>
 		public static long Available(this MemoryStream receiver)
 			=> receiver.Capacity - receiver.Position;
 	}
