@@ -17,24 +17,24 @@ namespace MechDancer.Framework.Net {
 		private static readonly IPEndPoint Address
 			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
 
+		private readonly Addresses            _addresses = new Addresses();
+		private readonly MulticastBroadcaster _broadcaster;
+
+		private readonly ShortConnectionClient _client = new ShortConnectionClient();
+
 		private readonly Group        _group = new Group();
 		private readonly GroupMonitor _monitor;
 
-		private readonly Networks             _networks = new Networks();
-		private readonly MulticastSockets     _sockets;
-		private readonly MulticastBroadcaster _broadcaster;
-		private readonly MulticastReceiver    _receiver = new MulticastReceiver();
-		private readonly PacketSlicer         _slicer   = new PacketSlicer();
+		private readonly Networks          _networks = new Networks();
+		private readonly MulticastReceiver _receiver = new MulticastReceiver();
 
-		private readonly Addresses       _addresses     = new Addresses();
-		private readonly ServerSockets   _servers       = new ServerSockets();
-		private readonly PortBroadcaster _synchronizer1 = new PortBroadcaster();
-		private readonly PortMonitor     _synchronizer2 = new PortMonitor();
-
-		private readonly ShortConnectionClient _client = new ShortConnectionClient();
-		private readonly ShortConnectionServer _server = new ShortConnectionServer();
-
-		private readonly DynamicScope _scope;
+		private readonly DynamicScope          _scope;
+		private readonly ShortConnectionServer _server  = new ShortConnectionServer();
+		private readonly ServerSockets         _servers = new ServerSockets();
+		private readonly PacketSlicer          _slicer  = new PacketSlicer();
+		private readonly MulticastSockets      _sockets;
+		private readonly PortBroadcaster       _synchronizer1 = new PortBroadcaster();
+		private readonly PortMonitor           _synchronizer2 = new PortMonitor();
 
 		public RemoteHub(string                  name              = null,
 		                 uint                    size              = 0x4000,

@@ -21,10 +21,10 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 		private static readonly HashSet<byte> InterestSet
 			= new HashSet<byte> {(byte) UdpCmd.AddressAck};
 
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
-
 		private readonly UniqueDependency<Addresses>            _addresses;
 		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
+
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
 
 		public PortMonitor() {
 			_broadcaster = _dependencies.BuildDependency<MulticastBroadcaster>();

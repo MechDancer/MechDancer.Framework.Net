@@ -6,9 +6,8 @@ using MechDancer.Framework.Net.Resources;
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	public sealed class ShortConnectionClient : UniqueComponent<ShortConnectionClient>,
 	                                            IDependent {
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
-
 		private readonly UniqueDependency<Addresses>   _addresses;
+		private readonly UniqueDependencies            _dependencies = new UniqueDependencies();
 		private readonly UniqueDependency<PortMonitor> _monitor;
 		private readonly UniqueDependency<Name>        _name;
 
@@ -33,7 +32,8 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 				var stream = socket.GetStream();
 				stream.Say(cmd);
 				stream.Say(_name.Field?.Field ?? "");
-			} catch (SocketException) {
+			}
+			catch (SocketException) {
 				_addresses.StrictField.Remove(name);
 				_monitor.Field?.Ask(name);
 				return null;

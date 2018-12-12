@@ -10,10 +10,10 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
 			= new Dictionary<byte, IShortConnectionListener>();
 
+		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
+
 		private readonly HashSet<IMailListener> _mailListeners
 			= new HashSet<IMailListener>();
-
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
 
 		private readonly UniqueDependency<ServerSockets> _servers;
 
@@ -36,7 +36,8 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 					var payload = stream.ReadWithLength();
 					foreach (var listener in _mailListeners)
 						listener.Process(client, payload);
-				} else if (_connectListeners.TryGetValue(cmd, out var listener)) {
+				}
+				else if (_connectListeners.TryGetValue(cmd, out var listener)) {
 					listener.Process(client, stream);
 				}
 			}

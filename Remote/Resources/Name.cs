@@ -1,4 +1,3 @@
-using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {

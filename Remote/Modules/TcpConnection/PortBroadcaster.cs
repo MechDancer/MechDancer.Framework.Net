@@ -12,11 +12,11 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	                                      IMulticastListener {
 		private static readonly byte[] InterestSet = {(byte) UdpCmd.AddressAsk};
 
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
-
 		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
-		private readonly UniqueDependency<Name>                 _name;
-		private readonly UniqueDependency<ServerSockets>        _servers;
+
+		private readonly UniqueDependencies              _dependencies = new UniqueDependencies();
+		private readonly UniqueDependency<Name>          _name;
+		private readonly UniqueDependency<ServerSockets> _servers;
 
 		public PortBroadcaster() {
 			_name        = _dependencies.BuildDependency<Name>();

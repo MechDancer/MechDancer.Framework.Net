@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace MechDancer.Framework.Dependency {
 	/// <summary>
@@ -9,7 +10,7 @@ namespace MechDancer.Framework.Dependency {
 		///     构造器
 		/// </summary>
 		/// <param name="type">不存在的组件类型</param>
-		public ComponentNotExistException(Type type)
+		public ComponentNotExistException(MemberInfo type)
 			: base($"cannot find this dependency: {type.Name}") { }
 	}
 }

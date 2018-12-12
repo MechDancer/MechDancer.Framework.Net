@@ -22,7 +22,8 @@ namespace MechDancer.Framework.Net.Protocol {
 				if (temp > 0x7f) {
 					receiver.WriteByte((byte) (temp | 0x80));
 					temp >>= 7;
-				} else {
+				}
+				else {
 					receiver.WriteByte((byte) temp);
 					return receiver;
 				}

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;

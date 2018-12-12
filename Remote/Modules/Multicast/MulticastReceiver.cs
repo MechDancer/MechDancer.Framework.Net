@@ -15,15 +15,15 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	///     组播单体接收
 	/// </summary>
 	public sealed class MulticastReceiver : UniqueComponent<MulticastReceiver>, IDependent {
-		private readonly ThreadLocal<byte[]>      _buffer;    // 线程独立缓冲区
+		private readonly UniqueDependency<Addresses> _addresses; // 地址管理
+		private readonly ThreadLocal<byte[]>         _buffer;    // 线程独立缓冲区
+
+		private readonly UniqueDependencies       _dependencies = new UniqueDependencies();
 		private readonly List<IMulticastListener> _listeners; // 处理回调
 
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
-
-		private readonly UniqueDependency<Name>             _name;      // 过滤环路数据
-		private readonly UniqueDependency<Addresses>        _addresses; // 地址管理
-		private readonly UniqueDependency<Networks>         _networks;  // 网络管理
-		private readonly UniqueDependency<MulticastSockets> _socket;    // 接收套接字
+		private readonly UniqueDependency<Name>             _name;     // 过滤环路数据
+		private readonly UniqueDependency<Networks>         _networks; // 网络管理
+		private readonly UniqueDependency<MulticastSockets> _socket;   // 接收套接字
 
 		/// <summary>
 		///     构造器

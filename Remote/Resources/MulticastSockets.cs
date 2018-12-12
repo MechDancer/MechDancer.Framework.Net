@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
-using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 
 namespace MechDancer.Framework.Net.Resources {
@@ -22,7 +21,7 @@ namespace MechDancer.Framework.Net.Resources {
 
 		public UdpMulticastClient Temporary => new UdpMulticastClient(Address, null);
 
-		public UdpMulticastClient Get(NetworkInterface parameter) 
+		public UdpMulticastClient Get(NetworkInterface parameter)
 			=> _core.GetOrAdd(parameter, network => new UdpMulticastClient(Address, network));
 	}
 }

@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MechDancer.Framework.Dependency\MechDancer.Framework.Dependency.csproj"/>
+        <ProjectReference Include="..\Dependency\Dependency.csproj"/>
     </ItemGroup>
 
 </Project>

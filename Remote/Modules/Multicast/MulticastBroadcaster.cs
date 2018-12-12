@@ -10,11 +10,10 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	///     组播发布者
 	/// </summary>
 	public sealed class MulticastBroadcaster : UniqueComponent<MulticastBroadcaster>, IDependent {
-		private readonly int _size;
-
 		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
 
 		private readonly UniqueDependency<Name>             _name; // 可以匿名发送组播
+		private readonly int                                _size;
 		private readonly UniqueDependency<PacketSlicer>     _slicer;
 		private readonly UniqueDependency<MulticastSockets> _sockets;
 
@@ -48,7 +47,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 				stream.WriteByte(cmd);
 				stream.Write(payload);
 				Send();
-			} else if (_slicer.Field != null) {
+			}
+			else if (_slicer.Field != null) {
 				stream.WriteByte((byte) UdpCmd.PackageSlice);
 				var position = stream.Position;
 				_slicer.StrictField.Broadcast
@@ -59,7 +59,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 						 stream.Write(bytes);
 						 Send();
 					 });
-			} else throw new OutOfMemoryException("payload is too heavy");
+			}
+			else throw new OutOfMemoryException("payload is too heavy");
 		}
 	}
 }

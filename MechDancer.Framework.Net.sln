@@ -1,10 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Remote", "MechDancer.Framework.Remote\MechDancer.Framework.Remote.csproj", "{27485454-0D17-44C8-B2BE-E8243BBBFFA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remote", "Remote\Remote.csproj", "{27485454-0D17-44C8-B2BE-E8243BBBFFA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterface\UserInterface.csproj", "{BB3B17AE-2CBA-4870-80C5-1C0241F7CEFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechDancer.Framework.Dependency", "MechDancer.Framework.Dependency\MechDancer.Framework.Dependency.csproj", "{E8308B55-EE68-41BD-8C9D-7D5A10E84779}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dependency", "Dependency\Dependency.csproj", "{E8308B55-EE68-41BD-8C9D-7D5A10E84779}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleParser", "ConsoleParser\ConsoleParser.csproj", "{2BA3A88C-A7C2-4E97-9082-19A8D8987AF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{5F4B2148-7490-4450-AEE5-24B38AF35F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,13 @@ Global
 		{E8308B55-EE68-41BD-8C9D-7D5A10E84779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8308B55-EE68-41BD-8C9D-7D5A10E84779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8308B55-EE68-41BD-8C9D-7D5A10E84779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BA3A88C-A7C2-4E97-9082-19A8D8987AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BA3A88C-A7C2-4E97-9082-19A8D8987AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BA3A88C-A7C2-4E97-9082-19A8D8987AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BA3A88C-A7C2-4E97-9082-19A8D8987AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F4B2148-7490-4450-AEE5-24B38AF35F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F4B2148-7490-4450-AEE5-24B38AF35F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F4B2148-7490-4450-AEE5-24B38AF35F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F4B2148-7490-4450-AEE5-24B38AF35F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

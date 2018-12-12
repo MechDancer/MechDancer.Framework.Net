@@ -17,11 +17,10 @@ namespace MechDancer.Framework.Net.Modules {
 	public sealed class GroupMonitor : UniqueComponent<GroupMonitor>,
 	                                   IDependent,
 	                                   IMulticastListener {
-		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
-
 		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
-		private readonly UniqueDependency<Group>                _group;
+		private readonly UniqueDependencies                     _dependencies = new UniqueDependencies();
 		private readonly Action<string>                         _detected;
+		private readonly UniqueDependency<Group>                _group;
 		private readonly TimeSpan                               _timeout;
 
 		/// <summary>
@@ -38,12 +37,6 @@ namespace MechDancer.Framework.Net.Modules {
 
 		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
-		/// <summary>
-		/// 	请求组中成员响应以证实存在性
-		/// 	要使用此功能必须依赖组播发送
-		/// </summary>
-		public void Yell() => _broadcaster.StrictField.Broadcast((byte) UdpCmd.YellAsk);
-
 		public IReadOnlyCollection<byte> Interest => new byte[0];
 
 		public void Process(RemotePacket remotePacket) {
@@ -58,5 +51,11 @@ namespace MechDancer.Framework.Net.Modules {
 			if (cmd == (byte) UdpCmd.YellAsk) // 回应询问
 				_broadcaster.Field?.Broadcast((byte) UdpCmd.YellAck);
 		}
+
+		/// <summary>
+		/// 	请求组中成员响应以证实存在性
+		/// 	要使用此功能必须依赖组播发送
+		/// </summary>
+		public void Yell() => _broadcaster.StrictField.Broadcast((byte) UdpCmd.YellAsk);
 	}
 }

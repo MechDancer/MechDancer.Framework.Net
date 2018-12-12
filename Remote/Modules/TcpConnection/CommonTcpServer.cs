@@ -1,6 +1,5 @@
 using System;
 using System.Net.Sockets;
-using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Resources;
 
