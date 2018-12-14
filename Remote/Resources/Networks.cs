@@ -19,13 +19,7 @@ namespace MechDancer.Framework.Net.Resources {
 		///     这是一个耗时操作，最多可达100ms，谨慎使用
 		/// </summary>
 		public void Scan() {
-			bool NotVirtual(params string[] descriptions) {
-				return !descriptions.Any(it => it.ToLower().Contains("virtual"));
-			}
-
-			bool NotDocker(params string[] descriptions) {
-				return !descriptions.Any(it => it.ToLower().Contains("virtual"));
-			}
+			bool NotDocker(params string[] descriptions) => !descriptions.Any(it => it.ToLower().Contains("docker"));
 
 			var @new = from network in NetworkInterface.GetAllNetworkInterfaces()
 			           where network.OperationalStatus == OperationalStatus.Up
@@ -38,7 +32,6 @@ namespace MechDancer.Framework.Net.Resources {
 			              || network.NetworkInterfaceType == NetworkInterfaceType.FastEthernetFx
 			              || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet3Megabit
 			              || network.NetworkInterfaceType == NetworkInterfaceType.Unknown
-			           where NotVirtual(network.Name, network.Description)
 			           where NotDocker(network.Name, network.Description)
 			           select network;
 
