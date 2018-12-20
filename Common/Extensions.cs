@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace MechDancer.Common {
 	/// <summary>
@@ -148,6 +149,35 @@ namespace MechDancer.Common {
 		public static bool Otherwise(this bool receiver, Action func) {
 			if (!receiver) func();
 			return receiver;
+		}
+
+		/// <summary>
+		///     锁定读锁并调用方法
+		/// </summary>
+		public static T Read<T>(this ReaderWriterLock receiver, Func<T> block) {
+			receiver.AcquireReaderLock(-1);
+			var result = block();
+			receiver.ReleaseReaderLock();
+			return result;
+		}
+
+		/// <summary>
+		///     锁定写锁并调用方法
+		/// </summary>
+		public static void Write(this ReaderWriterLock receiver, Action block) {
+			receiver.AcquireWriterLock(-1);
+			block();
+			receiver.ReleaseWriterLock();
+		}
+
+		/// <summary>
+		///     锁定写锁并调用方法
+		/// </summary>
+		public static T Write<T>(this ReaderWriterLock receiver, Func<T> block) {
+			receiver.AcquireWriterLock(-1);
+			var result = block();
+			receiver.ReleaseWriterLock();
+			return result;
 		}
 	}
 }

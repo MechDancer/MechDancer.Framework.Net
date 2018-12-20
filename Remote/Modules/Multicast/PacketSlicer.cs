@@ -11,9 +11,13 @@ using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
+	/// <summary>
+	///     UDP 分片器
+	/// </summary>
 	public class PacketSlicer : UniqueComponent<PacketSlicer>,
 	                            IMulticastListener {
-		private static   byte[]                                       InterestSet = {(byte) UdpCmd.PackageSlice};
+		private static readonly byte[] InterestSet = {(byte) UdpCmd.PackageSlice};
+
 		private readonly ConcurrentDictionary<(string, long), Buffer> _buffers;
 		private readonly List<IMulticastListener>                     _listeners;
 
@@ -33,9 +37,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			if (payload[0] == 0) {
 				stream.ReadByte();
 				cmd = (byte) stream.ReadByte();
-			}
-			else
+			} else {
 				cmd = null;
+			}
 
 			var subSeq = stream.ReadZigzag(false);
 			var index  = stream.ReadZigzag(false);
@@ -44,8 +48,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			Tuple<byte, byte[]> result;
 			if (index == 0 && cmd.HasValue) {
 				result = new Tuple<byte, byte[]>(cmd.Value, rest);
-			}
-			else {
+			} else {
 				var info = (name, subSeq);
 				result = _buffers.GetOrAdd(info, new Buffer())
 				                 .Put(cmd, (int) index, rest)
@@ -86,8 +89,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 					outStream = new MemoryStream(pack);
 					outStream.WriteByte(0);   // 空一位作为停止位
 					outStream.WriteByte(cmd); // 保存实际指令
-				}
-				else {
+				} else {
 					pack      = new byte[size];
 					outStream = new MemoryStream(pack);
 				}
@@ -102,6 +104,14 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 				output(pack);
 			}
+		}
+
+		public void Refresh(TimeSpan timeout) {
+			var now = DateTime.Now;
+			foreach (var key in from buffer in _buffers
+			                    where buffer.Value.By(now) > timeout
+			                    select buffer.Key)
+				_buffers.TryRemove(key, out _);
 		}
 
 		private class Buffer {
@@ -119,8 +129,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 					if (Done) {
 						_mark[index].Ptr = payload;
 						_mark.Remove(index);
-					}
-					else {
+					} else {
 						_command = cmd;
 
 						for (var i = _list.Count; i < index; ++i) {
@@ -132,8 +141,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 						if (_list.Count != index) {
 							_mark[index].Ptr = payload;
 							_mark.Remove(index);
-						}
-						else {
+						} else {
 							_list.Add(new Hook {Ptr = payload});
 						}
 					}

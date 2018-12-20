@@ -54,7 +54,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 			_networks.Field
 			        ?.View
-			         .FirstOrDefault(it => Match(it.Value, address))
+			        ?.FirstOrDefault(it => Match(it.Value, address))
 			         .Key
 			        ?.Let(it => _socket.StrictField.Get(it));
 			_addresses.Field?.Update(sender, address);
