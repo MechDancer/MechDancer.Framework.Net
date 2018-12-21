@@ -119,17 +119,18 @@ namespace MechDancer.Framework.Net {
 		public bool OpenOneNetwork()
 			=> _sockets.View.Any()
 			|| null != _networks.View
-			                    .Keys
+			                    .Values
 			                    .FirstOrDefault()
-			                   ?.Also(it => _sockets.Get(it));
+			                   ?.Address
+			                    .Also(it => _sockets.Get(it));
 
 		/// <summary>
 		///     打开本机所有网络端口对应的套接字
 		/// </summary>
 		/// <returns>打开的网络端口数量</returns>
 		public int OpenAllNetworks() {
-			foreach (var network in _networks.View.Keys)
-				_sockets.Get(network);
+			foreach (var address in _networks.View.Values)
+				_sockets.Get(address.Address);
 			return _sockets.View.Count;
 		}
 

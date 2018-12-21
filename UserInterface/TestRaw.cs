@@ -11,6 +11,9 @@ using MechDancer.Framework.Net.Resources;
 
 namespace UserInterface {
 	public static class TestRaw {
+		private static readonly IPEndPoint Address
+			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
+
 		public static void Test() {
 			var group    = new Group();
 			var receiver = new MulticastReceiver();
@@ -25,8 +28,8 @@ namespace UserInterface {
 				         var networks = new Networks().Also(it => it.Scan());
 				         @this.Setup(new MulticastSockets(Address)
 					                    .Also(it => {
-						                          foreach (var network in networks.View.Keys)
-							                          it.Get(network);
+						                          foreach (var network in networks.View.Values)
+							                          it.Get(network.Address);
 					                          }));
 				         @this.Setup(new MulticastBroadcaster());
 				         @this.Setup(receiver);
@@ -44,15 +47,10 @@ namespace UserInterface {
 			}
 
 			Task.Run(async () => {
-				         while (true) {
-					         await Display(TimeSpan.FromSeconds(1));
-				         }
+				         while (true) await Display(TimeSpan.FromSeconds(1));
 			         });
 
 			while (true) receiver.Invoke().Also(Console.WriteLine);
 		}
-
-		private static readonly IPEndPoint Address
-			= new IPEndPoint(IPAddress.Parse("233.33.33.33"), 23333);
 	}
 }
