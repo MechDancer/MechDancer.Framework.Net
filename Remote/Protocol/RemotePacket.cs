@@ -1,5 +1,5 @@
 using System.IO;
-using MechDancer.Framework.Dependency;
+using MechDancer.Common;
 
 namespace MechDancer.Framework.Net.Protocol {
 	public sealed class RemotePacket {
@@ -29,14 +29,14 @@ namespace MechDancer.Framework.Net.Protocol {
 			Payload = buffer.ReadRest();
 		}
 
-		public byte[] Bytes =>
-			new MemoryStream(Payload.Length + 1)
-			   .Also(it => {
-				         it.WriteEnd(Sender);
-				         it.WriteByte(Command);
-				         it.Write(Payload);
-			         })
-			   .ToArray();
+		public byte[] Bytes
+			=> new MemoryStream(Payload.Length + 1)
+			  .Also(it => {
+						it.WriteEnd(Sender);
+						it.WriteByte(Command);
+						it.Write(Payload);
+					})
+			  .ToArray();
 
 		/// <summary>
 		///     解构

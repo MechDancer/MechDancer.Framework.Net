@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Modules;
 using MechDancer.Framework.Net.Modules.Multicast;
@@ -37,10 +38,10 @@ namespace MechDancer.Framework.Net {
 		private readonly PortMonitor           _synchronizer2 = new PortMonitor();
 
 		public RemoteHub(string                  name              = null,
-		                 uint                    size              = 0x4000,
-		                 IPEndPoint              address           = null,
-		                 Action<string>          newMemberDetected = null,
-		                 IEnumerable<IComponent> additions         = null
+						 uint                    size              = 0x4000,
+						 IPEndPoint              address           = null,
+						 Action<string>          newMemberDetected = null,
+						 IEnumerable<IComponent> additions         = null
 		) {
 			_monitor     = new GroupMonitor(detected: newMemberDetected);
 			_sockets     = new MulticastSockets(address ?? Address);
@@ -81,17 +82,17 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		public (ICollection<IPAddress>, ICollection<int>) Endpoints
 			=> (_networks.View
-			             .Values
-			             .Select(it => it.Address)
-			             .ToList(),
-			    _servers.View
-			            .Keys
-			            .ToList()
-			            .Also(list => _servers.Default
-			                                  .LocalEndpoint
-			                                  .Let(it => (IPEndPoint) it)
-			                                  .Port
-			                                  .Also(list.Add))
+						 .Values
+						 .Select(it => it.Address)
+						 .ToList(),
+				_servers.View
+						.Keys
+						.ToList()
+						.Also(list => _servers.Default
+											  .LocalEndpoint
+											  .Let(it => (IPEndPoint) it)
+											  .Port
+											  .Also(list.Add))
 			   );
 
 		/// <summary>
@@ -116,42 +117,46 @@ namespace MechDancer.Framework.Net {
 		///     若当前已有打开的网络端口则不进行任何操作
 		/// </remarks>
 		/// <returns>是否有网络端口已被打开</returns>
-		public bool OpenOneNetwork()
-			=> _sockets.View.Any()
-			|| null != _networks.View
-			                    .Values
-			                    .FirstOrDefault()
-			                   ?.Address
-			                    .Also(it => _sockets.Get(it));
+		public bool OpenOneNetwork() {
+			if (_sockets.View.Any()) return true;
+			if (_networks.View.None()) return false;
+			_networks.View.First().Also(it => _sockets.Open(it.Key, it.Value.Address));
+			return true;
+		}
 
 		/// <summary>
 		///     打开本机所有网络端口对应的套接字
 		/// </summary>
 		/// <returns>打开的网络端口数量</returns>
 		public int OpenAllNetworks() {
-			foreach (var address in _networks.View.Values)
-				_sockets.Get(address.Address);
+			foreach (var it in _networks.View)
+				_sockets.Open(it.Key, it.Value.Address);
 			return _sockets.View.Count;
 		}
 
 		/// <summary>
 		///     请求组成员自证存在性
 		/// </summary>
-		public void Yell() => _monitor.Yell();
+		public void Yell() {
+			_monitor.Yell();
+		}
 
 		/// <summary>
 		///     主动询问一个远端的端口号
 		/// </summary>
 		/// <param name="name">对方名字</param>
-		public void Ask(string name) => _synchronizer2.Ask(name);
+		public void Ask(string name) {
+			_synchronizer2.Ask(name);
+		}
 
 		/// <summary>
 		///     广播数据
 		/// </summary>
 		/// <param name="cmd">指令代码</param>
 		/// <param name="payload">数据负载</param>
-		public void Broadcast(byte cmd, byte[] payload)
-			=> _broadcaster.Broadcast(cmd, payload);
+		public void Broadcast(byte cmd, byte[] payload) {
+			_broadcaster.Broadcast(cmd, payload);
+		}
 
 		/// <summary>
 		///     连接到一个TCP远端
@@ -176,11 +181,15 @@ namespace MechDancer.Framework.Net {
 		///     收到的UDP包
 		///     若收到的是自己发的则返回空
 		/// </returns>
-		public RemotePacket Invoke() => _receiver.Invoke();
+		public RemotePacket Invoke() {
+			return _receiver.Invoke();
+		}
 
 		/// <summary>
 		///     调度一次TCP短连接服务
 		/// </summary>
-		public void Accept() => _server.Invoke();
+		public void Accept() {
+			_server.Invoke();
+		}
 	}
 }

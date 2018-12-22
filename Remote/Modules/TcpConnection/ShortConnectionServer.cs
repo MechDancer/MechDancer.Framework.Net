@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Protocol;
@@ -6,7 +7,7 @@ using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	public sealed class ShortConnectionServer : UniqueComponent<ShortConnectionServer>,
-	                                            IDependent {
+												IDependent {
 		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
 			= new Dictionary<byte, IShortConnectionListener>();
 
@@ -36,8 +37,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 					var payload = stream.ReadWithLength();
 					foreach (var listener in _mailListeners)
 						listener.Process(client, payload);
-				}
-				else if (_connectListeners.TryGetValue(cmd, out var listener)) {
+				} else if (_connectListeners.TryGetValue(cmd, out var listener)) {
 					listener.Process(client, stream);
 				}
 			}

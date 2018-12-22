@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net.Modules;
 using MechDancer.Framework.Net.Modules.Multicast;
@@ -20,23 +21,23 @@ namespace UserInterface {
 
 			var scope = new DynamicScope()
 			   .Also(@this => {
-				         @this.Setup(new Name(".Net"));
+						 @this.Setup(new Name(".Net"));
 
-				         @this.Setup(group);
-				         @this.Setup(new GroupMonitor(detected: Console.WriteLine));
+						 @this.Setup(group);
+						 @this.Setup(new GroupMonitor(detected: Console.WriteLine));
 
-				         var networks = new Networks().Also(it => it.Scan());
-				         @this.Setup(new MulticastSockets(Address)
-					                    .Also(it => {
-						                          foreach (var network in networks.View.Values)
-							                          it.Get(network.Address);
-					                          }));
-				         @this.Setup(new MulticastBroadcaster());
-				         @this.Setup(receiver);
-				         @this.Setup(new PacketSlicer());
+						 var networks = new Networks().Also(it => it.Scan());
+						 @this.Setup(new MulticastSockets(Address)
+										.Also(it => {
+												  foreach (var (@interface, address) in networks.View)
+													  it.Open(@interface, address.Address);
+											  }));
+						 @this.Setup(new MulticastBroadcaster());
+						 @this.Setup(receiver);
+						 @this.Setup(new PacketSlicer());
 
-				         @this.Setup(new CommonUdpServer((_, pack) => Console.WriteLine(pack.GetString())));
-			         });
+						 @this.Setup(new CommonUdpServer((_, pack) => Console.WriteLine(pack.GetString())));
+					 });
 
 			async Task Display(TimeSpan timeSpan) {
 				Console.Write("members: [");
@@ -47,8 +48,8 @@ namespace UserInterface {
 			}
 
 			Task.Run(async () => {
-				         while (true) await Display(TimeSpan.FromSeconds(1));
-			         });
+						 while (true) await Display(TimeSpan.FromSeconds(1));
+					 });
 
 			while (true) receiver.Invoke().Also(Console.WriteLine);
 		}

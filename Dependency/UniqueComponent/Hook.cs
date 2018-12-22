@@ -10,6 +10,7 @@ namespace MechDancer.Framework.Dependency.UniqueComponent {
 		bool TrySet(T obj);
 	}
 
+	/// <inheritdoc />
 	/// <summary>
 	///     引用钩子类型
 	/// </summary>
@@ -24,9 +25,12 @@ namespace MechDancer.Framework.Dependency.UniqueComponent {
 			set => _lock.Write(() => _field = value);
 		}
 
-		public bool TrySet(TS obj) => (obj as T)?.Also(it => Field = it) != null;
+		public bool TrySet(TS obj) {
+			return (obj as T)?.Also(it => Field = it) != null;
+		}
 	}
 
+	/// <inheritdoc />
 	/// <summary>
 	///     组件的引用钩子
 	/// </summary>

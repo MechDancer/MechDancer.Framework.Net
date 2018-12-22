@@ -1,5 +1,5 @@
 using System.IO;
-using MechDancer.Framework.Dependency;
+using MechDancer.Common;
 
 namespace MechDancer.Framework.Net.Protocol {
 	public static partial class Functions {
@@ -22,8 +22,7 @@ namespace MechDancer.Framework.Net.Protocol {
 				if (temp > 0x7f) {
 					receiver.WriteByte((byte) (temp | 0x80));
 					temp >>= 7;
-				}
-				else {
+				} else {
 					receiver.WriteByte((byte) temp);
 					return receiver;
 				}
@@ -34,15 +33,15 @@ namespace MechDancer.Framework.Net.Protocol {
 			bool        signed
 		) {
 			return new MemoryStream(10)
-			      .Also(stream => {
-				            int b;
-				            do {
-					            b = receiver.ReadByte();
-					            stream.WriteByte((byte) b);
-				            } while (b > 0x7f);
-			            })
-			      .ToArray()
-			      .Zigzag(signed);
+				  .Also(stream => {
+							int b;
+							do {
+								b = receiver.ReadByte();
+								stream.WriteByte((byte) b);
+							} while (b > 0x7f);
+						})
+				  .ToArray()
+				  .Zigzag(signed);
 		}
 
 		public static byte[] Zigzag(
@@ -50,8 +49,8 @@ namespace MechDancer.Framework.Net.Protocol {
 			bool      signed
 		) {
 			return new MemoryStream(10)
-			      .WriteZigzag(receiver, signed)
-			      .ToArray();
+				  .WriteZigzag(receiver, signed)
+				  .ToArray();
 		}
 
 		public static long Zigzag(

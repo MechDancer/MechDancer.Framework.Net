@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using MechDancer.Framework.Dependency;
+using MechDancer.Common;
 
 namespace MechDancer.Framework.Net.Protocol {
 	public static partial class Functions {
@@ -17,8 +17,10 @@ namespace MechDancer.Framework.Net.Protocol {
 			this T[] receiver,
 			int      begin = 0,
 			int      end   = int.MaxValue
-		) => new T[Math.Min(end, receiver.Length) - begin]
-		   .Also(it => Array.Copy(receiver, begin, it, 0, it.Length));
+		) {
+			return new T[Math.Min(end, receiver.Length) - begin]
+			   .Also(it => Array.Copy(receiver, begin, it, 0, it.Length));
+		}
 
 		/// <summary>
 		///     向流写入一个字符数组
@@ -28,7 +30,9 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <typeparam name="T">流实现类型</typeparam>
 		/// <returns>流</returns>
 		public static T Write<T>(this T receiver, byte[] bytes)
-			where T : Stream => receiver.Also(it => it.Write(bytes, 0, bytes.Length));
+			where T : Stream {
+			return receiver.Also(it => it.Write(bytes, 0, bytes.Length));
+		}
 
 		/// <summary>
 		///     把一个字节数组按相反的顺序写入流
@@ -44,10 +48,12 @@ namespace MechDancer.Framework.Net.Protocol {
 			byte[] bytes,
 			int    index  = 0,
 			int    length = int.MaxValue
-		) where T : Stream => receiver.Also(it => {
-			                                    index += Math.Min(length, bytes.Length - index);
-			                                    while (index-- > 0) it.WriteByte(bytes[index]);
-		                                    });
+		) where T : Stream {
+			return receiver.Also(it => {
+									 index += Math.Min(length, bytes.Length - index);
+									 while (index-- > 0) it.WriteByte(bytes[index]);
+								 });
+		}
 
 		/// <summary>
 		///     从输入流阻塞接收 n 个字节数据，或直到流关闭。
@@ -56,8 +62,8 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <param name="receiver"></param>
 		/// <param name="n"></param>
 		/// <returns></returns>
-		public static byte[] WaitNBytes(this Stream receiver, int n)
-			=> new MemoryStream(n).Let
+		public static byte[] WaitNBytes(this Stream receiver, int n) {
+			return new MemoryStream(n).Let
 				(buffer => {
 					 for (var i = 0; i < n; ++i) {
 						 var temp = receiver.ReadByte();
@@ -67,6 +73,7 @@ namespace MechDancer.Framework.Net.Protocol {
 
 					 return buffer.GetBuffer();
 				 });
+		}
 
 		/// <summary>
 		///     从输入流阻塞接收 n 个字节数据，并将数组按相反的方向读出。
@@ -74,8 +81,8 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <param name="receiver"></param>
 		/// <param name="n"></param>
 		/// <returns></returns>
-		public static byte[] WaitReversed(this Stream receiver, uint n)
-			=> new byte[n].Also
+		public static byte[] WaitReversed(this Stream receiver, uint n) {
+			return new byte[n].Also
 				(buffer => {
 					 while (n-- > 0) {
 						 var temp = receiver.ReadByte();
@@ -83,6 +90,7 @@ namespace MechDancer.Framework.Net.Protocol {
 						 else throw new IOException("stream is already end");
 					 }
 				 });
+		}
 
 		/// <summary>
 		///     字节数组转字符串
@@ -90,8 +98,9 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <param name="receiver"></param>
 		/// <param name="encoding"></param>
 		/// <returns></returns>
-		public static string GetString(this byte[] receiver, Encoding encoding = null)
-			=> (encoding ?? Encoding.Default).GetString(receiver);
+		public static string GetString(this byte[] receiver, Encoding encoding = null) {
+			return (encoding ?? Encoding.Default).GetString(receiver);
+		}
 
 		/// <summary>
 		///     字符串转字节数组
@@ -99,8 +108,9 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <param name="receiver"></param>
 		/// <param name="encoding"></param>
 		/// <returns></returns>
-		public static byte[] GetBytes(this string receiver, Encoding encoding = null)
-			=> (encoding ?? Encoding.Default).GetBytes(receiver);
+		public static byte[] GetBytes(this string receiver, Encoding encoding = null) {
+			return (encoding ?? Encoding.Default).GetBytes(receiver);
+		}
 
 		/// <summary>
 		///     向流中写入字符串，再写入结尾
@@ -110,10 +120,12 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <typeparam name="T">流实现类型</typeparam>
 		/// <returns>流</returns>
 		public static T WriteEnd<T>(this T receiver, string text)
-			where T : Stream => receiver.Also(it => {
-				                                  it.Write(text.GetBytes());
-				                                  it.WriteByte(0);
-			                                  });
+			where T : Stream {
+			return receiver.Also(it => {
+									 it.Write(text.GetBytes());
+									 it.WriteByte(0);
+								 });
+		}
 
 		/// <summary>
 		///     从流读取一个带结尾的字符串
@@ -157,25 +169,29 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <typeparam name="T">流实现类型</typeparam>
 		/// <returns>流本身</returns>
 		public static T WriteWithLength<T>(this T receiver, byte[] payload)
-			where T : Stream => receiver.Also(it => {
-				                                  it.WriteZigzag(payload.Length, false);
-				                                  it.Write(payload);
-			                                  });
+			where T : Stream {
+			return receiver.Also(it => {
+									 it.WriteZigzag(payload.Length, false);
+									 it.Write(payload);
+								 });
+		}
 
 		/// <summary>
 		///     先从流中读取长度，再读取指定长度内容
 		/// </summary>
 		/// <param name="receiver">流</param>
 		/// <returns>读到的内容</returns>
-		public static byte[] ReadWithLength(this Stream receiver)
-			=> receiver.WaitNBytes((int) receiver.ReadZigzag(false));
+		public static byte[] ReadWithLength(this Stream receiver) {
+			return receiver.WaitNBytes((int) receiver.ReadZigzag(false));
+		}
 
 		/// <summary>
 		///     计算内存流剩余空间
 		/// </summary>
 		/// <param name="receiver">内存流</param>
 		/// <returns>剩余空间长度</returns>
-		public static long Available(this MemoryStream receiver)
-			=> receiver.Capacity - receiver.Position;
+		public static long Available(this MemoryStream receiver) {
+			return receiver.Capacity - receiver.Position;
+		}
 	}
 }

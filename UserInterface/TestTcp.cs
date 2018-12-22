@@ -1,8 +1,6 @@
 using System;
-using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
-using MechDancer.Framework.Dependency;
+using MechDancer.Common;
 using MechDancer.Framework.Net;
 using MechDancer.Framework.Net.Modules.TcpConnection;
 using MechDancer.Framework.Net.Protocol;
@@ -15,8 +13,8 @@ namespace UserInterface {
 			hub.OpenAllNetworks();
 
 			new Thread(() => {
-				           while (true) hub.Invoke();
-			           }) {IsBackground = true}.Start();
+						   while (true) hub.Invoke();
+					   }) {IsBackground = true}.Start();
 
 			while (true) {
 				var success = hub.Connect

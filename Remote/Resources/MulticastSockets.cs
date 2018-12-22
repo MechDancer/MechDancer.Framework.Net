@@ -16,7 +16,16 @@ namespace MechDancer.Framework.Net.Resources {
 
 		public UdpMulticastClient Temporary => new UdpMulticastClient(Address, null);
 
-		public UdpMulticastClient Get(IPAddress parameter)
-			=> _core.GetOrAdd(parameter, network => new UdpMulticastClient(Address, network));
+		public UdpMulticastClient this[NetworkInterface @interface, IPAddress address] {
+			get {
+				Default.Bind(address);
+				return _core.GetOrAdd(@interface, new UdpMulticastClient(Address, @interface));
+			}
+		}
+
+		public void Open(NetworkInterface @interface, IPAddress address) {
+			Default.Bind(address);
+			_core.TryAdd(@interface, new UdpMulticastClient(Address, @interface));
+		}
 	}
 }

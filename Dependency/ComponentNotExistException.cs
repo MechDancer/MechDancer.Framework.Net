@@ -1,10 +1,11 @@
 using System;
 
 namespace MechDancer.Framework.Dependency {
+	/// <inheritdoc />
 	/// <summary>
 	///     组件不存在异常
 	/// </summary>
-	/// <param name="T">不存在的组件类型</param>
+	/// <typeparam name="T">不存在的组件类型</typeparam>
 	public sealed class ComponentNotExistException<T> : NullReferenceException
 		where T : IComponent {
 		/// <summary>

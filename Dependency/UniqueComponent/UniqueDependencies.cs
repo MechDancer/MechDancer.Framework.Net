@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using MechDancer.Common;
 
 namespace MechDancer.Framework.Dependency.UniqueComponent {
 	/// <summary>
-	/// 	管理单例依赖项
+	///     管理单例依赖项
 	/// </summary>
 	public sealed class UniqueDependencies {
 		/// <summary>
@@ -15,8 +16,9 @@ namespace MechDancer.Framework.Dependency.UniqueComponent {
 		/// </summary>
 		/// <param name="dependency">新组件</param>
 		/// <returns>是否装载了全部依赖项</returns>
-		public bool Sync(IComponent dependency)
-			=> _dependencies.Count == _dependencies.RemoveAll(hook => hook.TrySet(dependency));
+		public bool Sync(IComponent dependency) {
+			return _dependencies.Count == _dependencies.RemoveAll(hook => hook.TrySet(dependency));
+		}
 
 		/// <summary>
 		///     构造一个依赖项钩子
@@ -24,6 +26,8 @@ namespace MechDancer.Framework.Dependency.UniqueComponent {
 		/// <typeparam name="TD">依赖项类型</typeparam>
 		/// <returns>钩子类型</returns>
 		public UniqueDependency<TD> BuildDependency<TD>()
-			where TD : class, IComponent => new UniqueDependency<TD>().Also(it => _dependencies.Add(it));
+			where TD : class, IComponent {
+			return new UniqueDependency<TD>().Also(it => _dependencies.Add(it));
+		}
 	}
 }
