@@ -36,7 +36,8 @@ namespace UserInterface {
 						 @this.Setup(receiver);
 						 @this.Setup(new PacketSlicer());
 
-						 @this.Setup(new CommonUdpServer((_, pack) => Console.WriteLine(pack.GetString())));
+						 @this.Setup(MulticastListener.CommonUdpListener
+										 ((_, pack) => Console.WriteLine(pack.GetString())));
 					 });
 
 			async Task Display(TimeSpan timeSpan) {

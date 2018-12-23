@@ -1,5 +1,4 @@
 using System;
-using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Net;
 using MechDancer.Framework.Net.Modules.Multicast;
 using MechDancer.Framework.Net.Protocol;
@@ -7,21 +6,6 @@ using MechDancer.Framework.Net.Resources;
 
 namespace UserInterface {
 	public static class TestSlice {
-		public static void TestReceive() {
-			var hub = new RemoteHub
-				(additions: new[] {
-					                  new CommonUdpServer
-						                  ((_, bytes) => Console.WriteLine(bytes.GetString()))
-				                  });
-			while (true) hub.Invoke();
-		}
-
-		public static void TestSend() {
-			var hub = new RemoteHub("C# slice sender", 512);
-			hub.OpenOneNetwork();
-			hub.Broadcast((byte) UdpCmd.Common, LiSao.GetBytes());
-		}
-
 		private const string LiSao = @"
 		帝高阳之苗裔兮，朕皇考曰伯庸。
         摄提贞于孟陬兮，惟庚寅吾以降。
@@ -212,5 +196,20 @@ namespace UserInterface {
         国无人莫我知兮，又何怀乎故都！
         既莫足与为美政兮，吾将从彭咸之所居！
 ";
+
+		public static void TestReceive() {
+			var hub = new RemoteHub
+				(additions: new[] {
+									  MulticastListener.CommonUdpListener
+										  ((_, bytes) => Console.WriteLine(bytes.GetString()))
+								  });
+			while (true) hub.Invoke();
+		}
+
+		public static void TestSend() {
+			var hub = new RemoteHub("C# slice sender", 512);
+			hub.OpenOneNetwork();
+			hub.Broadcast((byte) UdpCmd.Common, LiSao.GetBytes());
+		}
 	}
 }
