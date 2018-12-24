@@ -47,8 +47,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 				stream.WriteByte(cmd);
 				stream.Write(payload);
 				Send();
-			}
-			else if (_slicer.Field != null) {
+			} else if (_slicer.Field != null) {
 				stream.WriteByte((byte) UdpCmd.PackageSlice);
 				var position = stream.Position;
 				_slicer.StrictField.Broadcast
@@ -59,8 +58,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 						 stream.Write(bytes);
 						 Send();
 					 });
+			} else {
+				throw new OutOfMemoryException("payload is too heavy");
 			}
-			else throw new OutOfMemoryException("payload is too heavy");
 		}
 	}
 }

@@ -32,8 +32,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 				var stream = socket.GetStream();
 				stream.Say(cmd);
 				stream.Say(_name.Field?.Field ?? "");
-			}
-			catch (SocketException) {
+			} catch (SocketException) {
 				_addresses.StrictField.Remove(name);
 				_monitor.Field?.Ask(name);
 				return null;

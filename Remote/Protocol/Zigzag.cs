@@ -31,27 +31,25 @@ namespace MechDancer.Framework.Net.Protocol {
 		public static long ReadZigzag(
 			this Stream receiver,
 			bool        signed
-		) {
-			return new MemoryStream(10)
-				  .Also(stream => {
-							int b;
-							do {
-								b = receiver.ReadByte();
-								stream.WriteByte((byte) b);
-							} while (b > 0x7f);
-						})
-				  .ToArray()
-				  .Zigzag(signed);
-		}
+		) =>
+			new MemoryStream(10)
+			   .Also(stream => {
+				         int b;
+				         do {
+					         b = receiver.ReadByte();
+					         stream.WriteByte((byte) b);
+				         } while (b > 0x7f);
+			         })
+			   .ToArray()
+			   .Zigzag(signed);
 
 		public static byte[] Zigzag(
 			this long receiver,
 			bool      signed
-		) {
-			return new MemoryStream(10)
-				  .WriteZigzag(receiver, signed)
-				  .ToArray();
-		}
+		) =>
+			new MemoryStream(10)
+			   .WriteZigzag(receiver, signed)
+			   .ToArray();
 
 		public static long Zigzag(
 			this byte[] receiver,

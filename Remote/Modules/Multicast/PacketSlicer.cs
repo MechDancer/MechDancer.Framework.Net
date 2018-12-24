@@ -16,7 +16,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	///     UDP 分片器
 	/// </summary>
 	public class PacketSlicer : UniqueComponent<PacketSlicer>,
-								IMulticastListener {
+	                            IMulticastListener {
 		private static readonly byte[] InterestSet = {(byte) UdpCmd.PackageSlice};
 
 		private readonly ConcurrentDictionary<(string, long), Buffer> _buffers;
@@ -52,19 +52,19 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			} else {
 				var info = (name, subSeq);
 				result = _buffers.GetOrAdd(info, new Buffer())
-								 .Put(cmd, (int) index, rest)
-								?.Also(__ => _buffers.TryRemove(info, out _));
+				                 .Put(cmd, (int) index, rest)
+				                ?.Also(__ => _buffers.TryRemove(info, out _));
 			}
 
 			result?.Let(it => new RemotePacket(name, it.Item1, it.Item2))
-				  ?.Also(it => {
-							 foreach (
-								 var listener
-								 in from item in _listeners
-									where !item.Interest.Any() || item.Interest.Contains(it.Command)
-									select item
-							 ) listener.Process(it);
-						 });
+			      ?.Also(it => {
+				             foreach (
+					             var listener
+					             in from item in _listeners
+					                where !item.Interest.Any() || item.Interest.Contains(it.Command)
+					                select item
+				             ) listener.Process(it);
+			             });
 		}
 
 		public bool Sync(IComponent dependency) {
@@ -99,8 +99,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 				outStream.Write(i);
 				var length = outStream.Available();
 				Array.Copy(payload, stream.Position,
-						   pack, outStream.Position,
-						   outStream.Available());
+				           pack, outStream.Position,
+				           outStream.Available());
 				stream.Position += length;
 
 				output(pack);
@@ -110,8 +110,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		public void Refresh(TimeSpan timeout) {
 			var now = DateTime.Now;
 			foreach (var key in from buffer in _buffers
-								where buffer.Value.By(now) > timeout
-								select buffer.Key)
+			                    where buffer.Value.By(now) > timeout
+			                    select buffer.Key)
 				_buffers.TryRemove(key, out _);
 		}
 
@@ -123,9 +123,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			private DateTime _time = DateTime.Now;
 			private bool     Done => _command != null;
 
-			public TimeSpan By(in DateTime now) {
-				return now - _time;
-			}
+			public TimeSpan By(in DateTime now) => now - _time;
 
 			public Tuple<byte, byte[]> Put(byte? cmd, int index, byte[] payload) {
 				lock (_list) {
@@ -156,8 +154,8 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 						(_command.Value,
 						 new MemoryStream(_list.Sum(it => it.Ptr.Length))
 							.Also(it => {
-									  foreach (var hook in _list) it.Write(hook.Ptr);
-								  })
+								      foreach (var hook in _list) it.Write(hook.Ptr);
+							      })
 							.GetBuffer());
 				}
 

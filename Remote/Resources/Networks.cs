@@ -25,9 +25,7 @@ namespace MechDancer.Framework.Net.Resources {
 		/// <remarks>
 		///     构造时自动扫描一次网络
 		/// </remarks>
-		public Networks() {
-			Scan();
-		}
+		public Networks() => Scan();
 
 		/// <summary>
 		///     获取映射的副本
@@ -40,35 +38,33 @@ namespace MechDancer.Framework.Net.Resources {
 		///     这是一个耗时操作，最多可达100ms，谨慎使用
 		/// </summary>
 		public void Scan() {
-			bool NotDocker(params string[] descriptions) {
-				return !descriptions.Any(it => it.ToLower().Contains("docker"));
-			}
+			bool NotDocker(params string[] descriptions) => !descriptions.Any(it => it.ToLower().Contains("docker"));
 
 			// 筛选：状态；支持组播；是WiFi、以太网或未知类型；非docker创建的虚拟网卡；
 			var @new = from network in NetworkInterface.GetAllNetworkInterfaces()
-					   where network.OperationalStatus == OperationalStatus.Up
-						  || network.OperationalStatus == OperationalStatus.Unknown
-					   where network.SupportsMulticast
-					   where network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
-						  || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet
-						  || network.NetworkInterfaceType == NetworkInterfaceType.GigabitEthernet
-						  || network.NetworkInterfaceType == NetworkInterfaceType.FastEthernetT
-						  || network.NetworkInterfaceType == NetworkInterfaceType.FastEthernetFx
-						  || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet3Megabit
-						  || network.NetworkInterfaceType == NetworkInterfaceType.Unknown
-					   where NotDocker(network.Name, network.Description)
-					   select network;
+			           where network.OperationalStatus == OperationalStatus.Up
+			              || network.OperationalStatus == OperationalStatus.Unknown
+			           where network.SupportsMulticast
+			           where network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
+			              || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet
+			              || network.NetworkInterfaceType == NetworkInterfaceType.GigabitEthernet
+			              || network.NetworkInterfaceType == NetworkInterfaceType.FastEthernetT
+			              || network.NetworkInterfaceType == NetworkInterfaceType.FastEthernetFx
+			              || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet3Megabit
+			              || network.NetworkInterfaceType == NetworkInterfaceType.Unknown
+			           where NotDocker(network.Name, network.Description)
+			           select network;
 
 			_lock.Write(() => {
-							_core.Clear();
-							foreach (var network in @new)
-								network.GetIPProperties()
-									   .UnicastAddresses
-									   .Where(it => AddressFamily.InterNetwork == it.Address.AddressFamily)
-									   .SingleOrDefault(it => it.Address.GetAddressBytes()[0]
-																.Let(b => b != 127))
-									  ?.Also(it => _core.Add(network, it));
-						});
+				            _core.Clear();
+				            foreach (var network in @new)
+					            network.GetIPProperties()
+					                   .UnicastAddresses
+					                   .Where(it => AddressFamily.InterNetwork == it.Address.AddressFamily)
+					                   .SingleOrDefault(it => it.Address.GetAddressBytes()[0]
+					                                            .Let(b => b != 127))
+					                  ?.Also(it => _core.Add(network, it));
+			            });
 		}
 	}
 }

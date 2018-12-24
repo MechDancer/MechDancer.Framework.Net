@@ -20,13 +20,10 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public IReadOnlyCollection<byte> Interest { get; }
 
-		public void Process(RemotePacket remotePacket) {
-			_callback(remotePacket);
-		}
+		public void Process(RemotePacket remotePacket) => _callback(remotePacket);
 
-		public static MulticastListener CommonUdpListener(Action<string, byte[]> action) {
-			return new MulticastListener(new[] {(byte) UdpCmd.Common},
-										 pack => action(pack.Sender, pack.Payload));
-		}
+		public static MulticastListener CommonUdpListener(Action<string, byte[]> action) =>
+			new MulticastListener(new[] {(byte) UdpCmd.Common},
+			                      pack => action(pack.Sender, pack.Payload));
 	}
 }

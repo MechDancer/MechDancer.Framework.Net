@@ -9,8 +9,8 @@ using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	public sealed class PortBroadcaster : UniqueComponent<PortBroadcaster>,
-										  IDependent,
-										  IMulticastListener {
+	                                      IDependent,
+	                                      IMulticastListener {
 		private static readonly byte[] InterestSet = {(byte) UdpCmd.AddressAsk};
 
 		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
@@ -25,9 +25,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 			_servers     = _dependencies.BuildDependency<ServerSockets>();
 		}
 
-		public bool Sync(IComponent dependency) {
-			return _dependencies.Sync(dependency);
-		}
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
@@ -37,11 +35,11 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 				return;
 
 			var port = _servers.StrictField
-							   .Default
-							   .LocalEndpoint
-							   .Let(it => (IPEndPoint) it)
-							   .Port
-							   .Let(it => new[] {(byte) (it >> 8), (byte) it});
+			                   .Default
+			                   .LocalEndpoint
+			                   .Let(it => (IPEndPoint) it)
+			                   .Port
+			                   .Let(it => new[] {(byte) (it >> 8), (byte) it});
 
 			_broadcaster.StrictField.Broadcast((byte) UdpCmd.AddressAck, port);
 		}
