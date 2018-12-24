@@ -6,26 +6,28 @@ using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
+	/// <inheritdoc cref="UniqueComponent{T}" />
+	/// <inheritdoc cref="IDependent" />
 	/// <summary>
 	///     组播发布者
 	/// </summary>
 	public sealed class MulticastBroadcaster : UniqueComponent<MulticastBroadcaster>, IDependent {
 		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
 
-		private readonly UniqueDependency<Name>             _name; // 可以匿名发送组播
+		private readonly UniqueDependency<Name> _name;
+
 		private readonly int                                _size;
 		private readonly UniqueDependency<PacketSlicer>     _slicer;
 		private readonly UniqueDependency<MulticastSockets> _sockets;
 
 		public MulticastBroadcaster(uint size = 0x4000) {
-			_size    = (int) size;
+			_size    = size <= 65536 ? (int) size : throw new ArgumentException($"size {size} > 65536");
 			_name    = _dependencies.BuildDependency<Name>();
 			_slicer  = _dependencies.BuildDependency<PacketSlicer>();
 			_sockets = _dependencies.BuildDependency<MulticastSockets>();
 		}
 
 		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
-
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
 			payload = payload ?? new byte[0];
@@ -36,7 +38,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			) return;
 
 			var stream = new MemoryStream(_size);
-			stream.WriteEnd(me);
+			stream.WriteEnd(me ?? "");
 
 			void Send() {
 				foreach (var socket in _sockets.StrictField.View.Values)

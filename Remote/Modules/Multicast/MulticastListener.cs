@@ -4,10 +4,11 @@ using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
+	/// <inheritdoc />
 	/// <summary>
 	///     组播监听者的便捷实现
 	/// </summary>
-	public class MulticastListener : IMulticastListener {
+	public sealed class MulticastListener : IMulticastListener {
 		private readonly Action<RemotePacket> _callback;
 
 		public MulticastListener(
