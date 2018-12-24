@@ -22,8 +22,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		private readonly UniqueDependencies       _dependencies = new UniqueDependencies();
 		private readonly List<IMulticastListener> _listeners; // 处理回调
 
-		private readonly UniqueDependency<Name>             _name;   // 过滤环路数据
-		private readonly UniqueDependency<MulticastSockets> _socket; // 接收套接字
+		private readonly UniqueDependency<Name>             _name;     // 过滤环路数据
+		private readonly UniqueDependency<Networks>         _networks; // 组播管理
+		private readonly UniqueDependency<MulticastSockets> _socket;   // 接收套接字
 
 		/// <summary>
 		///     构造器
@@ -33,6 +34,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			_buffer    = new ThreadLocal<byte[]>(() => new byte[bufferSize]);
 			_name      = _dependencies.BuildDependency<Name>();
 			_addresses = _dependencies.BuildDependency<Addresses>();
+			_networks  = _dependencies.BuildDependency<Networks>();
 			_socket    = _dependencies.BuildDependency<MulticastSockets>();
 			_listeners = new List<IMulticastListener>();
 		}
@@ -45,14 +47,18 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public RemotePacket Invoke() {
 			var length = _socket.StrictField.Default.ReceiveFrom(_buffer.Value, out var address);
-			// todo 修复这个垃圾东西
 
 			var stream = new MemoryStream(_buffer.Value, 0, length, false);
 			var sender = stream.ReadEnd();
 
 			if (sender == (_name.Field?.Field ?? "")) return null;
 
-			_socket.StrictField.Get(address);
+			_networks.Field
+			        ?.View
+			        ?.FirstOrDefault(it => Match(it.Value, address))
+			         .Key
+			         .Also(_socket.StrictField.Open);
+
 			_addresses.Field?.Update(sender, address);
 
 			var packet = new RemotePacket

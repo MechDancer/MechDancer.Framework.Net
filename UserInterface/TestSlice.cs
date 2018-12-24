@@ -200,15 +200,15 @@ namespace UserInterface {
 		public static void TestReceive() {
 			var hub = new RemoteHub
 				(additions: new[] {
-									  MulticastListener.CommonUdpListener
-										  ((_, bytes) => Console.WriteLine(bytes.GetString()))
-								  });
+					                  MulticastListener.CommonUdpListener
+						                  ((_, bytes) => Console.WriteLine(bytes.GetString()))
+				                  });
 			while (true) hub.Invoke();
 		}
 
 		public static void TestSend() {
 			var hub = new RemoteHub("C# slice sender", 512);
-			hub.OpenOneNetwork();
+			hub.Monitor.OpenAll();
 			hub.Broadcast((byte) UdpCmd.Common, LiSao.GetBytes());
 		}
 	}

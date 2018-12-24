@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using MechDancer.Common;
 
 namespace MechDancer.Framework.Net {
 	/// <inheritdoc />
@@ -21,46 +22,49 @@ namespace MechDancer.Framework.Net {
 		///     构造 UDP 组播客户端
 		/// </summary>
 		/// <param name="multicast">组播地址和端口</param>
-		/// <param name="interfaceAddress">目标出口网卡地址</param>
-		public UdpMulticastClient(IPEndPoint multicast, IPAddress interfaceAddress) {
+		/// <param name="interface">目标出口网卡地址</param>
+		public UdpMulticastClient(IPEndPoint multicast, NetworkInterface @interface) {
 			_multicast = multicast;
 			// 允许端口复用
 			Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, false);
 			Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,        true);
 			// 绑定端口
 			Socket.Bind(new IPEndPoint(IPAddress.Any, multicast.Port));
-			// 加入组播并指定出口网卡
-			Socket.SetSocketOption
-				(SocketOptionLevel.IP, SocketOptionName.AddMembership,
-				 new MulticastOption(multicast.Address, interfaceAddress));
+			// 获取网卡序号并指定出口网卡
+			@interface
+			  ?.GetIPProperties()
+			   .GetIPv4Properties()
+			   .Index
+			   .Also(index => Socket.SetSocketOption
+				         (SocketOptionLevel.IP,
+				          SocketOptionName.MulticastInterface,
+				          IPAddress.HostToNetworkOrder(index)));
 		}
 
 		/// <inheritdoc />
 		/// <summary>
 		///     释放网络资源
 		/// </summary>
-		public void Dispose() {
-			Socket.Dispose();
-		}
+		public void Dispose() => Socket.Dispose();
 
 		/// <summary>
 		///     监听指定网络接口上到来的组播包
 		/// </summary>
 		/// <param name="local">网络端口的单播地址</param>
-		public void Bind(IPAddress local) {
-			Socket.SetSocketOption(SocketOptionLevel.IP,
-								   SocketOptionName.AddMembership,
-								   new MulticastOption(_multicast.Address, local));
-		}
+		public void Bind(IPAddress local) =>
+			Socket.SetSocketOption
+				(SocketOptionLevel.IP,
+				 SocketOptionName.AddMembership,
+				 local == null
+					 ? new MulticastOption(_multicast.Address)
+					 : new MulticastOption(_multicast.Address, local));
 
 		/// <summary>
 		///     向组播发送数据
 		/// </summary>
 		/// <param name="payload">负载数据包</param>
 		/// <param name="size">数据包范围</param>
-		public void Broadcast(byte[] payload, int size) {
-			Socket.SendTo(payload, size, SocketFlags.None, _multicast);
-		}
+		public void Broadcast(byte[] payload, int size) => Socket.SendTo(payload, size, SocketFlags.None, _multicast);
 
 		/// <summary>
 		///     从组播接收数据
@@ -80,13 +84,12 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="localAddress">网卡绑定的单播IP</param>
 		/// <returns>网卡引用</returns>
-		public static NetworkInterface GetAdapterByAddress(IPAddress localAddress) {
-			return (from adapter in NetworkInterface.GetAllNetworkInterfaces()
-					where adapter.GetIPProperties()
-								 .UnicastAddresses
-								 .Select(x => x.Address)
-								 .Contains(localAddress)
-					select adapter).FirstOrDefault();
-		}
+		public static NetworkInterface GetAdapterByAddress(IPAddress localAddress) =>
+			(from adapter in NetworkInterface.GetAllNetworkInterfaces()
+			 where adapter.GetIPProperties()
+			              .UnicastAddresses
+			              .Select(x => x.Address)
+			              .Contains(localAddress)
+			 select adapter).FirstOrDefault();
 	}
 }

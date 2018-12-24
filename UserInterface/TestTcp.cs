@@ -10,11 +10,11 @@ namespace UserInterface {
 	public static class TestTcp {
 		public static void Test() {
 			var hub = new RemoteHub("C#");
-			hub.OpenAllNetworks();
+			hub.Monitor.OpenAll();
 
 			new Thread(() => {
-						   while (true) hub.Invoke();
-					   }) {IsBackground = true}.Start();
+				           while (true) hub.Invoke();
+			           }) {IsBackground = true}.Start();
 
 			while (true) {
 				var success = hub.Connect
