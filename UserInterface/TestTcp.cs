@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using MechDancer.Common;
-using MechDancer.Framework.Net;
 using MechDancer.Framework.Net.Modules.TcpConnection;
+using MechDancer.Framework.Net.Presets;
 using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 

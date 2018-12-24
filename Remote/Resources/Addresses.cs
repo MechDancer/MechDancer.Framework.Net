@@ -8,9 +8,7 @@ namespace MechDancer.Framework.Net.Resources {
 			= new ConcurrentDictionary<string, IPEndPoint>();
 
 		public IPEndPoint this[string name] =>
-			_core.TryGetValue(name, out var endPoint) && endPoint.Port != 0
-				? endPoint
-				: null;
+			_core.TryGetValue(name, out var endPoint) ? endPoint : null;
 
 		public IPEndPoint Update(string name, IPAddress address)
 			=> _core.AddOrUpdate

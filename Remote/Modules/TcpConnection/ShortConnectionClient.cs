@@ -21,7 +21,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 
 		public NetworkStream Connect(string name, byte cmd) {
 			var address = _addresses.StrictField[name];
-			if (address == null) {
+			if (address == null || (ushort) address.Port != address.Port) {
 				_monitor.Field?.Ask(name);
 				return null;
 			}

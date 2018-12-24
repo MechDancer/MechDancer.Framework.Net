@@ -51,13 +51,16 @@ namespace MechDancer.Framework.Net {
 		///     监听指定网络接口上到来的组播包
 		/// </summary>
 		/// <param name="local">网络端口的单播地址</param>
-		public void Bind(IPAddress local) =>
-			Socket.SetSocketOption
-				(SocketOptionLevel.IP,
-				 SocketOptionName.AddMembership,
-				 local == null
-					 ? new MulticastOption(_multicast.Address)
-					 : new MulticastOption(_multicast.Address, local));
+		public void Bind(IPAddress local) {
+			try {
+				Socket.SetSocketOption
+					(SocketOptionLevel.IP,
+					 SocketOptionName.AddMembership,
+					 local == null
+						 ? new MulticastOption(_multicast.Address)
+						 : new MulticastOption(_multicast.Address, local));
+			} catch (SocketException) { }
+		}
 
 		/// <summary>
 		///     向组播发送数据

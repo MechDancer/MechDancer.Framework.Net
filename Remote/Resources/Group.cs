@@ -12,6 +12,9 @@ namespace MechDancer.Framework.Net.Resources {
 
 		public IReadOnlyDictionary<string, DateTime> View => _core;
 
+		public DateTime? this[string name]
+			=> _core.TryGetValue(name, out var value) ? value : (DateTime?) null;
+
 		public List<string> this[TimeSpan timeout] {
 			get {
 				var now = DateTime.Now;
@@ -30,8 +33,5 @@ namespace MechDancer.Framework.Net.Resources {
 		}
 
 		public bool Remove(string parameter) => _core.TryRemove(parameter, out _);
-
-		public DateTime Get(string parameter) =>
-			_core.TryGetValue(parameter, out var value) ? value : DateTime.MinValue;
 	}
 }
