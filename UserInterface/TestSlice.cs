@@ -1,7 +1,7 @@
 using System;
+using MechDancer.Common;
 using MechDancer.Framework.Net.Modules.Multicast;
 using MechDancer.Framework.Net.Presets;
-using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace UserInterface {
@@ -200,9 +200,9 @@ namespace UserInterface {
 		public static void TestReceive() {
 			var hub = new RemoteHub
 				(additions: new[] {
-					                  MulticastListener.CommonUdpListener
-						                  ((_, bytes) => Console.WriteLine(bytes.GetString()))
-				                  });
+									  MulticastListener.CommonUdpListener
+										  ((_, bytes) => Console.WriteLine(bytes.GetString()))
+								  });
 			while (true) hub.Invoke();
 		}
 

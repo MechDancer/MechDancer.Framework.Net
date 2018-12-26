@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Modules.Multicast;
@@ -16,8 +17,8 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	///     将发起地址询问并更新地址资源
 	/// </remarks>
 	public sealed class PortMonitor : UniqueComponent<PortMonitor>,
-	                                  IDependent,
-	                                  IMulticastListener {
+									  IDependent,
+									  IMulticastListener {
 		private static readonly HashSet<byte> InterestSet
 			= new HashSet<byte> {(byte) UdpCmd.AddressAck};
 
@@ -31,7 +32,9 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 			_addresses   = _dependencies.BuildDependency<Addresses>();
 		}
 
-		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
+		public bool Sync(IComponent dependency) {
+			return _dependencies.Sync(dependency);
+		}
 
 		public IReadOnlyCollection<byte> Interest => InterestSet;
 
@@ -44,14 +47,16 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 				   .Update(sender, (payload[0] << 8) | payload[1]);
 		}
 
-		public void AskEveryone()
-			=> _broadcaster
-			  .StrictField
-			  .Broadcast((byte) UdpCmd.AddressAsk);
+		public void AskEveryone() {
+			_broadcaster
+			   .StrictField
+			   .Broadcast((byte) UdpCmd.AddressAsk);
+		}
 
-		public void Ask(string name)
-			=> _broadcaster
-			  .StrictField
-			  .Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
+		public void Ask(string name) {
+			_broadcaster
+			   .StrictField
+			   .Broadcast((byte) UdpCmd.AddressAsk, name.GetBytes());
+		}
 	}
 }

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ConsoleParser.Scanner;
 using MechDancer.Common;
 
 // ReSharper disable InconsistentNaming
 
 namespace MechDancer.ConsoleParser.Scanner {
+	/// <inheritdoc />
 	/// <summary>
 	///     确定性自动机扫描器
 	/// </summary>
@@ -34,14 +34,14 @@ namespace MechDancer.ConsoleParser.Scanner {
 		public int  Length   { get; private set; }
 		public bool Complete => _ending.Contains(Math.Abs(_state));
 
-		public void Set(T item) {
+		public void Add(T item) {
 			if (_state > 0)
 				_state = _map(item)
-				        .AcceptIf(it => it >= 0)
-				       ?.Let(it => _table[_state - 1][it])
-				        .AcceptIf(it => it != 0)
-				       ?.Also(_ => ++Length)
-				      ?? -_state;
+						.AcceptIf(it => it >= 0)
+					   ?.Let(it => _table[_state - 1][it])
+						.AcceptIf(it => it != 0)
+					   ?.Also(_ => ++Length)
+					  ?? -_state;
 		}
 
 		public void Reset() {

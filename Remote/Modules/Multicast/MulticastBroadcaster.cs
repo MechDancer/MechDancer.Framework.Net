@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency;
 using MechDancer.Framework.Dependency.UniqueComponent;
-using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
@@ -27,7 +27,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			_sockets = _dependencies.BuildDependency<MulticastSockets>();
 		}
 
-		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
+		public bool Sync(IComponent dependency) {
+			return _dependencies.Sync(dependency);
+		}
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
 			payload = payload ?? new byte[0];
