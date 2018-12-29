@@ -37,11 +37,11 @@ namespace MechDancer.ConsoleParser.Scanner {
 		public void Add(T item) {
 			if (_state > 0)
 				_state = _map(item)
-						.AcceptIf(it => it >= 0)
-					   ?.Let(it => _table[_state - 1][it])
-						.AcceptIf(it => it != 0)
-					   ?.Also(_ => ++Length)
-					  ?? -_state;
+				        .AcceptIf(it => it >= 0)
+				       ?.Let(it => _table[_state - 1][it])
+				        .AcceptIf(it => it != 0)
+				       ?.Also(_ => ++Length)
+				      ?? -_state;
 		}
 
 		public void Reset() {
