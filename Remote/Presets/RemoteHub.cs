@@ -161,9 +161,8 @@ namespace MechDancer.Framework.Net.Presets {
 		///     尚未得知对方地址或连接失败将返回 false
 		/// </returns>
 		public bool Connect(string name, byte cmd, Action<NetworkStream> block) {
-			using (var client = _client.Connect(name, cmd)) {
+			using (var client = _client.Connect(name, cmd))
 				return client?.Also(block) != null;
-			}
 		}
 
 		/// <summary>
