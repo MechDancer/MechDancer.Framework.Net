@@ -3,6 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>MechDancer.Framework.Dependency</RootNamespace>
+        <PackageId>Mechdancer.Dependency.Net</PackageId>
+        <Authors>YangDR</Authors>
+        <Company>MechDancer</Company>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Product>Framework.Net</Product>
+        <Description>动态依赖项管理</Description>
+        <Copyright>WTFPL</Copyright>
+        <PackageTags>Dynamic Dependency;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

@@ -59,7 +59,7 @@ namespace MechDancer.Framework.Net {
 					 local == null
 						 ? new MulticastOption(_multicast.Address)
 						 : new MulticastOption(_multicast.Address, local));
-			} catch (SocketException) { }
+			} catch (SystemException) { }
 		}
 
 		/// <summary>

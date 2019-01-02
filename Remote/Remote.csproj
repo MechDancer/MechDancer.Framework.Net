@@ -4,6 +4,14 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>7.3</LangVersion>
         <RootNamespace>MechDancer.Framework.Net</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Mechdancer.Remote.Net</PackageId>
+        <Authors>YangDR</Authors>
+        <Company>MechDancer</Company>
+        <Product>Framework.Net</Product>
+        <Description>Raw Socket 的封装和地址交换协议实现</Description>
+        <PackageProjectUrl>https://github.com/MechDancer/MechDancer.Framework.Net/tree/master/Remote</PackageProjectUrl>
+        <PackageTags>network;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

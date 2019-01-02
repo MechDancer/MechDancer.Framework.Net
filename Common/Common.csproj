@@ -3,6 +3,15 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>MechDancer.Common</RootNamespace>
+        <Authors>YangDR</Authors>
+        <Company>MechDancer</Company>
+        <Product>Framework.Net</Product>
+        <Description>包含使C#变得更加函数式的很多扩展函数</Description>
+        <PackageTags>Extensions; Functional; Lambda;</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Mechdancer.Common.Net</PackageId>
+        <Copyright>WTFPL</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
 </Project>
