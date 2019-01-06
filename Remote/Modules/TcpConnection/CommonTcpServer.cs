@@ -7,7 +7,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	using Func = Action<string, NetworkStream>;
 
 	public sealed class CommonTcpServer : UniqueComponent<CommonTcpServer>,
-	                                      IShortConnectionListener {
+										  IShortConnectionListener {
 		private readonly Func _func;
 
 		public CommonTcpServer(Func func) => _func = func;

@@ -36,9 +36,9 @@ namespace MechDancer.Framework.Net {
 			   .GetIPv4Properties()
 			   .Index
 			   .Also(index => Socket.SetSocketOption
-				         (SocketOptionLevel.IP,
-				          SocketOptionName.MulticastInterface,
-				          IPAddress.HostToNetworkOrder(index)));
+						 (SocketOptionLevel.IP,
+						  SocketOptionName.MulticastInterface,
+						  IPAddress.HostToNetworkOrder(index)));
 		}
 
 		/// <inheritdoc />
@@ -90,9 +90,9 @@ namespace MechDancer.Framework.Net {
 		public static NetworkInterface GetAdapterByAddress(IPAddress localAddress) =>
 			(from adapter in NetworkInterface.GetAllNetworkInterfaces()
 			 where adapter.GetIPProperties()
-			              .UnicastAddresses
-			              .Select(x => x.Address)
-			              .Contains(localAddress)
+						  .UnicastAddresses
+						  .Select(x => x.Address)
+						  .Contains(localAddress)
 			 select adapter).FirstOrDefault();
 	}
 }

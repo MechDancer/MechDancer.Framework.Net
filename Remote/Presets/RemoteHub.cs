@@ -48,10 +48,10 @@ namespace MechDancer.Framework.Net.Presets {
 		/// <param name="newMemberDetected">发现新成员上线时的回调</param>
 		/// <param name="additions">自定义组件</param>
 		public RemoteHub(string              name              = null,
-		                 uint                size              = 0x4000,
-		                 IPEndPoint          group             = null,
-		                 Action<string>      newMemberDetected = null,
-		                 params IComponent[] additions
+						 uint                size              = 0x4000,
+						 IPEndPoint          group             = null,
+						 Action<string>      newMemberDetected = null,
+						 params IComponent[] additions
 		) {
 			_groupMonitor = new GroupMonitor(detected: newMemberDetected);
 			_broadcaster  = new MulticastBroadcaster(size);
@@ -95,17 +95,17 @@ namespace MechDancer.Framework.Net.Presets {
 		/// </summary>
 		public (ICollection<IPAddress>, ICollection<int>) Endpoints
 			=> (_networks.View
-			             .Values
-			             .Select(it => it.Address)
-			             .ToList(),
-			    _servers.View
-			            .Keys
-			            .ToList()
-			            .Also(list => _servers.Default
-			                                  .LocalEndpoint
-			                                  .Let(it => (IPEndPoint) it)
-			                                  .Port
-			                                  .Also(list.Add))
+						 .Values
+						 .Select(it => it.Address)
+						 .ToList(),
+				_servers.View
+						.Keys
+						.ToList()
+						.Also(list => _servers.Default
+											  .LocalEndpoint
+											  .Let(it => (IPEndPoint) it)
+											  .Port
+											  .Also(list.Add))
 			   );
 
 		/// <summary>

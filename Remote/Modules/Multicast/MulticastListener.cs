@@ -25,6 +25,6 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public static MulticastListener CommonUdpListener(Action<string, byte[]> action) =>
 			new MulticastListener(new[] {(byte) UdpCmd.Common},
-			                      pack => action(pack.Sender, pack.Payload));
+								  pack => action(pack.Sender, pack.Payload));
 	}
 }

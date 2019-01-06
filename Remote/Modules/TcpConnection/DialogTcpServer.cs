@@ -7,7 +7,7 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	using Func = Func<string, byte[], byte[]>;
 
 	public sealed class DialogTcpServer : UniqueComponent<DialogTcpServer>,
-	                                      IShortConnectionListener {
+										  IShortConnectionListener {
 		private readonly Func _func;
 
 		public DialogTcpServer(Func func) => _func = func;

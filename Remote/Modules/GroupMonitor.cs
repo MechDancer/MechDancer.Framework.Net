@@ -15,8 +15,8 @@ namespace MechDancer.Framework.Net.Modules {
 	///     从未出现过的成员或离线时间超过超时时间的成员视作新成员
 	/// </remarks>
 	public sealed class GroupMonitor : UniqueComponent<GroupMonitor>,
-	                                   IDependent,
-	                                   IMulticastListener {
+									   IDependent,
+									   IMulticastListener {
 		private readonly UniqueDependency<MulticastBroadcaster> _broadcaster;
 		private readonly UniqueDependencies                     _dependencies = new UniqueDependencies();
 		private readonly Action<string>                         _detected;
@@ -44,7 +44,7 @@ namespace MechDancer.Framework.Net.Modules {
 
 			if (!string.IsNullOrWhiteSpace(name)) // 非匿名则保存名字
 				if (!_group.StrictField
-				           .Update(name, DateTime.Now, out var previous)
+						   .Update(name, DateTime.Now, out var previous)
 				 || DateTime.Now - previous > _timeout)
 					_detected?.Invoke(name);
 

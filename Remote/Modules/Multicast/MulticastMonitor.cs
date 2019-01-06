@@ -46,11 +46,11 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		public void BindOne(bool scan = false) {
 			if (scan) _networks.StrictField.Scan();
 			_networks.StrictField
-			         .View
-			         .Values
-			         .FirstOrDefault()
-			        ?.Address
-			         .Also(_sockets.StrictField.Bind);
+					 .View
+					 .Values
+					 .FirstOrDefault()
+					?.Address
+					 .Also(_sockets.StrictField.Bind);
 		}
 
 		/// <summary>
@@ -61,9 +61,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		public void BindWhere(Predicate predicate, bool scan = false) {
 			if (scan) _networks.StrictField.Scan();
 			foreach (var address in _networks.StrictField
-			                                 .View
-			                                 .Where(predicate)
-			                                 .Select(it => it.Value.Address)
+											 .View
+											 .Where(predicate)
+											 .Select(it => it.Value.Address)
 			) _sockets.StrictField.Bind(address);
 		}
 
@@ -85,10 +85,10 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		public IEnumerable<NetworkInterface> OpenOne(bool scan = false) {
 			if (scan) _networks.StrictField.Scan();
 			_networks.StrictField
-			         .View
-			         .Keys
-			         .FirstOrDefault()
-			        ?.Also(_sockets.StrictField.Open);
+					 .View
+					 .Keys
+					 .FirstOrDefault()
+					?.Also(_sockets.StrictField.Open);
 			return _sockets.StrictField.View.Keys;
 		}
 
@@ -101,9 +101,9 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 		public IEnumerable<NetworkInterface> OpenWhere(Predicate predicate, bool scan = false) {
 			if (scan) _networks.StrictField.Scan();
 			foreach (var @interface in _networks.StrictField
-			                                    .View
-			                                    .Where(predicate)
-			                                    .Select(it => it.Key)
+												.View
+												.Where(predicate)
+												.Select(it => it.Key)
 			) _sockets.StrictField.Open(@interface);
 			return _sockets.StrictField.View.Keys;
 		}

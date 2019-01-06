@@ -42,8 +42,7 @@ namespace MechDancer.ConsoleParser {
 			switch (TokenType) {
 				case TokenType.Sign:
 				case TokenType.Word:
-					return (this as Token<string>)?.Data
-					    == (other as Token<string>)?.Data;
+					return (this as Token<string>)?.Data == (other as Token<string>)?.Data;
 				case TokenType.Number:
 				case TokenType.Note:
 				case TokenType.Key:

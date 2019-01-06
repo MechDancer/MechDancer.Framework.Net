@@ -7,7 +7,7 @@ using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	public sealed class ShortConnectionServer : UniqueComponent<ShortConnectionServer>,
-	                                            IDependent {
+												IDependent {
 		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
 			= new Dictionary<byte, IShortConnectionListener>();
 

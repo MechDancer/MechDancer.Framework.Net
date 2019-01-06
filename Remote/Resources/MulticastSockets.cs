@@ -37,10 +37,10 @@ namespace MechDancer.Framework.Net.Resources {
 		/// <param name="interface">本地网络接口</param>
 		public void Open(NetworkInterface @interface) {
 			@interface.GetIPProperties()
-			          .UnicastAddresses
-			          .Select(it => it.Address)
-			          .FirstOrDefault(it => it.AddressFamily == AddressFamily.InterNetwork)
-			         ?.Also(Default.Bind);
+					  .UnicastAddresses
+					  .Select(it => it.Address)
+					  .FirstOrDefault(it => it.AddressFamily == AddressFamily.InterNetwork)
+					 ?.Also(Default.Bind);
 			_core.TryAdd(@interface, new UdpMulticastClient(Address, @interface));
 		}
 	}

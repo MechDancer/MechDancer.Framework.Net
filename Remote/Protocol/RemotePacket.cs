@@ -32,10 +32,10 @@ namespace MechDancer.Framework.Net.Protocol {
 		public byte[] Bytes
 			=> new MemoryStream(Payload.Length + 1)
 			  .Also(it => {
-				        it.WriteEnd(Sender);
-				        it.WriteByte(Command);
-				        it.Write(Payload);
-			        })
+						it.WriteEnd(Sender);
+						it.WriteByte(Command);
+						it.Write(Payload);
+					})
 			  .ToArray();
 
 		/// <summary>

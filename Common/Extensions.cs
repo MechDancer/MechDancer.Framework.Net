@@ -137,6 +137,30 @@ namespace MechDancer.Common {
 			Func<TI, TO>         func
 		) where TO : class => receiver.Select(func).WhereNotNull();
 
+		/// <summary>
+		/// 	判定列表中不包含特定元素
+		/// </summary>
+		/// <param name="receiver">目标列表</param>
+		/// <param name="item">特定元素</param>
+		/// <typeparam name="T">元素类型</typeparam>
+		/// <returns>是否</returns>
+		public static bool NotContains<T>(
+			this IEnumerable<T> receiver,
+			T                   item
+		) => !receiver.Contains(item);
+
+		/// <summary>
+		/// 	取两集合的交集
+		/// </summary>
+		/// <param name="receiver">集合1</param>
+		/// <param name="others">集合2</param>
+		/// <typeparam name="T">元素类型</typeparam>
+		/// <returns>交集</returns>
+		public static IEnumerable<T> Retain<T>(
+			this IEnumerable<T> receiver,
+			IEnumerable<T>      others
+		) => receiver.Where(others.Contains);
+
 		#endregion
 
 		#region bool
