@@ -12,6 +12,8 @@
         <PackageId>Mechdancer.Common.Net</PackageId>
         <Copyright>WTFPL</Copyright>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <LangVersion>latest</LangVersion>
+        <RepositoryUrl>https://github.com/MechDancer/MechDancer.Framework.Net/tree/master/Common</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
