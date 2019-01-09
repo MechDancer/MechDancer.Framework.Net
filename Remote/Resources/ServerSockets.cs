@@ -13,19 +13,13 @@ namespace MechDancer.Framework.Net.Resources {
 
 		private readonly Lazy<TcpListener> _default;
 
-		public ServerSockets(int port = 0) {
-			_default = new Lazy<TcpListener>(() => Server(port));
-		}
+		public ServerSockets(int port = 0) => _default = new Lazy<TcpListener>(() => Server(port));
 
 		public IReadOnlyDictionary<int, TcpListener> View    => _core;
 		public TcpListener                           Default => _default.Value;
 
-		public TcpListener Get(int parameter) {
-			return parameter == 0 ? Default : _core.GetOrAdd(parameter, Server);
-		}
+		public TcpListener Get(int parameter) => parameter == 0 ? Default : _core.GetOrAdd(parameter, Server);
 
-		private static TcpListener Server(int port) {
-			return new TcpListener(IPAddress.Any, port).Also(it => it.Start());
-		}
+		private static TcpListener Server(int port) => new TcpListener(IPAddress.Any, port).Also(it => it.Start());
 	}
 }

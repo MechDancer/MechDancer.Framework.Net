@@ -4,14 +4,14 @@ using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
-	public sealed class ShortConnectionClient : UniqueComponent<ShortConnectionClient>,
-												IDependent {
+	public sealed class ConnectionClient : UniqueComponent<ConnectionClient>,
+	                                       IDependent {
 		private readonly UniqueDependency<Addresses>   _addresses;
 		private readonly UniqueDependencies            _dependencies = new UniqueDependencies();
 		private readonly UniqueDependency<PortMonitor> _monitor;
 		private readonly UniqueDependency<Name>        _name;
 
-		public ShortConnectionClient() {
+		public ConnectionClient() {
 			_name      = _dependencies.BuildDependency<Name>();
 			_addresses = _dependencies.BuildDependency<Addresses>();
 			_monitor   = _dependencies.BuildDependency<PortMonitor>();

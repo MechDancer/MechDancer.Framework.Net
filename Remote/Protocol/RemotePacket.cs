@@ -1,6 +1,3 @@
-using System.IO;
-using MechDancer.Common;
-
 namespace MechDancer.Framework.Net.Protocol {
 	public sealed class RemotePacket {
 		public readonly byte   Command;
@@ -19,24 +16,6 @@ namespace MechDancer.Framework.Net.Protocol {
 			Sender  = sender;
 			Payload = payload;
 		}
-
-		/// <summary>
-		///     从数据包构造
-		/// </summary>
-		public RemotePacket(Stream buffer) {
-			Sender  = buffer.ReadEnd();
-			Command = (byte) buffer.ReadByte();
-			Payload = buffer.ReadRest();
-		}
-
-		public byte[] Bytes
-			=> new MemoryStream(Payload.Length + 1)
-			  .Also(it => {
-						it.WriteEnd(Sender);
-						it.WriteByte(Command);
-						it.Write(Payload);
-					})
-			  .ToArray();
 
 		/// <summary>
 		///     解构

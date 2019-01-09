@@ -21,7 +21,7 @@ namespace MechDancer.Framework.Net.Presets {
 		private readonly Addresses            _addresses = new Addresses();
 		private readonly MulticastBroadcaster _broadcaster;
 
-		private readonly ShortConnectionClient _client = new ShortConnectionClient();
+		private readonly ConnectionClient _client = new ConnectionClient();
 
 		private readonly Group        _group = new Group();
 		private readonly GroupMonitor _groupMonitor;
@@ -29,12 +29,12 @@ namespace MechDancer.Framework.Net.Presets {
 		private readonly Networks          _networks = new Networks();
 		private readonly MulticastReceiver _receiver = new MulticastReceiver();
 
-		private readonly DynamicScope          _scope;
-		private readonly ShortConnectionServer _server        = new ShortConnectionServer();
-		private readonly ServerSockets         _servers       = new ServerSockets();
-		private readonly PacketSlicer          _slicer        = new PacketSlicer();
-		private readonly PortBroadcaster       _synchronizer1 = new PortBroadcaster();
-		private readonly PortMonitor           _synchronizer2 = new PortMonitor();
+		private readonly DynamicScope     _scope;
+		private readonly ConnectionServer _server        = new ConnectionServer();
+		private readonly ServerSockets    _servers       = new ServerSockets();
+		private readonly PacketSlicer     _slicer        = new PacketSlicer();
+		private readonly PortBroadcaster  _synchronizer1 = new PortBroadcaster();
+		private readonly PortMonitor      _synchronizer2 = new PortMonitor();
 
 		/// <summary>
 		///     构造器
@@ -48,10 +48,10 @@ namespace MechDancer.Framework.Net.Presets {
 		/// <param name="newMemberDetected">发现新成员上线时的回调</param>
 		/// <param name="additions">自定义组件</param>
 		public RemoteHub(string              name              = null,
-						 uint                size              = 0x4000,
-						 IPEndPoint          group             = null,
-						 Action<string>      newMemberDetected = null,
-						 params IComponent[] additions
+		                 uint                size              = 0x4000,
+		                 IPEndPoint          group             = null,
+		                 Action<string>      newMemberDetected = null,
+		                 params IComponent[] additions
 		) {
 			_groupMonitor = new GroupMonitor(detected: newMemberDetected);
 			_broadcaster  = new MulticastBroadcaster(size);
@@ -95,17 +95,17 @@ namespace MechDancer.Framework.Net.Presets {
 		/// </summary>
 		public (ICollection<IPAddress>, ICollection<int>) Endpoints
 			=> (_networks.View
-						 .Values
-						 .Select(it => it.Address)
-						 .ToList(),
-				_servers.View
-						.Keys
-						.ToList()
-						.Also(list => _servers.Default
-											  .LocalEndpoint
-											  .Let(it => (IPEndPoint) it)
-											  .Port
-											  .Also(list.Add))
+			             .Values
+			             .Select(it => it.Address)
+			             .ToList(),
+			    _servers.View
+			            .Keys
+			            .ToList()
+			            .Also(list => _servers.Default
+			                                  .LocalEndpoint
+			                                  .Let(it => (IPEndPoint) it)
+			                                  .Port
+			                                  .Also(list.Add))
 			   );
 
 		/// <summary>

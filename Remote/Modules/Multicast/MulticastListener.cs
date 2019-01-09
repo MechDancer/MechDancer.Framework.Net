@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MechDancer.Framework.Net.Protocol;
-using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.Multicast {
 	/// <inheritdoc />
@@ -11,9 +10,14 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 	public sealed class MulticastListener : IMulticastListener {
 		private readonly Action<RemotePacket> _callback;
 
+		/// <summary>
+		///     构造器
+		/// </summary>
+		/// <param name="callback">回调函数</param>
+		/// <param name="interest">关注指令</param>
 		public MulticastListener(
-			IReadOnlyCollection<byte> interest,
-			Action<RemotePacket>      callback
+			Action<RemotePacket> callback,
+			params byte[]        interest
 		) {
 			Interest  = interest;
 			_callback = callback;
@@ -23,8 +27,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 
 		public void Process(RemotePacket remotePacket) => _callback(remotePacket);
 
-		public static MulticastListener CommonUdpListener(Action<string, byte[]> action) =>
-			new MulticastListener(new[] {(byte) UdpCmd.Common},
-								  pack => action(pack.Sender, pack.Payload));
+		public override bool Equals(object obj) => ReferenceEquals(this, obj);
+		public override int  GetHashCode()      => typeof(MulticastListener).GetHashCode();
 	}
 }

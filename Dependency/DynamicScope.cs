@@ -44,27 +44,24 @@ namespace MechDancer.Framework.Dependency {
 		///     若组件被添加到域，返回 true
 		///     与已有的组件发生冲突时返回 false
 		/// </returns>
-		public bool Setup(IComponent component) {
-			return _components.TryAdd(component)
-							  .Then(() => {
-										lock (_dependents) {
-											_dependents.RemoveAll(it => it.Sync(component));
+		public bool Setup(IComponent component)
+			=> _components.TryAdd(component)
+			              .Then(() => {
+				                    lock (_dependents) {
+					                    _dependents.RemoveAll(it => it.Sync(component));
 
-											(component as IDependent)
-											  ?.TakeIf(it => Components.None(it.Sync))
-											  ?.Also(_dependents.Add);
-										}
-									});
-		}
+					                    (component as IDependent)
+						                  ?.TakeIf(it => Components.None(it.Sync))
+						                  ?.Also(_dependents.Add);
+				                    }
+			                    });
 
 		private sealed class ConcurrentSet<T> where T : class {
 			private readonly ConcurrentDictionary<T, byte> _core = new ConcurrentDictionary<T, byte>();
 
 			public IEnumerable<T> View => _core.Keys;
 
-			public bool TryAdd(T it) {
-				return _core.TryAdd(it, 0);
-			}
+			public bool TryAdd(T it) => _core.TryAdd(it, 0);
 		}
 	}
 }

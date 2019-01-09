@@ -6,10 +6,10 @@ using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
-	public sealed class ShortConnectionServer : UniqueComponent<ShortConnectionServer>,
-												IDependent {
-		private readonly Dictionary<byte, IShortConnectionListener> _connectListeners
-			= new Dictionary<byte, IShortConnectionListener>();
+	public sealed class ConnectionServer : UniqueComponent<ConnectionServer>,
+	                                       IDependent {
+		private readonly Dictionary<byte, IConnectionListener> _connectListeners
+			= new Dictionary<byte, IConnectionListener>();
 
 		private readonly UniqueDependencies _dependencies = new UniqueDependencies();
 
@@ -18,12 +18,12 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 
 		private readonly UniqueDependency<ServerSockets> _servers;
 
-		public ShortConnectionServer() => _servers = _dependencies.BuildDependency<ServerSockets>();
+		public ConnectionServer() => _servers = _dependencies.BuildDependency<ServerSockets>();
 
 		public bool Sync(IComponent dependency) {
 			_dependencies.Sync(dependency);
 			(dependency as IMailListener)?.Let(it => _mailListeners.Add(it));
-			(dependency as IShortConnectionListener)?.Also(it => _connectListeners.Add(it.Interest, it));
+			(dependency as IConnectionListener)?.Also(it => _connectListeners.Add(it.Interest, it));
 			return false;
 		}
 

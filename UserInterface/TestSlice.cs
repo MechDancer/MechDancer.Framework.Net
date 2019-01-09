@@ -199,10 +199,11 @@ namespace UserInterface {
 
 		public static void TestReceive() {
 			var hub = new RemoteHub
-				(additions: new[] {
-									  MulticastListener.CommonUdpListener
-										  ((_, bytes) => Console.WriteLine(bytes.GetString()))
-								  });
+				(additions:
+				 new MulticastListener
+					 (interest: (byte) UdpCmd.Common,
+					  callback: pack => Console.WriteLine(pack.Payload.GetString()))
+				);
 			while (true) hub.Invoke();
 		}
 

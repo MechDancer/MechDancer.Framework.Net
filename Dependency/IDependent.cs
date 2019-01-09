@@ -1,4 +1,5 @@
 namespace MechDancer.Framework.Dependency {
+	/// <inheritdoc />
 	/// <summary>
 	///     依赖项
 	/// </summary>

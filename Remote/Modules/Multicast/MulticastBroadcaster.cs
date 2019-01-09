@@ -27,9 +27,7 @@ namespace MechDancer.Framework.Net.Modules.Multicast {
 			_sockets = _dependencies.BuildDependency<MulticastSockets>();
 		}
 
-		public bool Sync(IComponent dependency) {
-			return _dependencies.Sync(dependency);
-		}
+		public bool Sync(IComponent dependency) => _dependencies.Sync(dependency);
 
 		public void Broadcast(byte cmd, byte[] payload = null) {
 			payload = payload ?? new byte[0];
