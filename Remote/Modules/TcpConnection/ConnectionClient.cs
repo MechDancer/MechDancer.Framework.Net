@@ -5,7 +5,7 @@ using MechDancer.Framework.Net.Resources;
 
 namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	public sealed class ConnectionClient : UniqueComponent<ConnectionClient>,
-	                                       IDependent {
+										   IDependent {
 		private readonly UniqueDependency<Addresses>   _addresses;
 		private readonly UniqueDependencies            _dependencies = new UniqueDependencies();
 		private readonly UniqueDependency<PortMonitor> _monitor;

@@ -7,8 +7,8 @@ namespace UserInterface {
 		private static void Main() {
 			var probe = new Probe();
 			new Thread(() => {
-				           while (true) probe.Invoke();
-			           }).Start();
+						   while (true) probe.Invoke();
+					   }).Start();
 
 			while (true) {
 				Console.ReadKey();

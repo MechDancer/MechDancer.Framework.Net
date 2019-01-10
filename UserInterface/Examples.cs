@@ -22,8 +22,8 @@ namespace UserInterface {
 		public static void UseProbe() {
 			var probe = new Probe();
 			new Thread(() => {
-				           while (true) probe.Invoke();
-			           }).Start();
+						   while (true) probe.Invoke();
+					   }).Start();
 
 			while (true) {
 				Console.ReadKey();

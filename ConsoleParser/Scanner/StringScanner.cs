@@ -20,15 +20,15 @@ namespace MechDancer.ConsoleParser.Scanner {
 
 		private static double ToDigit(this string receiver, byte order)
 			=> receiver.Aggregate((0.0, 1.0),
-			                      (state, it) => {
-				                      var (sum, step) = state;
-				                      // ReSharper disable once CompareOfFloatsByEqualityOperator
-				                      return step == 1.0
-					                             ? it == '.'
-						                               ? (sum, step / order)
-						                               : (sum * order + it.ToDigit(), 1.0)
-					                             : (sum + it.ToDigit() * step, step / order);
-			                      }).Item1;
+								  (state, it) => {
+									  var (sum, step) = state;
+									  // ReSharper disable once CompareOfFloatsByEqualityOperator
+									  return step == 1.0
+												 ? it == '.'
+													   ? (sum, step / order)
+													   : (sum * order + it.ToDigit(), 1.0)
+												 : (sum + it.ToDigit() * step, step / order);
+								  }).Item1;
 
 		private static double ToNumber(this string receiver)
 			=> receiver.Length == 1 || char.IsDigit(receiver[1]) || receiver[1] == '.'

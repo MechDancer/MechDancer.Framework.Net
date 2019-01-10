@@ -32,22 +32,22 @@ namespace MechDancer.Framework.Net.Protocol {
 			this Stream receiver,
 			bool        signed
 		) => new MemoryStream(10)
-		    .Also(stream => {
-			          int b;
-			          do {
-				          b = receiver.ReadByte();
-				          stream.WriteByte((byte) b);
-			          } while (b > 0x7f);
-		          })
-		    .ToArray()
-		    .Zigzag(signed);
+			.Also(stream => {
+					  int b;
+					  do {
+						  b = receiver.ReadByte();
+						  stream.WriteByte((byte) b);
+					  } while (b > 0x7f);
+				  })
+			.ToArray()
+			.Zigzag(signed);
 
 		public static byte[] Zigzag(
 			this long receiver,
 			bool      signed
 		) => new MemoryStream(10)
-		    .WriteZigzag(receiver, signed)
-		    .ToArray();
+			.WriteZigzag(receiver, signed)
+			.ToArray();
 
 		public static long Zigzag(
 			this byte[] receiver,
@@ -68,9 +68,9 @@ namespace MechDancer.Framework.Net.Protocol {
 		/// <returns>流本身</returns>
 		public static T WriteWithLength<T>(this T receiver, byte[] payload) where T : Stream
 			=> receiver.Also(it => {
-				                 it.WriteZigzag(payload.Length, false);
-				                 it.Write(payload);
-			                 });
+								 it.WriteZigzag(payload.Length, false);
+								 it.Write(payload);
+							 });
 
 		/// <summary>
 		///     先从流中读取长度，再读取指定长度内容

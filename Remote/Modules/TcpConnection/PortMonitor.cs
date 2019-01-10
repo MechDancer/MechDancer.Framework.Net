@@ -17,8 +17,8 @@ namespace MechDancer.Framework.Net.Modules.TcpConnection {
 	///     将发起地址询问并更新地址资源
 	/// </remarks>
 	public sealed class PortMonitor : UniqueComponent<PortMonitor>,
-	                                  IDependent,
-	                                  IMulticastListener {
+									  IDependent,
+									  IMulticastListener {
 		private static readonly HashSet<byte> InterestSet
 			= new HashSet<byte> {(byte) UdpCmd.AddressAck};
 

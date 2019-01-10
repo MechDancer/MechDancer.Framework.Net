@@ -47,8 +47,8 @@ namespace MechDancer.Framework.Net.Presets {
 		/// </summary>
 		public IReadOnlyDictionary<string, (DateTime? time, IPEndPoint address)> View
 			=> _group.View
-			         .Keys
-			         .ToDictionary(name => name, name => this[name]);
+					 .Keys
+					 .ToDictionary(name => name, name => this[name]);
 
 		/// <summary>
 		///     查看所有在线的成员

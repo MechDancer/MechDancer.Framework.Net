@@ -3,7 +3,6 @@ using System.Threading;
 using MechDancer.Common;
 using MechDancer.Framework.Net.Modules.TcpConnection;
 using MechDancer.Framework.Net.Presets;
-using MechDancer.Framework.Net.Protocol;
 using MechDancer.Framework.Net.Resources;
 
 namespace UserInterface {
@@ -13,8 +12,8 @@ namespace UserInterface {
 			hub.Monitor.OpenAll();
 
 			new Thread(() => {
-				           while (true) hub.Invoke();
-			           }) {IsBackground = true}.Start();
+						   while (true) hub.Invoke();
+					   }) {IsBackground = true}.Start();
 
 			while (true) {
 				var success = hub.Connect

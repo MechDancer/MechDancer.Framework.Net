@@ -46,15 +46,15 @@ namespace MechDancer.Framework.Dependency {
 		/// </returns>
 		public bool Setup(IComponent component)
 			=> _components.TryAdd(component)
-			              .Then(() => {
-				                    lock (_dependents) {
-					                    _dependents.RemoveAll(it => it.Sync(component));
+						  .Then(() => {
+									lock (_dependents) {
+										_dependents.RemoveAll(it => it.Sync(component));
 
-					                    (component as IDependent)
-						                  ?.TakeIf(it => Components.None(it.Sync))
-						                  ?.Also(_dependents.Add);
-				                    }
-			                    });
+										(component as IDependent)
+										  ?.TakeIf(it => Components.None(it.Sync))
+										  ?.Also(_dependents.Add);
+									}
+								});
 
 		private sealed class ConcurrentSet<T> where T : class {
 			private readonly ConcurrentDictionary<T, byte> _core = new ConcurrentDictionary<T, byte>();
