@@ -74,15 +74,17 @@ namespace MechDancer.Common {
 		/// <param name="receiver">输入流</param>
 		/// <param name="n">数量</param>
 		/// <returns>内存块</returns>
-		public static byte[] WaitReversed(this Stream receiver, uint n) =>
-			new byte[n].Also
-				(buffer => {
-					 while (n-- > 0) {
-						 var temp = receiver.ReadByte();
-						 if (temp >= 0) buffer[n] = (byte) temp;
-						 else throw new IOException("stream is already end");
-					 }
-				 });
+		public static byte[] WaitReversed(this Stream receiver, uint n) {
+			var buffer = new byte[n];
+
+			while (n-- > 0) {
+				var temp = receiver.ReadByte();
+				if (temp >= 0) buffer[n] = (byte) temp;
+				else return buffer.CopyRange((int) n + 1, buffer.Length);
+			}
+
+			return buffer;
+		}
 
 
 		/// <summary>

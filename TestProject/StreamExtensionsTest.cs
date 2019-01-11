@@ -42,6 +42,10 @@ namespace TestProject {
 						 .WaitNBytes(3)
 						 .ToArray()
 						 .SequenceEqual(new byte[] {1, 2, 3}));
+			Assert.IsTrue(new MemoryStream(new byte[] {1, 2, 3, 4, 5})
+						 .WaitNBytes(20)
+						 .ToArray()
+						 .SequenceEqual(new byte[] {1, 2, 3, 4, 5}));
 		}
 
 		[TestMethod]
@@ -50,6 +54,10 @@ namespace TestProject {
 						 .WaitReversed(3)
 						 .ToArray()
 						 .SequenceEqual(new byte[] {3, 2, 1}));
+			Assert.IsTrue(new MemoryStream(new byte[] {1, 2, 3, 4, 5})
+						 .WaitReversed(20)
+						 .ToArray()
+						 .SequenceEqual(new byte[] {5, 4, 3, 2, 1}));
 		}
 
 		[TestMethod]
@@ -67,6 +75,29 @@ namespace TestProject {
 			var stream = new MemoryStream(new byte[] {1, 2, 3, 4, 5});
 			stream.ReadByte();
 			Assert.AreEqual(4, stream.Available());
+		}
+
+		[TestMethod]
+		public void TestGetBytes() {
+			Assert.IsTrue("12345".GetBytes().SequenceEqual(new byte[] {49, 50, 51, 52, 53}));
+		}
+
+		[TestMethod]
+		public void TestString() {
+			Assert.IsTrue(new byte[] {49, 50, 51, 52, 53}.GetString() == "12345");
+		}
+
+		[TestMethod]
+		public void TestWriteEnd() {
+			var stream = new MemoryStream();
+			stream.WriteEnd("12345");
+			Assert.IsTrue(stream.ToArray().SequenceEqual(new byte[] {49, 50, 51, 52, 53, 0}));
+		}
+
+		[TestMethod]
+		public void TestReadEnd() {
+			var stream = new MemoryStream(new byte[] {49, 50, 51, 52, 53, 0, 1, 2, 3});
+			Assert.IsTrue(stream.ReadEnd() == "12345");
 		}
 	}
 }
