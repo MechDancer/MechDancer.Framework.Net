@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -11,6 +12,9 @@ namespace MechDancer.Framework.Net {
 	///     UDP 组播客户端
 	/// </summary>
 	public sealed class UdpMulticastClient : IDisposable {
+		private readonly ConcurrentDictionary<IPAddress, object> _addresses
+			= new ConcurrentDictionary<IPAddress, object>();
+
 		private readonly IPEndPoint _multicast;
 
 		/// <summary>
@@ -52,14 +56,15 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="local">网络端口的单播地址</param>
 		public void Bind(IPAddress local) {
+			if (!_addresses.TryAdd(local, new object())) return;
 			try {
 				Socket.SetSocketOption
 					(SocketOptionLevel.IP,
 					 SocketOptionName.AddMembership,
-					 local == null
-						 ? new MulticastOption(_multicast.Address)
-						 : new MulticastOption(_multicast.Address, local));
-			} catch (SystemException) { }
+					 new MulticastOption(_multicast.Address, local));
+			} catch (SystemException) {
+				Console.WriteLine("12345");
+			}
 		}
 
 		/// <summary>
