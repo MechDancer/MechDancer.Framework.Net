@@ -12,17 +12,18 @@ namespace MechDancer.Framework.Net.Resources {
 		private readonly ConcurrentDictionary<NetworkInterface, UdpMulticastClient> _core
 			= new ConcurrentDictionary<NetworkInterface, UdpMulticastClient>();
 
-		public readonly IPEndPoint         Address;
 		public readonly UdpMulticastClient Default;
 
-		public MulticastSockets(IPEndPoint address) {
-			Address = address;
-			Default = new UdpMulticastClient(address, null);
+		public readonly IPEndPoint Group;
+
+		public MulticastSockets(IPEndPoint group) {
+			Group   = group;
+			Default = new UdpMulticastClient(group, null);
 		}
 
 		public IReadOnlyDictionary<NetworkInterface, UdpMulticastClient> View => _core;
 
-		public UdpMulticastClient Temporary => new UdpMulticastClient(Address, null);
+		public UdpMulticastClient Temporary => new UdpMulticastClient(Group, null);
 
 		/// <summary>
 		///     指定可以从一个本地IP地址接收
@@ -41,7 +42,7 @@ namespace MechDancer.Framework.Net.Resources {
 					  .Select(it => it.Address)
 					  .FirstOrDefault(it => it.AddressFamily == AddressFamily.InterNetwork)
 					 ?.Also(Default.Bind);
-			_core.TryAdd(@interface, new UdpMulticastClient(Address, @interface));
+			_core.TryAdd(@interface, new UdpMulticastClient(Group, @interface));
 		}
 	}
 }

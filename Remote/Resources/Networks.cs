@@ -39,6 +39,7 @@ namespace MechDancer.Framework.Net.Resources {
 		/// </summary>
 		public void Scan() {
 			bool NotDocker(params string[] descriptions) => !descriptions.Any(it => it.ToLower().Contains("docker"));
+			bool NotVMware(params string[] descriptions) => !descriptions.Any(it => it.ToLower().Contains("vmware"));
 
 			// 筛选：状态；支持组播；是WiFi、以太网或未知类型；非docker创建的虚拟网卡；
 			var @new = from network in NetworkInterface.GetAllNetworkInterfaces()
@@ -53,6 +54,7 @@ namespace MechDancer.Framework.Net.Resources {
 						  || network.NetworkInterfaceType == NetworkInterfaceType.Ethernet3Megabit
 						  || network.NetworkInterfaceType == NetworkInterfaceType.Unknown
 					   where NotDocker(network.Name, network.Description)
+					   where NotVMware(network.Name, network.Description)
 					   select network;
 
 			_lock.Write(() => {

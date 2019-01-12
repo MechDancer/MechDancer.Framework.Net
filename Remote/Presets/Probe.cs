@@ -21,6 +21,7 @@ namespace MechDancer.Framework.Net.Presets {
 		// 组播
 		private readonly MulticastMonitor  _monitor  = new MulticastMonitor();
 		private readonly MulticastReceiver _receiver = new MulticastReceiver();
+		private readonly MulticastSockets  _sockets;
 
 		/// <summary>
 		///     构造器
@@ -35,12 +36,17 @@ namespace MechDancer.Framework.Net.Presets {
 			scope.Setup(new PortMonitor());
 
 			scope.Setup(new Networks());
-			scope.Setup(new MulticastSockets(group ?? Default.Group));
+			scope.Setup(_sockets = new MulticastSockets(group ?? Default.Group));
 			scope.Setup(_monitor);
 			scope.Setup(_receiver);
 
 			_monitor.BindAll();
 		}
+
+		/// <summary>
+		///     查看探针所在的组播组
+		/// </summary>
+		public IPEndPoint Group => _sockets.Group;
 
 		/// <summary>
 		///     查看所有成员的信息

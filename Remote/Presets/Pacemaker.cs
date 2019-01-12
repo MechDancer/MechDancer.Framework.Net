@@ -17,6 +17,7 @@ namespace MechDancer.Framework.Net.Presets {
 	public sealed class Pacemaker {
 		private readonly MulticastBroadcaster _broadcaster = new MulticastBroadcaster();
 		private readonly MulticastMonitor     _monitor     = new MulticastMonitor();
+		private readonly MulticastSockets     _sockets;
 
 		/// <summary>
 		///     构造器
@@ -25,12 +26,17 @@ namespace MechDancer.Framework.Net.Presets {
 		public Pacemaker(IPEndPoint group = null) {
 			var scope = new DynamicScope();
 			scope.Setup(new Networks());
-			scope.Setup(new MulticastSockets(group ?? Default.Group));
+			scope.Setup(_sockets = new MulticastSockets(group ?? Default.Group));
 			scope.Setup(_monitor);
 			scope.Setup(_broadcaster);
 
 			_monitor.OpenAll();
 		}
+
+		/// <summary>
+		///     查看起搏器激发的组播组
+		/// </summary>
+		public IPEndPoint Group => _sockets.Group;
 
 		/// <summary>
 		///     重新扫描并打开所有本地网络接口
