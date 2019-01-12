@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using MechDancer.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -96,6 +97,23 @@ namespace TestProject {
 		[TestMethod]
 		public void TestRetain() {
 			Assert.IsTrue(new[] {1, 2, 3}.Retain(new[] {2, 3, 4}).SequenceEqual(new[] {2, 3}));
+		}
+
+		[TestMethod]
+		public void TestDifference() {
+			new[] {1, 2, 3, 4, 5}.Difference(new[] {3, 4, 5, 6, 7},
+											 out var difference0,
+											 out var difference1);
+			Assert.IsTrue(difference0.SequenceEqual(new[] {1, 2}));
+			Assert.IsTrue(difference1.SequenceEqual(new[] {6, 7}));
+		}
+
+		[TestMethod]
+		public void TestSync() {
+			var temp1 = new List<int> {1, 2, 3, 4, 5};
+			var temp2 = new[] {3, 4, 5, 6, 7};
+			temp1.Sync(temp2);
+			Assert.IsTrue(temp1.SequenceEqual(temp2));
 		}
 
 		[TestMethod]

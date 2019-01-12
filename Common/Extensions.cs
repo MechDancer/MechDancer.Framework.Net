@@ -155,6 +155,35 @@ namespace MechDancer.Common {
 		public static IEnumerable<T> Retain<T>(this IEnumerable<T> receiver, IEnumerable<T> others)
 			=> receiver.Where(others.Contains);
 
+		/// <summary>
+		/// 	求差集
+		/// </summary>
+		/// <param name="receiver">集合1</param>
+		/// <param name="others">集合2</param>
+		/// <param name="difference0"> {1} - {2} </param>
+		/// <param name="difference1"> {2} - {1} </param>
+		/// <typeparam name="T">元素类型</typeparam>
+		public static void Difference<T>(
+			this IEnumerable<T> receiver,
+			IEnumerable<T>      others,
+			out List<T>         difference0,
+			out List<T>         difference1) {
+			difference0 = receiver.Where(others.NotContains).ToList();
+			difference1 = others.Where(receiver.NotContains).ToList();
+		}
+
+		/// <summary>
+		/// 	令一个可变列表与另一个保持一致
+		/// </summary>
+		/// <param name="receiver">列表</param>
+		/// <param name="others">参考</param>
+		/// <typeparam name="T">元素类型</typeparam>
+		public static void Sync<T>(this ICollection<T> receiver, IEnumerable<T> others) {
+			receiver.Difference(others, out var difference0, out var difference1);
+			foreach (var it in difference0) receiver.Remove(it);
+			foreach (var it in difference1) receiver.Add(it);
+		}
+
 		#endregion
 
 		#region bool

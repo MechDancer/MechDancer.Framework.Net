@@ -5,6 +5,7 @@ namespace MechDancer.Framework.Net.Resources {
 		AddressAsk   = 2,  // 地址请求
 		AddressAck   = 3,  // 地址回复
 		PackageSlice = 4,  // 包分片
+		TopicMessage = 5,  // 话题消息
 		Common       = 127 // 通用广播
 	}
 
