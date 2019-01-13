@@ -36,8 +36,6 @@ namespace MechDancer.Framework.Net.Presets {
 		private readonly PacketSlicer    _slicer        = new PacketSlicer();
 		private readonly PortBroadcaster _synchronizer1 = new PortBroadcaster();
 		private readonly PortMonitor     _synchronizer2 = new PortMonitor();
-		private readonly TopicBuffer     _topic         = new TopicBuffer();
-		private readonly TopicReceiver   _topicReceiver = new TopicReceiver();
 
 		/// <summary>
 		///     构造器
@@ -70,10 +68,7 @@ namespace MechDancer.Framework.Net.Presets {
 			_scope.Setup(Monitor);
 			_scope.Setup(_broadcaster);
 			_scope.Setup(_receiver);
-
 			_scope.Setup(_slicer);
-			_scope.Setup(_topic);
-			_scope.Setup(_topicReceiver);
 
 			_scope.Setup(_addresses);
 			_scope.Setup(_servers);

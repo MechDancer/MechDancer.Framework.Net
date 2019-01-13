@@ -22,8 +22,6 @@ namespace MechDancer.Framework.Net.Resources {
 				 _ => new IPEndPoint(IPAddress.Any,        port),
 				 (_, last) => new IPEndPoint(last.Address, port));
 
-		public IPEndPoint Update(string name, IPEndPoint address) => _core[name] = address;
-
 		public bool Remove(string name) => _core.TryRemove(name, out _);
 	}
 }
