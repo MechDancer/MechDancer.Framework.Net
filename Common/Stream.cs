@@ -56,14 +56,16 @@ namespace MechDancer.Common {
 		public static byte[] WaitNBytes(this Stream receiver, int n) =>
 			new MemoryStream(n).Let
 				(buffer => {
-					 for (var i = 0; i < n; ++i) {
-						 var temp = receiver.ReadByte();
-						 if (temp > 0) buffer.WriteByte((byte) temp);
-						 else return buffer.GetBuffer().CopyRange(0, i);
-					 }
+					for (var i = 0; i < n; ++i) {
+						var temp = receiver.ReadByte();
+						if (temp > 0)
+							buffer.WriteByte((byte) temp);
+						else
+							return buffer.GetBuffer().CopyRange(0, i);
+					}
 
-					 return buffer.GetBuffer();
-				 });
+					return buffer.GetBuffer();
+				});
 
 		/// <summary>
 		///     从输入流阻塞接收 n 个字节数据，并将数组按相反的方向读出。
@@ -76,8 +78,10 @@ namespace MechDancer.Common {
 
 			while (n-- > 0) {
 				var temp = receiver.ReadByte();
-				if (temp >= 0) buffer[n] = (byte) temp;
-				else return buffer.CopyRange((int) n + 1, buffer.Length);
+				if (temp >= 0)
+					buffer[n] = (byte) temp;
+				else
+					return buffer.CopyRange((int) n + 1, buffer.Length);
 			}
 
 			return buffer;
@@ -111,11 +115,10 @@ namespace MechDancer.Common {
 		/// <param name="receiver">流</param>
 		/// <param name="text">字符串</param>
 		/// <returns>流</returns>
-		public static void WriteEnd(this Stream receiver, string text)
-			=> receiver.Also(it => {
-								 it.Write(text.GetBytes());
-								 it.WriteByte(0);
-							 });
+		public static void WriteEnd(this Stream receiver, string text) {
+			receiver.Write(text.GetBytes());
+			receiver.WriteByte(0);
+		}
 
 		/// <summary>
 		///     从流读取一个带结尾的字符串
@@ -156,64 +159,6 @@ namespace MechDancer.Common {
 		/// <returns>字节数组</returns>
 		public static byte[] GetBytes(this string receiver, Encoding encoding = null) =>
 			(encoding ?? Encoding.Default).GetBytes(receiver);
-
-		#endregion
-
-		#region Data Encode
-
-		public static void Write(this Stream receiver, sbyte value)
-			=> receiver.WriteByte((byte) value);
-
-		public static void Write(this Stream receiver, short value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, ushort value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, int value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, uint value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, long value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, ulong value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, float value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static void Write(this Stream receiver, double value)
-			=> receiver.WriteReversed(BitConverter.GetBytes(value));
-
-		public static sbyte ReadSByte(this Stream receiver)
-			=> (sbyte) receiver.ReadByte();
-
-		public static short ReadShort(this Stream stream)
-			=> BitConverter.ToInt16(stream.WaitReversed(sizeof(short)), 0);
-
-		public static ushort ReadUShort(this Stream stream)
-			=> BitConverter.ToUInt16(stream.WaitReversed(sizeof(ushort)), 0);
-
-		public static int ReadInt(this Stream stream)
-			=> BitConverter.ToInt32(stream.WaitReversed(sizeof(int)), 0);
-
-		public static uint ReadUInt(this Stream stream)
-			=> BitConverter.ToUInt32(stream.WaitReversed(sizeof(uint)), 0);
-
-		public static long ReadLong(this Stream stream)
-			=> BitConverter.ToInt64(stream.WaitReversed(sizeof(long)), 0);
-
-		public static ulong ReadULong(this Stream stream)
-			=> BitConverter.ToUInt64(stream.WaitReversed(sizeof(ulong)), 0);
-
-		public static float ReadFloat(this Stream stream)
-			=> BitConverter.ToSingle(stream.WaitReversed(sizeof(float)), 0);
-
-		public static double ReadDouble(this Stream stream)
-			=> BitConverter.ToDouble(stream.WaitReversed(sizeof(double)), 0);
 
 		#endregion
 	}
