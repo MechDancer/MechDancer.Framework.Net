@@ -33,9 +33,10 @@ namespace MechDancer.Framework.Net.Presets {
 		private readonly ConnectionServer _server  = new ConnectionServer();
 		private readonly ServerSockets    _servers = new ServerSockets();
 
-		private readonly PacketSlicer    _slicer        = new PacketSlicer();
-		private readonly PortBroadcaster _synchronizer1 = new PortBroadcaster();
-		private readonly PortMonitor     _synchronizer2 = new PortMonitor();
+		private readonly PacketSlicer     _slicer = new PacketSlicer();
+		private readonly MulticastSockets _sockets;
+		private readonly PortBroadcaster  _synchronizer1 = new PortBroadcaster();
+		private readonly PortMonitor      _synchronizer2 = new PortMonitor();
 
 		/// <summary>
 		///     构造器
@@ -49,24 +50,20 @@ namespace MechDancer.Framework.Net.Presets {
 		/// <param name="newMemberDetected">发现新成员上线时的回调</param>
 		/// <param name="additions">自定义组件</param>
 		public RemoteHub(string              name              = null,
-						 uint                size              = 0x4000,
-						 IPEndPoint          group             = null,
-						 Action<string>      newMemberDetected = null,
-						 params IComponent[] additions
-		) {
-			_groupMonitor = new GroupMonitor(detected: newMemberDetected);
-			_broadcaster  = new MulticastBroadcaster(size);
-
+		                 uint                size              = 0x4000,
+		                 IPEndPoint          group             = null,
+		                 Action<string>      newMemberDetected = null,
+		                 params IComponent[] additions) {
 			_scope = new DynamicScope();
 			_scope.Setup(new Name(name ?? $"RemoteHub[{Guid.NewGuid()}]"));
 
 			_scope.Setup(_group);
-			_scope.Setup(_groupMonitor);
+			_scope.Setup(_groupMonitor = new GroupMonitor(detected: newMemberDetected));
 
 			_scope.Setup(_networks);
-			_scope.Setup(new MulticastSockets(group ?? Default.Group));
+			_scope.Setup(_sockets = new MulticastSockets(group ?? Default.Group));
 			_scope.Setup(Monitor);
-			_scope.Setup(_broadcaster);
+			_scope.Setup(_broadcaster = new MulticastBroadcaster(size));
 			_scope.Setup(_receiver);
 			_scope.Setup(_slicer);
 
@@ -84,6 +81,14 @@ namespace MechDancer.Framework.Net.Presets {
 				_scope.Setup(dependency);
 		}
 
+		/// <summary>
+		///     查看远程节点所在的组播组
+		/// </summary>
+		public IPEndPoint Group => _sockets.Group;
+
+		/// <summary>
+		///     网络管理器
+		/// </summary>
 		public MulticastMonitor Monitor { get; } = new MulticastMonitor();
 
 		/// <summary>
@@ -96,17 +101,17 @@ namespace MechDancer.Framework.Net.Presets {
 		/// </summary>
 		public (ICollection<IPAddress>, ICollection<int>) Endpoints
 			=> (_networks.View
-						 .Values
-						 .Select(it => it.Address)
-						 .ToList(),
-				_servers.View
-						.Keys
-						.ToList()
-						.Also(list => _servers.Default
-											  .LocalEndpoint
-											  .Let(it => (IPEndPoint) it)
-											  .Port
-											  .Also(list.Add))
+			             .Values
+			             .Select(it => it.Address)
+			             .ToList(),
+			    _servers.View
+			            .Keys
+			            .ToList()
+			            .Also(list => _servers.Default
+			                                  .LocalEndpoint
+			                                  .Let(it => (IPEndPoint) it)
+			                                  .Port
+			                                  .Also(list.Add))
 			   );
 
 		/// <summary>
@@ -114,42 +119,36 @@ namespace MechDancer.Framework.Net.Presets {
 		/// </summary>
 		/// <param name="timeout">超时时间</param>
 		/// <returns>组成员列表</returns>
-		public List<string> this[TimeSpan timeout]
-			=> _group[timeout];
+		public List<string> this[TimeSpan timeout] => _group[timeout];
 
 		/// <summary>
 		///     查看一个远端的地址和端口
 		/// </summary>
 		/// <param name="name">远端名字</param>
-		public IPEndPoint this[string name]
-			=> _addresses[name].TakeIf(it => (ushort) it.Port == it.Port);
+		public IPEndPoint this[string name] => _addresses[name].TakeIf(it => (ushort) it.Port == it.Port);
 
 		/// <summary>
 		///     请求组成员自证存在性
 		/// </summary>
-		public void Yell()
-			=> _groupMonitor.Yell();
+		public void Yell() => _groupMonitor.Yell();
 
 		/// <summary>
 		///     主动询问一个远端的端口号
 		/// </summary>
 		/// <param name="name">对方名字</param>
-		public void Ask(string name)
-			=> _synchronizer2.Ask(name);
+		public void Ask(string name) => _synchronizer2.Ask(name);
 
 		/// <summary>
 		///     请求线上所有远程终端广播自己端口号
 		/// </summary>
-		public void AskEveryone()
-			=> _synchronizer2.AskEveryone();
+		public void AskEveryone() => _synchronizer2.AskEveryone();
 
 		/// <summary>
 		///     广播数据
 		/// </summary>
 		/// <param name="cmd">指令代码</param>
 		/// <param name="payload">数据负载</param>
-		public void Broadcast(byte cmd, byte[] payload)
-			=> _broadcaster.Broadcast(cmd, payload);
+		public void Broadcast(byte cmd, byte[] payload) => _broadcaster.Broadcast(cmd, payload);
 
 		/// <summary>
 		///     连接到一个TCP远端
@@ -162,9 +161,7 @@ namespace MechDancer.Framework.Net.Presets {
 		///     尚未得知对方地址或连接失败将返回 false
 		/// </returns>
 		public bool Connect(string name, byte cmd, Action<NetworkStream> block) {
-			using (var client = _client.Connect(name, cmd)) {
-				return client?.Also(block) != null;
-			}
+			using (var client = _client.Connect(name, cmd)) return client?.Also(block) != null;
 		}
 
 		/// <summary>
@@ -174,13 +171,11 @@ namespace MechDancer.Framework.Net.Presets {
 		///     收到的UDP包
 		///     若收到的是自己发的则返回空
 		/// </returns>
-		public RemotePacket Invoke()
-			=> _receiver.Invoke();
+		public RemotePacket Invoke() => _receiver.Invoke();
 
 		/// <summary>
 		///     调度一次TCP短连接服务
 		/// </summary>
-		public void Accept()
-			=> _server.Invoke();
+		public void Accept() => _server.Invoke();
 	}
 }
