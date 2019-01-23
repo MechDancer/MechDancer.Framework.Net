@@ -24,10 +24,9 @@ namespace MechDancer.Common {
 		/// </summary>
 		/// <param name="receiver">流</param>
 		/// <param name="bytes">字符数组</param>
-		/// <typeparam name="T">流实现类型</typeparam>
 		/// <returns>流</returns>
-		public static T Write<T>(this T receiver, byte[] bytes) where T : Stream =>
-			receiver.Also(it => it.Write(bytes, 0, bytes.Length));
+		public static void Write(this Stream receiver, byte[] bytes)
+			=> receiver.Write(bytes, 0, bytes.Length);
 
 		/// <summary>
 		///     把一个字节数组按相反的顺序写入流
@@ -36,18 +35,16 @@ namespace MechDancer.Common {
 		/// <param name="bytes">字节数组</param>
 		/// <param name="index">起始位置</param>
 		/// <param name="length">写入的长度</param>
-		/// <typeparam name="T">流具体类型</typeparam>
 		/// <returns>所在流</returns>
-		public static T WriteReversed<T>(
-			this T receiver,
-			byte[] bytes,
-			int    index  = 0,
-			int    length = int.MaxValue
-		) where T : Stream
-			=> receiver.Also(it => {
-								 index += Math.Min(length, bytes.Length - index);
-								 while (index-- > 0) it.WriteByte(bytes[index]);
-							 });
+		public static void WriteReversed(
+			this Stream receiver,
+			byte[]      bytes,
+			int         index  = 0,
+			int         length = int.MaxValue
+		) {
+			index += Math.Min(length, bytes.Length - index);
+			while (index-- > 0) receiver.WriteByte(bytes[index]);
+		}
 
 		/// <summary>
 		///     从输入流阻塞接收 n 个字节数据，或直到流关闭。
@@ -59,14 +56,16 @@ namespace MechDancer.Common {
 		public static byte[] WaitNBytes(this Stream receiver, int n) =>
 			new MemoryStream(n).Let
 				(buffer => {
-					 for (var i = 0; i < n; ++i) {
-						 var temp = receiver.ReadByte();
-						 if (temp > 0) buffer.WriteByte((byte) temp);
-						 else return buffer.GetBuffer().CopyRange(0, i);
-					 }
+					for (var i = 0; i < n; ++i) {
+						var temp = receiver.ReadByte();
+						if (temp > 0)
+							buffer.WriteByte((byte) temp);
+						else
+							return buffer.GetBuffer().CopyRange(0, i);
+					}
 
-					 return buffer.GetBuffer();
-				 });
+					return buffer.GetBuffer();
+				});
 
 		/// <summary>
 		///     从输入流阻塞接收 n 个字节数据，并将数组按相反的方向读出。
@@ -79,13 +78,14 @@ namespace MechDancer.Common {
 
 			while (n-- > 0) {
 				var temp = receiver.ReadByte();
-				if (temp >= 0) buffer[n] = (byte) temp;
-				else return buffer.CopyRange((int) n + 1, buffer.Length);
+				if (temp >= 0)
+					buffer[n] = (byte) temp;
+				else
+					return buffer.CopyRange((int) n + 1, buffer.Length);
 			}
 
 			return buffer;
 		}
-
 
 		/// <summary>
 		///     从流中读取所有数据
@@ -106,20 +106,19 @@ namespace MechDancer.Common {
 		/// </summary>
 		/// <param name="receiver">内存流</param>
 		/// <returns>剩余空间长度</returns>
-		public static long Available(this MemoryStream receiver) => receiver.Capacity - receiver.Position;
+		public static long Available(this MemoryStream receiver)
+			=> receiver.Capacity - receiver.Position;
 
 		/// <summary>
 		///     向流中写入字符串，再写入结尾
 		/// </summary>
 		/// <param name="receiver">流</param>
 		/// <param name="text">字符串</param>
-		/// <typeparam name="T">流实现类型</typeparam>
 		/// <returns>流</returns>
-		public static T WriteEnd<T>(this T receiver, string text) where T : Stream =>
-			receiver.Also(it => {
-							  it.Write(text.GetBytes());
-							  it.WriteByte(0);
-						  });
+		public static void WriteEnd(this Stream receiver, string text) {
+			receiver.Write(text.GetBytes());
+			receiver.WriteByte(0);
+		}
 
 		/// <summary>
 		///     从流读取一个带结尾的字符串

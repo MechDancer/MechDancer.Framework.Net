@@ -18,9 +18,9 @@ namespace TestProject {
 		public void TestWrite() {
 			var temp   = new byte[] {1, 2, 3, 4, 5};
 			var stream = new MemoryStream();
-			// 为了与 .Net Standard 支持的 Write(Span) 区分
-			Assert.IsTrue(Extensions
-						 .Write(stream, temp)
+			Extensions.Write(stream, temp);
+			// 为了与 .Net Core 支持的 Write(Span) 区分
+			Assert.IsTrue(stream
 						 .ToArray()
 						 .SequenceEqual(temp));
 		}
@@ -30,8 +30,8 @@ namespace TestProject {
 			var temp1  = new byte[] {1, 2, 3, 4, 5};
 			var temp2  = new byte[] {5, 4, 3, 2, 1};
 			var stream = new MemoryStream();
+			stream.WriteReversed(temp1);
 			Assert.IsTrue(stream
-						 .WriteReversed(temp1)
 						 .ToArray()
 						 .SequenceEqual(temp2));
 		}
