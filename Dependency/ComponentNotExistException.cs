@@ -8,6 +8,7 @@ namespace MechDancer.Framework.Dependency {
 	/// <typeparam name="T">不存在的组件类型</typeparam>
 	public sealed class ComponentNotExistException<T> : NullReferenceException
 		where T : IComponent {
+		/// <inheritdoc />
 		/// <summary>
 		///     构造器
 		/// </summary>

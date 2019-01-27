@@ -47,15 +47,19 @@ namespace MechDancer.Framework.Dependency {
 		public bool Setup(IComponent component)
 			=> _components.TryAdd(component)
 						  .Then(() => {
-									lock (_dependents) {
-										_dependents.RemoveAll(it => it.Sync(component));
+							   lock (_dependents) {
+								   _dependents.RemoveAll(it => it.Sync(component));
 
-										(component as IDependent)
-										  ?.TakeIf(it => Components.None(it.Sync))
-										  ?.Also(_dependents.Add);
-									}
-								});
+								   (component as IDependent)
+									 ?.TakeIf(it => Components.None(it.Sync))
+									 ?.Also(_dependents.Add);
+							   }
+						   });
 
+		/// <summary>
+		///     并发哈希集合
+		/// </summary>
+		/// <typeparam name="T">元素类型</typeparam>
 		private sealed class ConcurrentSet<T> where T : class {
 			private readonly ConcurrentDictionary<T, byte> _core = new ConcurrentDictionary<T, byte>();
 
