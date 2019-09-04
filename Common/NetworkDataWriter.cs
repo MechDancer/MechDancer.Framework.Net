@@ -3,7 +3,7 @@ using System.IO;
 
 namespace MechDancer.Common {
 	/// <summary>
-	///     网络字节序数据写入
+	/// 网络字节序数据写入
 	/// </summary>
 	public class NetworkDataWriter : IDisposable {
 		private readonly Stream _stream;
@@ -12,34 +12,74 @@ namespace MechDancer.Common {
 
 		public void Dispose() => _stream.Dispose();
 
+        /// <summary>
+        /// 向流中写入无符号字节
+        /// </summary>
+        /// <param name="value">数据</param>
 		public void Write(byte value)
 			=> _stream.WriteByte(value);
 
-		public void Write(sbyte value)
+        /// <summary>
+        /// 向流中写入有符号字节
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(sbyte value)
 			=> _stream.WriteByte((byte) value);
 
-		public void Write(short value)
+        /// <summary>
+        /// 向流中写入有符号短整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(short value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(ushort value)
+        /// <summary>
+        /// 向流中写入无符号短整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(ushort value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(int value)
+        /// <summary>
+        /// 向流中写入有符号整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(int value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(uint value)
+        /// <summary>
+        /// 向流中写入无符号整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(uint value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(long value)
+        /// <summary>
+        /// 向流中写入有符号长整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(long value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(ulong value)
+        /// <summary>
+        /// 向流中写入无符号长整型
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(ulong value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(float value)
+        /// <summary>
+        /// 向流中写入单精度浮点
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(float value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 
-		public void Write(double value)
+        /// <summary>
+        /// 向流中写入双精度浮点
+        /// </summary>
+        /// <param name="value">数据</param>
+        public void Write(double value)
 			=> _stream.WriteReversed(BitConverter.GetBytes(value));
 	}
 }
