@@ -8,13 +8,19 @@
         <Company>MechDancer</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Product>Framework.Net</Product>
-        <Description>动态依赖项管理</Description>
-        <Copyright>WTFPL</Copyright>
+        <Description>动态依赖项管理；为 Remote 提供支持；</Description>
+        <Copyright>Copyright 2018 - 2019 by YangDR</Copyright>
         <PackageTags>Dynamic Dependency;</PackageTags>
+        <Version>1.0.1</Version>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/MechDancer/MechDancer.Framework.Net.git</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/MechDancer/MechDancer.Framework.Net/tree/master/Dependency</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common\Common.csproj"/>
+        <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
 </Project>

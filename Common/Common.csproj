@@ -6,14 +6,19 @@
         <Authors>YangDR</Authors>
         <Company>MechDancer</Company>
         <Product>Framework.Net</Product>
-        <Description>包含使C#变得更加函数式的很多扩展函数</Description>
+        <Description>包含使C#变得更加函数式的很多扩展函数；</Description>
         <PackageTags>Extensions; Functional; Lambda;</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Mechdancer.Common.Net</PackageId>
-        <Copyright>WTFPL</Copyright>
-        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <Copyright>Copyright 2018 - 2019 by YangDR</Copyright>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <LangVersion>latest</LangVersion>
-        <RepositoryUrl>https://github.com/MechDancer/MechDancer.Framework.Net/tree/master/Common</RepositoryUrl>
+        <RepositoryUrl>https://github.com/MechDancer/MechDancer.Framework.Net.git</RepositoryUrl>
+        <PackageReleaseNotes />
+        <Version>1.0.1</Version>
+        <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/MechDancer/MechDancer.Framework.Net/tree/master/Common</PackageProjectUrl>
     </PropertyGroup>
 
 </Project>
