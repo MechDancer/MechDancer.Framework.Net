@@ -42,7 +42,7 @@ namespace MechDancer.Framework.Net.Resources {
 					  .Select(it => it.Address)
 					  .FirstOrDefault(it => it.AddressFamily == AddressFamily.InterNetwork)
 					 ?.Also(Default.Bind);
-			_core.TryAdd(@interface, new UdpMulticastClient(Group, @interface));
+            _core.GetOrAdd(@interface, _ => new UdpMulticastClient(Group, @interface));
 		}
 	}
 }
